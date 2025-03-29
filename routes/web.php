@@ -22,3 +22,7 @@ Route::post('/logout', function () {
     Auth::logout();
     return redirect('/')->with('success', 'Logout successfully! ');
 });
+
+
+Route::post('/register', [AuthController::class, 'register'])->name('register');
+

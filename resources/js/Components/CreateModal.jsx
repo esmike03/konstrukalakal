@@ -9,10 +9,12 @@ export default function RegisterModal() {
         name: '',
         email: '',
         address: '',
-        contact: '',
+        phone: '',
         password: '',
         password_confirmation: '',
     });
+    const [errors, setErrors] = useState({});
+    const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -20,8 +22,14 @@ export default function RegisterModal() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setLoading(true);
+        setErrors({});
         router.post('/register', form, {
             onSuccess: () => closeRegisterModal(),
+            onError: (errorResponse) => {
+                setErrors(errorResponse);
+                setLoading(true);
+            }
         });
     };
 
@@ -43,15 +51,23 @@ export default function RegisterModal() {
                     <input name="name" type="text" placeholder="Full Name" onChange={handleChange} required
                         className="text-sm w-full p-2 border border-gray-400 rounded-lg focus:outline-none focus:ring focus:ring-green-500"
                     />
+                    {errors.name && <p className="text-red-500 text-xs">{errors.name}</p>}
+
                     <input name="email" type="email" placeholder="Email Address" onChange={handleChange} required
                         className="text-sm w-full mt-3 p-2 border border-gray-400 rounded-lg focus:outline-none focus:ring focus:ring-green-500"
                     />
+                    {errors.email && <p className="text-red-500 text-xs">{errors.email}</p>}
+
                     <input name="address" type="text" placeholder="Address" onChange={handleChange} required
                         className="text-sm w-full mt-3 p-2 border border-gray-400 rounded-lg focus:outline-none focus:ring focus:ring-green-500"
                     />
-                    <input name="contact" type="text" placeholder="Contact No." onChange={handleChange} required
+                    {errors.address && <p className="text-red-500 text-xs">{errors.address}</p>}
+
+                    <input name="phone" type="text" placeholder="Contact No." onChange={handleChange} required
                         className="text-sm w-full mt-3 p-2 border border-gray-400 rounded-lg focus:outline-none focus:ring focus:ring-green-500"
                     />
+                    {errors.phone && <p className="text-red-500 text-xs">{errors.phone}</p>}
+
 
                     <div className="flex gap-3">
                         <input name="password" type="password" placeholder="Password" onChange={handleChange} required
@@ -61,6 +77,7 @@ export default function RegisterModal() {
                             className="text-sm w-full mt-3 p-2 border border-gray-400 rounded-lg focus:outline-none focus:ring focus:ring-green-500"
                         />
                     </div>
+                    {errors.password && <p className="text-red-500 text-xs">{errors.password}</p>}
 
 
                     <button type="submit" className="w-full bg-green-600 text-white text-sm py-2 rounded-full mt-4 hover:bg-green-700">

@@ -1,0 +1,180 @@
+import { useState } from "react";
+import { Link, Head, usePage } from "@inertiajs/react";
+import { useModal } from "@/context/ModalContext";
+import { ShoppingCart, LogOut, User, Menu, X } from "lucide-react";
+
+export default function Layout({ children }) {
+  const { openLoginModal, openRegisterModal } = useModal();
+  const { auth } = usePage().props;
+  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = () => setMobileMenuOpen(!isMobileMenuOpen);
+  const closeMobileMenu = () => setMobileMenuOpen(false);
+
+  return (
+    <>
+      <Head>
+        <meta
+          head-key="description"
+          name="description"
+          content="This is a description of the page"
+        />
+      </Head>
+      <header>
+        <nav className="w-full bg-white p-3  shadow-md px-4 md:px-10">
+          <div className="flex justify-between items-center">
+            {/* Left: Logo */}
+            <div className="flex items-center gap-2">
+              <img src="/images/logo.png" alt="Logo" className="h-8" />
+              <Link href="/" className="text-green-700 font-bold text-lg">
+                Konstrukalakal
+              </Link>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <div className="md:hidden">
+              <button onClick={toggleMobileMenu} className="text-gray-700">
+                {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
+            </div>
+
+            {/* Desktop Navigation */}
+            <div className="hidden ml-72 md:flex items-center justify-between w-full">
+              <div className="flex space-x-6 text-black text-sm">
+                <Link href="/" className="hover:text-green-600">
+                  Home
+                </Link>
+                <Link href="/materials" className="hover:text-green-600">
+                  Materials
+                </Link>
+                <Link href="/about" className="hover:text-green-600">
+                  About
+                </Link>
+                {auth.user && (
+                  <button className="relative">
+                    <ShoppingCart
+                      className="text-gray-700 hover:text-green-600"
+                      size={18}
+                    />
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
+                      3
+                    </span>
+                  </button>
+                )}
+              </div>
+
+              {/* Desktop: Profile & Auth Buttons */}
+              <div className="flex items-center gap-3">
+                {auth.user ? (
+                  <div className="relative group">
+                    <button className="bg-green-600 text-white text-sm px-4 py-1 rounded-full hover:bg-green-700">
+                      {auth.user.name.split(" ")[0]}
+                    </button>
+                    <div className="absolute right-0 mt-1 w-40 bg-white border rounded-md shadow-lg hidden group-hover:block">
+                      <Link
+                        href="/profile"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-gray-100"
+                      >
+                        <User size={18} /> Profile
+                      </Link>
+                      <Link
+                        href="/logout"
+                        method="post"
+                        as="button"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 w-full text-left"
+                      >
+                        <LogOut size={18} /> Logout
+                      </Link>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <button
+                      onClick={openLoginModal}
+                      className="bg-green-600 text-white text-sm px-4 py-1 rounded-full hover:bg-green-700"
+                    >
+                      Log In
+                    </button>
+                    <button
+                      onClick={openRegisterModal}
+                      className="bg-green-600 text-white text-sm px-4 py-1 rounded-full hover:bg-green-700"
+                    >
+                      Register
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile Navigation Menu */}
+          {isMobileMenuOpen && (
+            <div className="md:hidden mt-2 border-t pt-2">
+              <div className="flex flex-col space-y-2 text-black text-sm">
+                <Link href="/" onClick={closeMobileMenu} className="hover:text-green-600">
+                  Home
+                </Link>
+                <Link href="/materials" onClick={closeMobileMenu} className="hover:text-green-600">
+                  Materials
+                </Link>
+                <Link href="/about" onClick={closeMobileMenu} className="hover:text-green-600">
+                  About
+                </Link>
+                {auth.user && (
+                  <button onClick={closeMobileMenu} className="relative flex items-center">
+                    <ShoppingCart className="text-gray-700 hover:text-green-600" size={18} />
+                    <span className="ml-2 text-gray-700">Cart (3)</span>
+                  </button>
+                )}
+              </div>
+              <div className="mt-4 border-t pt-2">
+                {auth.user ? (
+                  <div className="flex flex-col space-y-2">
+                    <Link
+                      href="/profile"
+                      onClick={closeMobileMenu}
+                      className="flex items-center gap-2 text-gray-800 text-sm hover:text-green-600"
+                    >
+                      <User size={18} /> Profile
+                    </Link>
+                    <Link
+                      href="/logout"
+                      method="post"
+                      as="button"
+                      onClick={closeMobileMenu}
+                      className="flex items-center gap-2 text-gray-800 text-sm hover:text-green-600"
+                    >
+                      <LogOut size={18} /> Logout
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="flex flex-col space-y-2">
+                    <button
+                      onClick={() => {
+                        openLoginModal();
+                        closeMobileMenu();
+                      }}
+                      className="w-full bg-green-600 text-white text-sm py-2 rounded-full hover:bg-green-700"
+                    >
+                      Log In
+                    </button>
+                    <button
+                      onClick={() => {
+                        openRegisterModal();
+                        closeMobileMenu();
+                      }}
+                      className="w-full bg-green-600 text-white text-sm py-2 rounded-full hover:bg-green-700"
+                    >
+                      Register
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </nav>
+      </header>
+      <main>{children}</main>
+    </>
+  );
+}

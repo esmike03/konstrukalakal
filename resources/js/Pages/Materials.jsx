@@ -63,24 +63,28 @@ export default function Materials() {
                     <div className={`mt-6 ${view === "grid" ? "grid grid-cols-3 gap-6" : "space-y-4"}`}>
                         {materials.length > 0 ? (
                             materials.map((material) => (
-                                <div key={material.id} className="bg-gray-100 p-2 rounded-lg shadow">
-                                    {material.image && (
-                                        <img src={`/storage/${material.image}`} alt={material.materialName} className=" w-full h-32 object-cover rounded-sm" />
-                                    )}
+                                <div key={material.id} className="bg-gray-100 flex flex-col justify-between p-2 rounded-lg shadow">
+                                    <div>
+                                        {material.image && (
+                                            <img src={`/storage/${material.image}`} alt={material.materialName} className=" w-full h-32 object-cover rounded-sm" />
+                                        )}
 
-                                    <div className="flex justify-between content-center mt-2">
-                                        <div className="text-xs text-white bg-green-600 px-2 py-1 rounded-sm w-max">For {material.forbdt}</div>
-                                        <p className="text-xs mt-0.5 text-gray-500">📍 {material.location}</p>
+                                        <div className="flex justify-between content-center mt-2">
+                                            <div className="text-xs text-white bg-green-600 px-2 py-1 rounded-sm w-max">For {material.forbdt}</div>
+                                            <p className="text-xs mt-0.5 text-gray-500">📍 {material.location}</p>
+                                        </div>
+                                        <h3 className="text-lg font-bold mt-1">{material.material_name}</h3>
+                                        <p className="text-sm text-gray-600">{material.description}</p>
+
                                     </div>
-                                    <h3 className="text-lg font-bold mt-1">{material.material_name}</h3>
-                                    <p className="text-sm text-gray-600">{material.description}</p>
-                                    <div className="flex mt-2 gap-2 justify-between">
-                                        <p className="text-green-600 font-bold content-center  items-center">₱ {material.price}</p>
-                                        <p className="text-xs text-gray-500 mt-1">Qty: {material.quantity}</p>
+                                    <div>
+                                        <div className="flex mt-1 gap-2 justify-between">
+                                            <p className="text-green-600 font-bold content-center  items-center">₱ {material.price}</p>
+                                            <p className="text-xs text-gray-500 mt-1">Qty: {material.quantity}</p>
+                                        </div>
+                                        <button className=" bottom-0 w-full mt-2 text-sm bg-green-600 text-white py-1 rounded-full hover:bg-green-700">View Details</button>
                                     </div>
 
-
-                                    <button className="mt-2 w-full text-sm bg-green-600 text-white py-1 rounded-full hover:bg-green-700">View Details</button>
                                 </div>
                             ))
                         ) : (

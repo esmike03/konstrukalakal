@@ -1,9 +1,11 @@
 <?php
 
 use Inertia\Inertia;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\NavigationController;
 use App\Http\Controllers\PostController;
 
 // Route::get('/', function () {
@@ -13,6 +15,9 @@ use App\Http\Controllers\PostController;
 
 // Route::inertia('/', 'Home');
 Route::get('/', [PostController::class, 'index']);
+
+Route::get('/materials', [NavigationController::class, 'toMaterials']);
+Route::post('/materials/store', [NavigationController::class, 'materialStore']);
 
 Route::resource('posts', PostController::class)->except('index');
 

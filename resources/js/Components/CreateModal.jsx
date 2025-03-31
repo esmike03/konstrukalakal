@@ -78,7 +78,9 @@ export default function RegisterModal() {
                         />
                     </div>
                     {errors.password && <p className="text-red-500 text-xs">{errors.password}</p>}
-
+                    <label className="flex items-center text-xs mt-2 ml-1">
+                            <input type="checkbox" className="mr-2 text-xs" /> I agree to the  <span className="text-green-500 mx-1"> Terms of Service</span> and <span className="text-green-500 mx-1"> Privacy Policy</span>
+                    </label>
 
                     <button type="submit" className="w-full bg-green-600 text-white text-sm py-2 rounded-full mt-4 hover:bg-green-700">
                         Sign Up

@@ -1,35 +1,13 @@
 import { Link, usePage, Head } from "@inertiajs/react";
 import { useState, useEffect } from "react";
-export default function Home({posts}) {
+export default function Home() {
 
-    const { flash } = usePage().props;
     const { component } = usePage();
-    const [flashMsg, setFlashMsg] = useState(flash?.message || null);
-    const [flashMsg2, setFlashMsg2] = useState(flash?.success || null);
 
-    useEffect(() => {
-        if (flash.message || flash.success) {
-            const timer = setTimeout(() => {
-                setFlashMsg(null);
-                setFlashMsg2(null);
-            }, 2000);
-            return () => clearTimeout(timer);
-        }
-    }, [flash]);
 
     return(
         <>
             <Head title={component}/>
-            {flashMsg && (
-                <div className="absolute top-24 right-6 bg-rose-500 p-2 rounded-md shadow-lg text-sm text-white z-100">
-                    {flashMsg}
-                </div>
-            )}
-            {flashMsg2 && (
-                <div className="absolute top-24 right-6 bg-green-500 p-2 rounded-md shadow-lg text-sm text-white z-100">
-                    {flashMsg2}
-                </div>
-            )}
             <section>
 
                 <div className="p-10 sm:p-10 m-5 rounded-3xl text-black flex items-center justify-center overflow-hidden">

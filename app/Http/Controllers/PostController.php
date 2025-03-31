@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use Inertia\Inertia;
+use App\Models\Material;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -13,7 +15,11 @@ class PostController extends Controller
     public function index()
     {
 
-        return inertia('Home');
+        $materials = Material::latest()->paginate(3)->toArray(); // Convert to array
+
+        return Inertia::render('Home', [
+            'materials' => $materials, // Send the full paginated data
+        ]);
     }
 
     /**

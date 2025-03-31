@@ -22,7 +22,7 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             return redirect('/')->with(
-                'success', 'The post was updated successfully!'
+                'message', 'Login successfully!'
             );
         }
 
@@ -53,6 +53,6 @@ class AuthController extends Controller
         Auth::login($user);
 
         // Redirect to the intended page or homepage
-        return redirect()->intended('/');
+        return redirect()->intended('/')->with('message', 'Account created successfully!');
     }
 }

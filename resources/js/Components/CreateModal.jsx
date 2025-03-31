@@ -82,7 +82,7 @@ export default function RegisterModal() {
                             <input type="checkbox" className="mr-2 text-xs" /> I agree to the  <span className="text-green-500 mx-1"> Terms of Service</span> and <span className="text-green-500 mx-1"> Privacy Policy</span>
                     </label>
 
-                    <button type="submit" className="w-full bg-green-600 text-white text-sm py-2 rounded-full mt-4 hover:bg-green-700">
+                    <button type="submit" className="w-full cursor-pointer bg-green-600 text-white text-sm py-2 rounded-full mt-4 hover:bg-green-700">
                         Sign Up
                     </button>
                 </form>

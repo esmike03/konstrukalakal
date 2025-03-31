@@ -4,21 +4,54 @@ namespace App\Http\Controllers;
 
 use App\Models\Material;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class NavigationController extends Controller
 {
     public function toMaterials()
     {
-        sleep(2);
+        sleep(1);
         $materials = Material::all();
         return inertia('Materials', [
             'materials' => $materials,
         ]);
     }
 
+    public function tradeMaterials()
+    {
+        sleep(1);
+        $materials = Material::where('forbdt', 'Trade')->get();
+        return inertia('TradeMaterials', [
+            'materials' => $materials,
+        ]);
+    }
+
+    public function buyMaterials()
+    {
+        sleep(1);
+        $materials = Material::where('forbdt', 'Sale')->get();
+        return inertia('BuyMaterials', [
+            'materials' => $materials,
+        ]);
+    }
+
+    public function donateMaterials()
+    {
+        sleep(1);
+        $materials = Material::where('forbdt', 'Donate')->get();
+        return inertia('DonateMaterials', [
+            'materials' => $materials,
+        ]);
+    }
+
+    public function about()
+    {
+        return inertia('About');
+    }
+
     public function materialStore(Request $request)
     {
-        sleep(2);
+        sleep(0.5);
         $request->validate([
             'materialName' => 'required|string',
             'location' => 'required|string',
@@ -40,6 +73,7 @@ class NavigationController extends Controller
 
         // Create material
         Material::create([
+            'user_id' => Auth::id(),
             'material_name' => $request->materialName,
             'location' => $request->location,
             'category' => $request->category,
@@ -52,6 +86,6 @@ class NavigationController extends Controller
             'image' => $imagePath, // Store image path
         ]);
 
-        return back()->with('success', 'Material uploaded successfully!');
+        return back()->with('message', 'Uploaded successfully!');
     }
 }

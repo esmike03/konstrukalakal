@@ -25,9 +25,12 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::post('/logout', function () {
     Auth::logout();
-    return redirect('/')->with('success', 'Logout successfully! ');
+    return redirect('/')->with('message', 'Logout successfully! ');
 });
 
-
 Route::post('/register', [AuthController::class, 'register'])->name('register');
+Route::get('/about', [NavigationController::class, 'about'])->name('about');
 
+Route::get('/trade-materials', [NavigationController::class, 'tradeMaterials']);
+Route::get('/buy-materials', [NavigationController::class, 'buyMaterials']);
+Route::get('/donate-materials', [NavigationController::class, 'donateMaterials']);

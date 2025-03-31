@@ -68,7 +68,7 @@ export default function LoginModal() {
 
                     <button
                         type="submit"
-                        className="w-full bg-green-600 text-white text-sm py-2 rounded-full mt-4 hover:bg-green-700"
+                        className="w-full cursor-pointer bg-green-600 text-white text-sm py-2 rounded-full mt-4 hover:bg-green-700"
                         disabled={loading}
                     >
                         {loading ? "Logging in..." : "Log In"}

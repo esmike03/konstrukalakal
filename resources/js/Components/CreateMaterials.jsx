@@ -75,6 +75,7 @@ export default function CreateMaterials() {
                                     <h2 className="text-lg font-bold text-gray-600">Upload Material</h2>
                                     <div>
                                         <select name="forbdt" onChange={handleChange} className="w-fit p-1 px-2 border text-gray-500 text-xs border-gray-400 rounded-lg">
+                                            <option value="">Choose</option>
                                             <option value="Sale">Sale</option>
                                             <option value="Trade">Trade</option>
                                             <option value="Donation">Donation</option>
@@ -181,7 +182,7 @@ export default function CreateMaterials() {
                         <button type="button" onClick={closeMaterialModal} className="text-gray-500 px-4 py-2 rounded-full hover:bg-gray-300">
                             {loading ? 'Cancel' : 'Cancel'}
                         </button>
-                        <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700">
+                        <button type="submit" className="cursor-pointer bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700">
                             {loading ? 'Uploading...' : 'Upload Material'}
                         </button>
                     </div>

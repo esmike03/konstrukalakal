@@ -39,7 +39,7 @@ export default function Materials() {
 
             {auth.user && (
                 <div className="flex justify-between items-center">
-                    <h1 className="text-2xl font-bold text-green-700">Browse Materials <span className="text-xs text-gray-400 font-normal">{'>'} All</span></h1>
+                    <h1 className="text-2xl font-bold text-green-700">Browse Materials <span className="text-xs text-gray-400 font-normal">{'>'} Buy Materials</span></h1>
 
 
                     <button onClick={openMaterialModal} className="cursor-pointer bg-green-500 text-white text-sm px-3 py-1 rounded-full flex items-center gap-1">

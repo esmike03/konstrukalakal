@@ -44,12 +44,40 @@ export default function Layout({ children }) {
                 <Link href="/" className="hover:text-green-600">
                   Home
                 </Link>
-                <Link href="/materials" className="hover:text-green-600">
-                  Materials
-                </Link>
-                <Link href="/about" className="hover:text-green-600">
-                  About
-                </Link>
+                <div className="relative group">
+                    <Link href="/materials" className=" hover:text-green-600">
+                      Materials
+                    </Link>
+                    <div className="absolute z-50   w-40 bg-white border rounded-md shadow-lg hidden group-hover:block">
+                        <Link
+                            href="/materials"
+                            className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-gray-100"
+                        >
+                            All Materials
+                        </Link>
+                      <Link
+                        href="/trade-materials"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-gray-100"
+                      >
+                         Trade Materials
+                      </Link>
+                      <Link
+                        href="/buy-materials"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 w-full text-left"
+                      >
+                        Buy Materials
+                      </Link>
+                      <Link
+                        href="/donate-materials"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 w-full text-left"
+                        >
+                        Donate Materials
+                      </Link>
+                    </div>
+                  </div>
+                  <Link href="/about" className="hover:text-green-600">
+                    About
+                  </Link>
                 {auth.user && (
                   <button className="relative">
                     <ShoppingCart
@@ -70,7 +98,7 @@ export default function Layout({ children }) {
                     <button className="bg-green-600 text-white text-sm px-4 py-1 rounded-full hover:bg-green-700">
                       {auth.user.name.split(" ")[0]}
                     </button>
-                    <div className="absolute right-0 mt-1 w-40 bg-white border rounded-md shadow-lg hidden group-hover:block">
+                    <div className="absolute right-0 mt-0.5 w-40 bg-white border rounded-md shadow-lg hidden group-hover:block">
                       <Link
                         href="/profile"
                         className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-gray-100"
@@ -91,13 +119,13 @@ export default function Layout({ children }) {
                   <>
                     <button
                       onClick={openLoginModal}
-                      className="bg-green-600 text-white text-sm px-4 py-1 rounded-full hover:bg-green-700"
+                      className="bg-green-600 cursor-pointer text-white text-sm px-4 py-1 rounded-full hover:bg-green-700"
                     >
                       Log In
                     </button>
                     <button
                       onClick={openRegisterModal}
-                      className="bg-green-600 text-white text-sm px-4 py-1 rounded-full hover:bg-green-700"
+                      className="bg-green-600 cursor-pointer text-white text-sm px-4 py-1 rounded-full hover:bg-green-700"
                     >
                       Register
                     </button>

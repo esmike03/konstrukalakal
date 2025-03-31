@@ -1,14 +1,42 @@
 import { Link, usePage, Head } from "@inertiajs/react";
 import { useState, useEffect } from "react";
+import { useModal } from "@/context/ModalContext";
+import { CheckCircle } from "lucide-react";
 export default function Home() {
 
     const { component } = usePage();
+    const { materials } = usePage().props;
+    const { flash } = usePage().props;
+    const [showMessage, setShowMessage] = useState(false);
+    const { openRegisterModal } = useModal();
+    useEffect(() => {
+        if (flash?.message) {
+            setShowMessage(true); // Show the message
+            const timer = setTimeout(() => {
+                setShowMessage(false); // Hide after 2 seconds
+            }, 3000);
+
+            return () => clearTimeout(timer);
+        }
+    }, [flash]);
 
 
     return(
         <>
             <Head title={component}/>
             <section>
+
+                    {flash?.message && (
+                        <div
+                            className={`bg-green-400 border border-green-600 shadow-lg bottom-4 flex items-center gap-2 w-fit right-4 absolute text-white p-3 rounded-md z-100 mb-4 transition-all duration-500 transform ${
+                                showMessage
+                                    ? "opacity-100 translate-y-0"
+                                    : "opacity-0 -translate-y-5"
+                            }`}
+                        >
+                        <CheckCircle size={20} className="text-white" /> {flash.message}
+                        </div>
+                    )}
 
                 <div className="p-10 sm:p-10 m-5 rounded-3xl text-black flex items-center justify-center overflow-hidden">
                 <div className="w-full max-w-6xl px-4 sm:px-6">
@@ -25,12 +53,12 @@ export default function Home() {
                         Join our community of builders and contribute to sustainable construction practices through material trading and donations.
                         </p>
                         <div className="mt-6 sm:mt-8 flex flex-wrap gap-4">
-                        <a href="#get-started" className="rounded-full p-3 grow text-center bg-green-500 text-white font-bold uppercase text-sm tracking-widest hover:bg-green-600 transition">
+                        <Link href="#second" className="rounded-full p-3 grow text-center bg-green-500 text-white font-bold uppercase text-sm tracking-widest hover:bg-green-600 transition">
                             Get Started
-                        </a>
-                        <a href="#learn-more" className="rounded-full p-3 grow border text-center border-green-500 text-green-500 font-bold uppercase text-sm tracking-widest hover:bg-green-500 hover:text-black transition">
+                        </Link>
+                        <Link href="about" className="rounded-full p-3 grow border text-center border-green-500 text-green-500 font-bold uppercase text-sm tracking-widest hover:bg-green-500 hover:text-black transition">
                             Learn More
-                        </a>
+                        </Link>
                         </div>
                     </div>
 
@@ -54,48 +82,52 @@ export default function Home() {
                 </div>
             </section>
 
-            <section className="bg-white py-12">
+            <section id="second" className="bg-white py-12">
                 <div className="max-w-6xl mx-auto px-4">
                     <h2 className="text-2xl font-extrabold text-gray-800 text-center mb-6">Featured Materials</h2>
-                    <div className="grid md:grid-cols-3 gap-6">
-                        {/* Card 1 */}
-                        <div className="bg-gray-300 rounded-xl shadow-lg overflow-hidden">
-                            <img src="/images/heromaterial.jpg" alt="Reclaimed Wood" className="w-full h-48 object-cover" />
-                            <div className="p-4 text-white">
-                                <h3 className="font-bold text-gray-700">Reclaimed Wood</h3>
-                                <p className="text-sm  text-gray-700">Vintage hardwood perfect for sustainable building projects.</p>
-                                <p className="font-bold text-green-500 mt-2">For Donation</p>
-                                <button className="mt-3 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md w-full">
-                                    View Details
-                                </button>
-                            </div>
-                        </div>
+                    <div className="grid grid-cols-3">
+                        {materials.data && materials.data.length > 0 ? (
+                            materials.data.map((material) => (
+                                <div key={material.id} className="bg-gray-100 flex flex-col justify-between p-2 rounded-lg shadow">
+                                    <div>
+                                        {material.image && (
+                                            <img src={`/storage/${material.image}`} alt={material.materialName} className=" w-full h-32 object-cover rounded-sm" />
+                                        )}
 
-                        {/* Card 2 */}
-                        <div className="bg-gray-300 rounded-xl shadow-lg overflow-hidden">
-                            <img src="/images/heromaterial.jpg" alt="Reclaimed Wood" className="w-full h-48 object-cover" />
-                            <div className="p-4 text-white">
-                                <h3 className="font-bold text-gray-700">Reclaimed Wood</h3>
-                                <p className="text-sm  text-gray-700">Vintage hardwood perfect for sustainable building projects.</p>
-                                <p className="font-bold text-green-500 mt-2">For Donation</p>
-                                <button className="mt-3 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md w-full">
-                                    View Details
-                                </button>
-                            </div>
-                        </div>
+                                        <div className="flex justify-between content-center mt-2">
+                                        <div
+                                        className={`text-xs text-white px-2 py-1 rounded-sm w-max ${
+                                          material.forbdt === "Trade"
+                                            ? "bg-blue-500"
+                                            : material.forbdt === "Sale"
+                                            ? "bg-red-500"
+                                            : material.forbdt === "Donation"
+                                            ? "bg-green-500"
+                                            : "bg-gray-500"
+                                        }`}
+                                      >
+                                        For {material.forbdt}
+                                      </div>
 
-                        {/* Card 3 */}
-                        <div className="bg-gray-300 rounded-xl shadow-lg overflow-hidden">
-                            <img src="/images/heromaterial.jpg" alt="Reclaimed Wood" className="w-full h-48 object-cover" />
-                            <div className="p-4 text-white">
-                                <h3 className="font-bold text-gray-700">Reclaimed Wood</h3>
-                                <p className="text-sm  text-gray-700">Vintage hardwood perfect for sustainable building projects.</p>
-                                <p className="font-bold text-green-500 mt-2">For Donation</p>
-                                <button className="mt-3 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md w-full">
-                                    View Details
-                                </button>
-                            </div>
-                        </div>
+                                            <p className="text-xs mt-0.5 text-gray-500">📍 {material.location}</p>
+                                        </div>
+                                        <h3 className="text-lg font-bold mt-1">{material.material_name}</h3>
+                                        <p className="text-sm text-gray-600">{material.description}</p>
+
+                                    </div>
+                                    <div>
+                                        <div className="flex mt-1 gap-2 justify-between">
+                                            <p className="text-green-600 font-bold content-center  items-center">₱ {material.price}</p>
+                                            <p className="text-xs text-gray-500 mt-1">Qty: {material.quantity}</p>
+                                        </div>
+                                        <button className=" bottom-0 w-full mt-2 text-sm bg-green-600 text-white py-1 rounded-full hover:bg-green-700">View Details</button>
+                                    </div>
+
+                                </div>
+                            ))
+                        ) : (
+                            <p className="text-center text-gray-500">No materials available.</p>
+                        )}
                     </div>
                 </div>
             </section>
@@ -169,7 +201,7 @@ export default function Home() {
                         Start trading and donating construction materials today. Make a
                         positive impact on the environment while saving costs.
                     </p>
-                    <button className="mt-6 bg-white text-green-600 font-semibold px-6 py-2 rounded-full shadow-md hover:bg-gray-100 transition">
+                    <button onClick={openRegisterModal} className="mt-6 cursor-pointer bg-white text-green-600 font-semibold px-6 py-2 rounded-full shadow-md hover:bg-gray-100 transition">
                         Sign Up
                     </button>
                 </div>

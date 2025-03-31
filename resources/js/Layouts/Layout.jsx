@@ -85,7 +85,7 @@ export default function Layout({ children }) {
                       size={18}
                     />
                     <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
-                      3
+                      0
                     </span>
                   </button>
                 )}
@@ -96,7 +96,7 @@ export default function Layout({ children }) {
                 {auth.user ? (
                   <div className="relative group">
                     <button className="bg-green-600 text-white text-sm px-4 py-1 rounded-full hover:bg-green-700">
-                      {auth.user.name.split(" ")[0]}
+                      Hi, {auth.user.name.split(" ")[0]}
                     </button>
                     <div className="absolute right-0 mt-0.5 w-40 bg-white border rounded-md shadow-lg hidden group-hover:block">
                       <Link
@@ -145,13 +145,24 @@ export default function Layout({ children }) {
                 <Link href="/materials" onClick={closeMobileMenu} className="hover:text-green-600">
                   Materials
                 </Link>
+                    <div className="ml-3 ">
+                        <Link href="/trade-materials" onClick={closeMobileMenu} className=" hover:text-green-600 text-gray-700">
+                            Trade Materials
+                        </Link><br></br>
+                        <Link href="/buy-materials" onClick={closeMobileMenu} className="hover:text-green-600 text-gray-700">
+                            Buy Materials
+                        </Link><br></br>
+                        <Link href="/donate-materials" onClick={closeMobileMenu} className="hover:text-green-600 text-gray-700">
+                            Donate Materials
+                        </Link><br></br>
+                    </div>
                 <Link href="/about" onClick={closeMobileMenu} className="hover:text-green-600">
                   About
                 </Link>
                 {auth.user && (
                   <button onClick={closeMobileMenu} className="relative flex items-center">
                     <ShoppingCart className="text-gray-700 hover:text-green-600" size={18} />
-                    <span className="ml-2 text-gray-700">Cart (3)</span>
+                    <span className="ml-2 text-gray-700">Cart (0)</span>
                   </button>
                 )}
               </div>

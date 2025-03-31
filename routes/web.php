@@ -34,3 +34,5 @@ Route::get('/about', [NavigationController::class, 'about'])->name('about');
 Route::get('/trade-materials', [NavigationController::class, 'tradeMaterials']);
 Route::get('/buy-materials', [NavigationController::class, 'buyMaterials']);
 Route::get('/donate-materials', [NavigationController::class, 'donateMaterials']);
+
+Route::get('/profile', [NavigationController::class, 'toProfile']);

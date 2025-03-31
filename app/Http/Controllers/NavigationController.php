@@ -49,6 +49,11 @@ class NavigationController extends Controller
         return inertia('About');
     }
 
+    public function toProfile()
+    {
+        return inertia('Profile');
+    }
+
     public function materialStore(Request $request)
     {
         sleep(0.5);

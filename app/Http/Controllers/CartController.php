@@ -8,13 +8,34 @@ use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
+    public function toCart()
+    {
+        if (!auth()->check()) {
+            // Redirect to the login route (trigger login modal)
+            return back()->with(
+                'message',
+                'Please login to add items to your cart.'
+            );  // You can also return a custom location for your login modal
+        }
+        $cartItemCount = Cart::where('user_id', auth()->id())->count();
+        $cartItems = Cart::with('material') // Eager load the 'material' relationship
+        ->where('user_id', auth()->id())
+        ->get();
+
+        return inertia('Cart', [
+        'cartItems' => $cartItems,
+        'cartItemCount' => $cartItemCount,
+        ]);
+    }
+
     public function add(Request $request)
     {
 
         if (!auth()->check()) {
             // Redirect to the login route (trigger login modal)
             return back()->with(
-                'message', 'Please login to add items to your cart.'
+                'message',
+                'Please login to add items to your cart.'
             );  // You can also return a custom location for your login modal
         }
 
@@ -42,5 +63,19 @@ class CartController extends Controller
         // ]);
 
         return back()->with('message', 'Material added to cart!');
+    }
+
+    public function destroy($id)
+    {
+        // Validate the incoming data
+        $cartItem = Cart::findOrFail($id);
+        $cartItem->delete();
+
+        if ($cartItem) {
+            $cartItem->delete();
+        }
+
+        // Optionally, you can return a response with the updated cart data
+        return back()->with('message', 'Item removed from cart');
     }
 }

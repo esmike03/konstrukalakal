@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
 use App\Models\Material;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,47 +12,61 @@ class NavigationController extends Controller
     public function toMaterials()
     {
         sleep(1);
+        $cartItemCount = Cart::where('user_id', auth()->id())->count();
         $materials = Material::all();
         return inertia('Materials', [
             'materials' => $materials,
+            'cartItemCount' => $cartItemCount,
         ]);
     }
 
     public function tradeMaterials()
     {
         sleep(1);
+        $cartItemCount = Cart::where('user_id', auth()->id())->count();
         $materials = Material::where('forbdt', 'Trade')->get();
         return inertia('TradeMaterials', [
             'materials' => $materials,
+            'cartItemCount' => $cartItemCount,
         ]);
     }
 
     public function buyMaterials()
     {
         sleep(1);
+        $cartItemCount = Cart::where('user_id', auth()->id())->count();
         $materials = Material::where('forbdt', 'Sale')->get();
         return inertia('BuyMaterials', [
             'materials' => $materials,
+            'cartItemCount' => $cartItemCount,
         ]);
     }
 
     public function donateMaterials()
     {
         sleep(1);
+        $cartItemCount = Cart::where('user_id', auth()->id())->count();
         $materials = Material::where('forbdt', 'Donate')->get();
         return inertia('DonateMaterials', [
             'materials' => $materials,
+            'cartItemCount' => $cartItemCount,
         ]);
     }
 
     public function about()
     {
-        return inertia('About');
+        $cartItemCount = Cart::where('user_id', auth()->id())->count();
+        return inertia('About',[
+            'cartItemCount' => $cartItemCount,
+        ]);
     }
 
     public function toProfile()
     {
-        return inertia('Profile');
+        $cartItemCount = Cart::where('user_id', auth()->id())->count();
+        return inertia('Profile', [
+            'cartItemCount' => $cartItemCount,
+        ]);
     }
 
     public function materialStore(Request $request)

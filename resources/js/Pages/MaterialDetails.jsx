@@ -5,10 +5,22 @@ import { ArrowLeft, ShoppingCart, CheckCircle, X } from "lucide-react";
 export default function Show({ material }) {
     const { flash } = usePage().props;
     const [showMessage, setShowMessage] = useState(false);
+    const [buttonText, setButtonText] = useState("");
     const { post, processing } = useForm({
         material_id: material.id,
         quantity: 1,
     });
+
+    useEffect(() => {
+        // Update the button text based on the material's `forbdt` value
+        if (material.forbdt === "Sale") {
+          setButtonText("Add to Cart");
+        } else if (material.forbdt === "Trade") {
+          setButtonText("Trade");
+        } else if (material.forbdt === "Donation") {
+          setButtonText("Inquire");
+        }
+      }, [material.forbdt]); // Re-run the effect when `material.forbdt` changes
 
     useEffect(() => {
         if (flash?.message) {
@@ -112,13 +124,13 @@ export default function Show({ material }) {
                     <div className="mt-6 flex flex-wrap gap-4">
                         {/* Add to Cart Button */}
                         <button
-                            onClick={addToCart}
-                            disabled={processing}
-                            className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-all duration-200"
-                        >
-                            <ShoppingCart size={18} />
-                            <span className="text-sm">Add to Cart</span>
-                        </button>
+                        onClick={addToCart}
+                        disabled={false} // You can replace this with a processing state if needed
+                        className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-all duration-200"
+                      >
+                        <ShoppingCart size={18} />
+                        <span className="text-sm">{buttonText}</span>
+                      </button>
 
                         {/* Add to Wishlist Button */}
                         <button className="flex items-center gap-2 bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition-all duration-200">

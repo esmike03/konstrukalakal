@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
 use App\Models\Post;
 use Inertia\Inertia;
 use App\Models\Material;
@@ -17,8 +18,11 @@ class PostController extends Controller
 
         $materials = Material::latest()->paginate(3)->toArray(); // Convert to array
 
+        $cartItemCount = Cart::where('user_id', auth()->id())->count();
+
         return Inertia::render('Home', [
-            'materials' => $materials, // Send the full paginated data
+            'materials' => $materials,
+            'cartItemCount' => $cartItemCount, // Send the full paginated data
         ]);
     }
 

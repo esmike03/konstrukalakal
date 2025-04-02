@@ -45,3 +45,6 @@ Route::get('/back', [MaterialController::class, 'back'])->name('materials.back')
 
 Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
 
+Route::get('/cart', [CartController::class, 'toCart']);
+Route::get('/cart/delete/{id}', [CartController::class, 'destroy'])->name('cart.delete');
+

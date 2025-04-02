@@ -10,7 +10,7 @@ export default function Layout({ children }) {
 
   const toggleMobileMenu = () => setMobileMenuOpen(!isMobileMenuOpen);
   const closeMobileMenu = () => setMobileMenuOpen(false);
-
+  const { cartItemCount } = usePage().props;
   return (
     <>
       <Head>
@@ -79,22 +79,32 @@ export default function Layout({ children }) {
                     About
                   </Link>
                 {auth.user && (
-                  <button className="relative">
-                    <ShoppingCart
-                      className="text-gray-700 hover:text-green-600 cursor-pointer"
-                      size={18}
-                    />
-                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
-                      0
-                    </span>
-                  </button>
+                    <Link href={`/cart`}>
+                        <button className="relative">
+                        <ShoppingCart
+                        className="text-gray-700 hover:text-green-600 cursor-pointer"
+                        size={18}
+                        />
+                        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
+                        {cartItemCount}
+                        </span>
+                    </button>
+
+                    </Link>
+
                 )}
               </div>
 
               {/* Desktop: Profile & Auth Buttons */}
               <div className="flex items-center gap-3">
-              <MessageCircle size={20} className="mr-2 text-gray-700 cursor-pointer hover:text-green-600"/>
-              <Bell size={20} className="mr-2 text-gray-700 cursor-pointer hover:text-green-600"/>
+              {auth.user && (
+                <div className="flex">
+                    <MessageCircle size={20} className="mr-2 text-gray-700 cursor-pointer hover:text-green-600"/>
+                    <Bell size={20} className="mr-2 text-gray-700 cursor-pointer hover:text-green-600"/>
+                </div>
+              )}
+
+
                 {auth.user ? (
                   <div className="relative group">
                     <button className="bg-green-600 text-white text-sm px-4 py-1 rounded-full hover:bg-green-700">

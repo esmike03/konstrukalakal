@@ -106,6 +106,12 @@ export default function CreateMaterials() {
                                     <option value="">Category</option>
                                     <option value="Wood">Wood</option>
                                     <option value="Metal">Metal</option>
+                                    <option value="Roofing">Roofing</option>
+                                    <option value="Structural Materials">Structural Materials</option>
+                                    <option value="Concrete & Cement">Concrete & Cement</option>
+                                    <option value="Insulation">Insulation</option>
+                                    <option value="Doors & Windows">Doors & Windows</option>
+
                                 </select>
                                 {errors.category && <p className="text-red-500 text-xs mt-1">{errors.category}</p>}
                             </div>
@@ -115,6 +121,9 @@ export default function CreateMaterials() {
                                     <option value="">Condition</option>
                                     <option value="Good">Good</option>
                                     <option value="Fair">Fair</option>
+                                    <option value="Like New">Like New</option>
+                                    <option value="New">New</option>
+                                    <option value="Salvageable">Salvageable</option>
                                 </select>
                                 {errors.condition && <p className="text-red-500 text-xs mt-1">{errors.condition}</p>}
                             </div>

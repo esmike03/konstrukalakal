@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, Head, usePage } from "@inertiajs/react";
 import { useModal } from "@/context/ModalContext";
-import { ShoppingCart, LogOut, User, Menu, X } from "lucide-react";
+import { ShoppingCart, LogOut, User, Menu, X, Bell, MessageCircle } from "lucide-react";
 
 export default function Layout({ children }) {
   const { openLoginModal, openRegisterModal } = useModal();
@@ -81,7 +81,7 @@ export default function Layout({ children }) {
                 {auth.user && (
                   <button className="relative">
                     <ShoppingCart
-                      className="text-gray-700 hover:text-green-600"
+                      className="text-gray-700 hover:text-green-600 cursor-pointer"
                       size={18}
                     />
                     <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
@@ -93,6 +93,8 @@ export default function Layout({ children }) {
 
               {/* Desktop: Profile & Auth Buttons */}
               <div className="flex items-center gap-3">
+              <MessageCircle size={20} className="mr-2 text-gray-700 cursor-pointer hover:text-green-600"/>
+              <Bell size={20} className="mr-2 text-gray-700 cursor-pointer hover:text-green-600"/>
                 {auth.user ? (
                   <div className="relative group">
                     <button className="bg-green-600 text-white text-sm px-4 py-1 rounded-full hover:bg-green-700">

@@ -1,0 +1,31 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Cart extends Model
+{
+    // Allow mass assignment for these fields.
+    protected $fillable = [
+        'user_id',
+        'material_id',
+        'quantity',
+    ];
+
+    /**
+     * Get the user that owns this cart item.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the material associated with this cart item.
+     */
+    public function material()
+    {
+        return $this->belongsTo(Material::class);
+    }
+}

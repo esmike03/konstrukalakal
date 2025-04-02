@@ -107,9 +107,22 @@ export default function Layout({ children }) {
 
                 {auth.user ? (
                   <div className="relative group">
-                    <button className="bg-green-600 text-white text-sm px-4 py-1 rounded-full hover:bg-green-700">
-                      Hi, {auth.user.name.split(" ")[0]}
-                    </button>
+                  <div className="flex bg-green-600 p-1 rounded-full">
+                    <img
+                        src={
+                            auth.user.profile_image
+                            ? `/storage/${auth.user.profile_image}`
+                            : "/images/user.png"
+                        }
+                        alt="Profile"
+                        className="w-6 h-6 mt-0.5 items-center rounded-full object-cover shadow-md"
+                        />
+
+                        <button className="bg-green-600 text-white text-sm px-2 py-1 rounded-full hover:bg-green-700">
+                        Hi, {auth.user.name.split(" ")[0]}
+                        </button>
+                  </div>
+
                     <div className="absolute right-0 mt-0.5 w-40 bg-white border rounded-md shadow-lg hidden group-hover:block">
                       <Link
                         href="/profile"

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\NavigationController;
 
@@ -48,3 +49,4 @@ Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
 Route::get('/cart', [CartController::class, 'toCart']);
 Route::get('/cart/delete/{id}', [CartController::class, 'destroy'])->name('cart.delete');
 
+Route::post('/profile/update-image', [ProfileController::class, 'updateProfileImage'])->middleware('auth');

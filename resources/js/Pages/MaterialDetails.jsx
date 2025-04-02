@@ -132,10 +132,7 @@ export default function Show({ material }) {
                         <span className="text-sm">{buttonText}</span>
                       </button>
 
-                        {/* Add to Wishlist Button */}
-                        <button className="flex items-center gap-2 bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition-all duration-200">
-                            ❤️ <span className="text-sm">Add to Wishlist</span>
-                        </button>
+
 
                         {/* Message Button */}
                         <button className="flex items-center gap-2 bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition-all duration-200">

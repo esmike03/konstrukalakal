@@ -19,51 +19,51 @@ class CartController extends Controller
         }
         $cartItemCount = Cart::where('user_id', auth()->id())->count();
         $cartItems = Cart::with('material') // Eager load the 'material' relationship
-        ->where('user_id', auth()->id())
-        ->get();
+            ->where('user_id', auth()->id())
+            ->get();
 
         return inertia('Cart', [
-        'cartItems' => $cartItems,
-        'cartItemCount' => $cartItemCount,
+            'cartItems' => $cartItems,
+            'cartItemCount' => $cartItemCount,
         ]);
     }
 
     public function add(Request $request)
     {
-
         if (!auth()->check()) {
             // Redirect to the login route (trigger login modal)
             return back()->with(
                 'message',
                 'Please login to add items to your cart.'
-            );  // You can also return a custom location for your login modal
+            );
         }
 
         $validated = $request->validate([
             'material_id' => 'required|exists:materials,id',
-            'quantity' => 'required|integer|min:1',
+            'quantity'    => 'required|integer|min:1',
         ]);
 
-        // Assuming you have a Cart model with user_id, material_id, quantity fields
-        $cart = Cart::updateOrCreate(
-            [
+        // Check if the material is already in the cart
+        $cart = Cart::where('user_id', auth()->id())
+            ->where('material_id', $validated['material_id'])
+            ->first();
+
+        if ($cart) {
+            // If the item exists in the cart, update the quantity
+            $cart->quantity += $validated['quantity'];  // Add the quantity to the existing quantity
+            $cart->save();
+        } else {
+            // If the item doesn't exist, create a new cart entry
+            Cart::create([
                 'user_id'     => auth()->id(),
                 'material_id' => $validated['material_id'],
-            ],
-            [
-                'quantity'    => \DB::raw("quantity + {$validated['quantity']}"),
-            ]
-        );
-
-        // If the cart item doesn't exist, you might want to create it instead:
-        // $cart = Cart::create([
-        //     'user_id'     => auth()->id(),
-        //     'material_id' => $validated['material_id'],
-        //     'quantity'    => $validated['quantity'],
-        // ]);
+                'quantity'    => $validated['quantity'],
+            ]);
+        }
 
         return back()->with('message', 'Material added to cart!');
     }
+
 
     public function destroy($id)
     {

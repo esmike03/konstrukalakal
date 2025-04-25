@@ -99,7 +99,9 @@ export default function Layout({ children }) {
               <div className="flex items-center gap-3">
               {auth.user && (
                 <div className="flex">
+                <Link href="/messages">
                     <MessageCircle size={20} className="mr-2 text-gray-700 cursor-pointer hover:text-green-600"/>
+                </Link>
 
                     <div className="relative group">
                     <Bell size={20} className="mr-2 text-gray-700 cursor-pointer hover:text-green-600"/>

@@ -64,7 +64,15 @@ class NavigationController extends Controller
     public function toProfile()
     {
         $cartItemCount = Cart::where('user_id', auth()->id())->count();
-        return inertia('Profile', [
+        return inertia('About',[
+            'cartItemCount' => $cartItemCount,
+        ]);
+    }
+
+    public function toMessages()
+    {
+        $cartItemCount = Cart::where('user_id', auth()->id())->count();
+        return inertia('Message', [
             'cartItemCount' => $cartItemCount,
         ]);
     }

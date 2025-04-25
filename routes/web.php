@@ -41,6 +41,7 @@ Route::get('/uploaded', [NavigationController::class, 'uploadedMaterials']);
 
 
 Route::get('/profile', [NavigationController::class, 'toProfile']);
+Route::get('/messages', [NavigationController::class, 'toMessages']);
 
 Route::get('/materials/{id}', [MaterialController::class, 'show'])->name('materials.show');
 Route::get('/materials-edit/{id}', [MaterialController::class, 'editMaterial'])->name('materials.edit');

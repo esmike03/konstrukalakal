@@ -57,3 +57,6 @@ Route::post('/profile/update-image', [ProfileController::class, 'updateProfileIm
 
 Route::put('/materials-update/{material}', [MaterialController::class, 'updateMaterial'])
      ->name('materials.update');
+
+Route::post('/profile/update', [ProfileController::class, 'update'])
+     ->name('profile.update');

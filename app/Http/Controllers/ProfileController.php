@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Inertia\Inertia;
 use App\Models\User;
+use Inertia\Inertia;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -29,5 +30,23 @@ class ProfileController extends Controller
         $user->update(['profile_image' => $path]);
 
         return redirect()->back()->with('message', 'Profile picture updated successfully!');
+    }
+
+    public function update(Request $request)
+    {
+        $user = auth()->user();
+
+        $validated = $request->validate([
+            'name'          => 'required|string|max:255',
+            'email'         => 'required|email|max:255|unique:users,email,'.$user->id,
+            'address'       => 'nullable|string|max:255',
+            'contact'       => 'nullable|string|max:50',
+        ]);
+
+
+        // Save all fields
+        $user->update($validated);
+
+        return back()->with('message', 'Profile updated successfully!');
     }
 }

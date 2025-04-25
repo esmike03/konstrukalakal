@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, Head, usePage } from "@inertiajs/react";
 import { useModal } from "@/context/ModalContext";
-import { ShoppingCart, LogOut, User, Menu, X, Bell, MessageCircle } from "lucide-react";
+import { ShoppingCart, LogOut, User, Menu, X, Bell, MessageCircle, Upload } from "lucide-react";
 
 export default function Layout({ children }) {
   const { openLoginModal, openRegisterModal } = useModal();
@@ -131,6 +131,13 @@ export default function Layout({ children }) {
                         <User size={18} /> Profile
                       </Link>
                       <Link
+                        href="/uploaded"
+
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 w-full text-left"
+                      >
+                        <Upload size={18} /> My Uploads
+                      </Link>
+                      <Link
                         href="/logout"
                         method="post"
                         as="button"
@@ -200,6 +207,15 @@ export default function Layout({ children }) {
                       className="flex items-center gap-2 text-gray-800 text-sm hover:text-green-600"
                     >
                       <User size={18} /> Profile
+                    </Link>
+                    <Link
+                      href="/uploaded"
+                      method="post"
+                      as="button"
+                      onClick={closeMobileMenu}
+                      className="flex items-center gap-2 text-gray-800 text-sm hover:text-green-600"
+                    >
+                      <Upload size={18} /> My Uploads
                     </Link>
                     <Link
                       href="/logout"

@@ -108,4 +108,15 @@ class NavigationController extends Controller
 
         return back()->with('message', 'Uploaded successfully!');
     }
+
+    public function uploadedMaterials()
+    {
+        sleep(1);
+        $cartItemCount = Cart::where('user_id', auth()->id())->count();
+        $materials = Material::where('user_id', auth()->id())->get();
+        return inertia('Uploads', [
+            'materials' => $materials,
+            'cartItemCount' => $cartItemCount,
+        ]);
+    }
 }

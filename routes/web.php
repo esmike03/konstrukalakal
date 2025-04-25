@@ -37,10 +37,13 @@ Route::get('/about', [NavigationController::class, 'about'])->name('about');
 Route::get('/trade-materials', [NavigationController::class, 'tradeMaterials']);
 Route::get('/buy-materials', [NavigationController::class, 'buyMaterials']);
 Route::get('/donate-materials', [NavigationController::class, 'donateMaterials']);
+Route::get('/uploaded', [NavigationController::class, 'uploadedMaterials']);
+
 
 Route::get('/profile', [NavigationController::class, 'toProfile']);
 
 Route::get('/materials/{id}', [MaterialController::class, 'show'])->name('materials.show');
+Route::get('/materials-edit/{id}', [MaterialController::class, 'editMaterial'])->name('materials.edit');
 
 Route::get('/back', [MaterialController::class, 'back'])->name('materials.back');
 
@@ -48,5 +51,9 @@ Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
 
 Route::get('/cart', [CartController::class, 'toCart']);
 Route::get('/cart/delete/{id}', [CartController::class, 'destroy'])->name('cart.delete');
+Route::get('/uploads/delete/{id}', [MaterialController::class, 'uploadDestroy'])->name('upload.delete');
 
 Route::post('/profile/update-image', [ProfileController::class, 'updateProfileImage'])->middleware('auth');
+
+Route::put('/materials-update/{material}', [MaterialController::class, 'updateMaterial'])
+     ->name('materials.update');

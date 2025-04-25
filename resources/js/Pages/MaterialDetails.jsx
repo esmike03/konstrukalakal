@@ -2,7 +2,7 @@ import { useForm, Link, usePage } from "@inertiajs/react";
 import { useState, useEffect } from "react";
 import { ArrowLeft, ShoppingCart, CheckCircle, X } from "lucide-react";
 
-export default function Show({ material }) {
+export default function Show({ material, user }) {
     const { flash } = usePage().props;
     const [showMessage, setShowMessage] = useState(false);
     const [buttonText, setButtonText] = useState("");
@@ -91,6 +91,18 @@ export default function Show({ material }) {
 
                 {/* Product Details Section */}
                 <div className="w-1/2">
+                    <div className="flex gap-2 item-center">
+                            <img
+                                src={`/storage/${user.profile_image}`}
+                                alt={user.name}
+                                className="h-10 w-10 object-cover shadow-md rounded-full"
+                            />
+                            <div className="">
+                                <p className="text-sm">{user.name}</p>
+                                <p className="text-xs text-gray-700">{user.contact}</p>
+                            </div>
+
+                    </div>
                     <p className="absolute right-40 bg-green-500 text-white px-2 rounded-md">
                         For {material.forbdt}
                     </p>

@@ -100,7 +100,13 @@ export default function Layout({ children }) {
               {auth.user && (
                 <div className="flex">
                     <MessageCircle size={20} className="mr-2 text-gray-700 cursor-pointer hover:text-green-600"/>
+
+                    <div className="relative group">
                     <Bell size={20} className="mr-2 text-gray-700 cursor-pointer hover:text-green-600"/>
+                    <div className="absolute z-50   w-40 bg-white border rounded-md shadow-lg hidden group-hover:block">
+                        <p className="text-xs px-3 p-1 text-center">No New Notifications</p>
+                    </div>
+                  </div>
                 </div>
               )}
 

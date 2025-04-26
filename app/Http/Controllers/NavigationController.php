@@ -56,7 +56,7 @@ class NavigationController extends Controller
     public function about()
     {
         $cartItemCount = Cart::where('user_id', auth()->id())->count();
-        return inertia('About',[
+        return inertia('About', [
             'cartItemCount' => $cartItemCount,
         ]);
     }
@@ -64,16 +64,46 @@ class NavigationController extends Controller
     public function toProfile()
     {
         $cartItemCount = Cart::where('user_id', auth()->id())->count();
-        return inertia('About',[
+        return inertia('About', [
             'cartItemCount' => $cartItemCount,
         ]);
     }
 
     public function toMessages()
     {
+
+
+        $me = auth()->user()->id;
+
+        // Fetch all messages where user is sender or recipient
+        $msgs = \App\Models\Message::where('sender_id', $me)
+            ->orWhere('recipient_id', $me)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Group by the other user
+        $groups = $msgs->groupBy(function ($msg) use ($me) {
+            return $msg->sender_id === $me
+                ? $msg->recipient_id
+                : $msg->sender_id;
+        });
+
+        $conversations = $groups->map(function ($msgs, $otherUserId) {
+            $last = $msgs->first(); // because we ordered desc
+            $other = $last->sender_id === auth()->id()
+                ? $last->recipient
+                : $last->sender;
+            return [
+                'user'          => $other,
+                'last_message'  => $last,
+                'material_id'   => $last->material_id,
+            ];
+        })->values();
+
         $cartItemCount = Cart::where('user_id', auth()->id())->count();
         return inertia('Message', [
             'cartItemCount' => $cartItemCount,
+            'conversations' => $conversations,
         ]);
     }
 

@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
-use App\Models\Material;
 use App\Models\User;
+use App\Models\Message;
+use App\Models\Material;
 use Illuminate\Http\Request;
 
 class MaterialController extends Controller
@@ -56,6 +57,43 @@ class MaterialController extends Controller
             'material' => $material,
             'cartItemCount' => $cartItemCount,
             'user' => $user,
+        ]);
+    }
+
+    public function send(Request $request)
+{
+    $request->validate([
+        'message' => 'required|string|max:1000',
+        'recipient_id' => 'required|exists:users,id',
+        'material_id' => 'required|exists:materials,id',
+    ]);
+
+    Message::create([
+        'sender_id' => auth()->id(),
+        'recipient_id' => $request->recipient_id,
+        'material_id' => $request->material_id,
+        'content' => $request->message,
+    ]);
+
+    return back()->with('success', 'Message sent!');
+}
+
+
+    //to send message
+    public function sendMessage($id){
+        $cartItemCount = Cart::where('user_id', auth()->id())->count();
+        $material = Material::findOrFail($id);
+        $user = User::findOrFail($material->user_id);
+
+        $messages = Message::where('recipient_id', $material->user_id)
+        ->orderBy('created_at')
+        ->get();
+
+        return inertia('SendMessage', [
+            'material' => $material,
+            'cartItemCount' => $cartItemCount,
+            'user' => $user,
+            'messages' => $messages,
         ]);
     }
 

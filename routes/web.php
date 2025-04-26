@@ -46,6 +46,10 @@ Route::get('/messages', [NavigationController::class, 'toMessages']);
 Route::get('/materials/{id}', [MaterialController::class, 'show'])->name('materials.show');
 Route::get('/materials-edit/{id}', [MaterialController::class, 'editMaterial'])->name('materials.edit');
 
+Route::get('/message/{id}', [MaterialController::class, 'sendMessage'])->name('message.show');
+Route::post('/messages/send', [MaterialController::class, 'send']);
+
+
 Route::get('/back', [MaterialController::class, 'back'])->name('materials.back');
 
 Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');

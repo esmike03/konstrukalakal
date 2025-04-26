@@ -91,7 +91,7 @@ export default function Show({ material, user }) {
 
                 {/* Product Details Section */}
                 <div className="w-1/2">
-                    <div className="flex gap-2 item-center">
+                    <div className="flex gap-2 item-center border-b-2 pb-4 mb-4 border-gray-200">
                             <img
                                 src={`/storage/${user.profile_image}`}
                                 alt={user.name}
@@ -147,9 +147,9 @@ export default function Show({ material, user }) {
 
 
                         {/* Message Button */}
-                        <button className="flex items-center gap-2 bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition-all duration-200">
+                        <Link href={`/message/${material.id}`} className="flex items-center gap-2 bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition-all duration-200">
                             ✉️ <span className="text-sm">Message</span>
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </div>

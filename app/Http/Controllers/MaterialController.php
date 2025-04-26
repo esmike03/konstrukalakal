@@ -85,7 +85,20 @@ class MaterialController extends Controller
         $material = Material::findOrFail($id);
         $user = User::findOrFail($material->user_id);
 
-        $messages = Message::where('recipient_id', $material->user_id)
+        $authId  = auth()->id();
+        $otherId = $material->user_id;
+
+        $messages = Message::where('material_id', $material->id)
+        ->where(function($q) use ($authId, $otherId) {
+            // messages I sent to them
+            $q->where('sender_id',    $authId)
+              ->where('recipient_id', $otherId);
+        })
+        ->orWhere(function($q) use ($authId, $otherId) {
+            // messages they sent to me
+            $q->where('sender_id',    $otherId)
+              ->where('recipient_id', $authId);
+        })
         ->orderBy('created_at')
         ->get();
 

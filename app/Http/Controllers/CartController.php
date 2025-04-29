@@ -78,4 +78,19 @@ class CartController extends Controller
         // Optionally, you can return a response with the updated cart data
         return back()->with('message', 'Item removed from cart');
     }
+
+    public function checkout(Request $request)
+    {
+        $ids = $request->query('items', []);
+        $selectedItems = Cart::with('material')
+            ->where('user_id', auth()->id())
+            ->whereIn('id', $ids)
+            ->get();
+        $cartItemCount = Cart::where('user_id', auth()->id())->count();
+
+        return Inertia::render('Checkout', [
+            'selectedItems' => $selectedItems,
+            'cartItemCount' => $cartItemCount,
+        ]);
+    }
 }

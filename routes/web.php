@@ -65,3 +65,5 @@ Route::put('/materials-update/{material}', [MaterialController::class, 'updateMa
 
 Route::post('/profile/update', [ProfileController::class, 'update'])
      ->name('profile.update');
+
+Route::get('/checkout', [CartController::class, 'checkout'])->middleware('auth');

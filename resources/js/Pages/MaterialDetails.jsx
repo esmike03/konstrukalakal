@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { ArrowLeft, ShoppingCart, CheckCircle, X } from "lucide-react";
 
 export default function Show({ material, user }) {
+    const { auth } = usePage().props;
     const { flash } = usePage().props;
     const [showMessage, setShowMessage] = useState(false);
     const [buttonText, setButtonText] = useState("");
@@ -147,9 +148,14 @@ export default function Show({ material, user }) {
 
 
                         {/* Message Button */}
-                        <Link href={`/message/${material.id}`} className="flex items-center gap-2 bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition-all duration-200">
-                            ✉️ <span className="text-sm">Message</span>
-                        </Link>
+                        {auth?.user && (
+                            <Link
+                              href={`/message/${material.id}`}
+                              className="flex items-center gap-2 bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition-all duration-200"
+                            >
+                              ✉️ <span className="text-sm">Message</span>
+                            </Link>
+                          )}
                     </div>
                 </div>
             </div>

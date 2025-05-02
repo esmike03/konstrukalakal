@@ -45,13 +45,21 @@ export default function Materials() {
     };
 
     // Filter and search materials based on state
-    const filteredMaterials = materials.filter((material) => {
+    const filteredMaterials = materials
+    .filter((material) => {
+        // If user is logged in, filter out their own materials
+        if (auth?.user?.id) {
+            return material.user_id !== auth.user.id;
+        }
+        return true; // No filtering if not logged in
+    })
+    .filter((material) => {
         const matchesSearch = material.material_name.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(material.category);
         const matchesCondition = selectedConditions.length === 0 || selectedConditions.includes(material.condition);
-
         return matchesSearch && matchesCategory && matchesCondition;
     });
+
 
     return (
         <div className="min-h-screen p-6 text-black">

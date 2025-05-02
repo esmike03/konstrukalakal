@@ -98,15 +98,25 @@ export default function Cart() {
                   <h3 className="text-lg font-semibold">
                     {item.material.material_name}
                   </h3>
-                  <p className="text-sm text-gray-500">
-                    {item.quantity} x ₱{item.material.price}
+
+                    <p className="text-sm text-gray-500">
+                    {item.quantity} x{" "}
+                    {(item.material.forbdt !== "Trade" && item.material.forbdt !== "Donate") ? (
+                      `₱${item.material.price}`
+                    ) : (
+                      ""
+                    )}
                   </p>
+
                 </div>
               </div>
               <div className="flex items-center gap-2">
+              {(item.material.forbdt !== "Trade" && item.material.forbdt !== "Donate") && (
                 <span className="font-semibold text-gray-800">
                   ₱{item.quantity * item.material.price}
                 </span>
+               )}
+
                 <Link href={`/cart/delete/${item.id}`}>
                   <button className="bg-red-500 text-white px-3 py-1 rounded-md">
                     Remove

@@ -186,7 +186,7 @@ export default function Materials() {
                                     </div>
                                     <div>
                                         <div className="flex mt-1 gap-2 justify-between">
-                                            {(material.forbdt !== "Trade" && material.forbdt !== "Donate") && (
+                                            {(material.forbdt !== "Trade" && material.forbdt !== "Donation") && (
                                                 <p className="text-green-600 font-bold content-center items-center">
                                                     ₱ {material.price}
                                                 </p>

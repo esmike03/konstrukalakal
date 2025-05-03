@@ -2,10 +2,10 @@ import { usePage, Link } from "@inertiajs/react";
 import { useState, useEffect } from "react";
 import { ShoppingCart, CheckCircle, X } from "lucide-react";
 
-export default function Cart() {
+export default function DonateCart() {
   const { cartItems, flash } = usePage().props;
   const [showMessage, setShowMessage] = useState(false);
-  const [activeTab, setActiveTab] = useState("sale");
+  const [activeTab, setActiveTab] = useState("donation");
   const [selectedItems, setSelectedItems] = useState([]);
 
   useEffect(() => {
@@ -58,19 +58,10 @@ export default function Cart() {
 
       {/* Header */}
       <h1 className="text-3xl font-bold text-center mb-6">Cart</h1>
-      <div className="gap-2 flex">
-        <Link href="/cart/donate" className="bg-green-500 px-2 rounded-md text-white cursor-pointer">
-            Donation
-        </Link>
-        <Link href="/my-trades" className="bg-green-500 px-2 rounded-md text-white cursor-pointer">
-            Trades
-        </Link>
 
-
-      </div>
       {/* Tabs */}
       <div className="flex justify-center space-x-4 mb-6">
-        {["sale"].map((tab) => (
+        {["donation"].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -92,12 +83,7 @@ export default function Cart() {
               className="flex justify-between items-center border-b pb-4"
             >
               <div className="flex items-center gap-4">
-                <input
-                  type="checkbox"
-                  checked={selectedItems.includes(item.id)}
-                  onChange={() => handleSelectItem(item.id)}
-                  className="w-5 h-5"
-                />
+
                 <img
                   src={`/storage/${item.material.image}`}
                   alt={item.material.material_name}

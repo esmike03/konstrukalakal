@@ -46,7 +46,7 @@ class NavigationController extends Controller
     {
         sleep(1);
         $cartItemCount = Cart::where('user_id', auth()->id())->count();
-        $materials = Material::where('forbdt', 'Donate')->get();
+        $materials = Material::where('forbdt', 'Donation')->get();
         return inertia('DonateMaterials', [
             'materials' => $materials,
             'cartItemCount' => $cartItemCount,

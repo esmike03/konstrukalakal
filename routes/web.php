@@ -55,6 +55,7 @@ Route::get('/back', [MaterialController::class, 'back'])->name('materials.back')
 Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
 
 Route::get('/cart', [CartController::class, 'toCart']);
+Route::get('/cart/donate', [CartController::class, 'todonate']);
 Route::get('/cart/delete/{id}', [CartController::class, 'destroy'])->name('cart.delete');
 Route::get('/uploads/delete/{id}', [MaterialController::class, 'uploadDestroy'])->name('upload.delete');
 
@@ -67,3 +68,6 @@ Route::post('/profile/update', [ProfileController::class, 'update'])
      ->name('profile.update');
 
 Route::get('/checkout', [CartController::class, 'checkout'])->middleware('auth');
+Route::get('/trade/create', [MaterialController::class, 'createTrade'])->name('trade.create');
+Route::post('/trade/submit', [MaterialController::class, 'storeTrade']);
+Route::get('/my-trades', [MaterialController::class, 'myTrades'])->middleware('auth');

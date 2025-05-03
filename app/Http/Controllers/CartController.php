@@ -28,6 +28,26 @@ class CartController extends Controller
         ]);
     }
 
+    public function todonate()
+    {
+        if (!auth()->check()) {
+            // Redirect to the login route (trigger login modal)
+            return back()->with(
+                'message',
+                'Please login to add items to your cart.'
+            );  // You can also return a custom location for your login modal
+        }
+        $cartItemCount = Cart::where('user_id', auth()->id())->count();
+        $cartItems = Cart::with('material') // Eager load the 'material' relationship
+            ->where('user_id', auth()->id())
+            ->get();
+
+        return inertia('DonateCart', [
+            'cartItems' => $cartItems,
+            'cartItemCount' => $cartItemCount,
+        ]);
+    }
+
     public function add(Request $request)
     {
         if (!auth()->check()) {

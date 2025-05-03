@@ -53,6 +53,42 @@ export default function Show({ material, user }) {
 
     }
 
+    function addToTrade(e) {
+        e.preventDefault();
+        if (status === 401) {
+            // Trigger your login modal here
+            openLoginModal();
+          }else{
+
+            get('/trade/create', {
+                onSuccess: () => {
+                    console.log('Trade Pending!');
+                },
+                onError: () => {
+                    console.log('Failed to Trade.');
+                },
+            });
+          }
+    }
+
+    function addToDonate(e) {
+        e.preventDefault();
+        if (status === 401) {
+            // Trigger your login modal here
+            openLoginModal();
+          }else{
+
+            post('/donate/add', {
+                onSuccess: () => {
+                    console.log('Inquire Successfully!');
+                },
+                onError: () => {
+                    console.log('Failed to Inquire.');
+                },
+            });
+          }
+    }
+
     return (
         <>
             <div className="max-w-5xl mx-auto p-6 rounded-lg flex gap-8 mt-10">
@@ -138,16 +174,38 @@ export default function Show({ material, user }) {
 
                     {/* Buttons */}
                     <div className="mt-6 flex flex-wrap gap-4">
-                        {/* Add to Cart Button */}
-                        <button
-                        onClick={addToCart}
-                        disabled={false} // You can replace this with a processing state if needed
+
+                    {material.forbdt === "Sale" ? (
+                            <button
+                                onClick={addToCart}
+                                disabled={false} // You can replace this with a processing state if needed
+                                className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-all duration-200"
+                                >
+                                <ShoppingCart size={18} />
+                                <span className="text-sm">{buttonText}</span>
+                            </button>
+                    ) : material.forbdt === "Trade" ? (
+                        <Link
+                        href="/trade/create"
+                        data={{ material }}
+                        method="get"
+                        as="button"
                         className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-all duration-200"
                       >
                         <ShoppingCart size={18} />
-                        <span className="text-sm">{buttonText}</span>
-                      </button>
+                        <span className="text-sm">Trade</span>
+                      </Link>
 
+                    ) : (
+                            <button
+                            onClick={addToCart}
+                            disabled={false} // You can replace this with a processing state if needed
+                            className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-all duration-200"
+                            >
+                                <ShoppingCart size={18} />
+                                <span className="text-sm">{buttonText}</span>
+                            </button>
+                    )}
 
 
                         {/* Message Button */}

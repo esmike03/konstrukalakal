@@ -5,6 +5,11 @@ import { router } from '@inertiajs/react';
 
 export default function CreateMaterials() {
     const { isMaterialOpen, closeMaterialModal } = useModal();
+    const [agreed, setAgreed] = useState(false);
+
+    const handleCheckboxChange = () => {
+        setAgreed(!agreed);
+    };
     const [form, setForm] = useState({
         materialName: "",
         location: "",
@@ -17,6 +22,7 @@ export default function CreateMaterials() {
         forbdt: "",
         image: null, // Store selected file
     });
+    const isPriceDisabled = form.forbdt === "Trade" || form.forbdt === "Donation";
     const [imagePreview, setImagePreview] = useState(null);
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
@@ -146,7 +152,8 @@ export default function CreateMaterials() {
                                 </div>
 
                                 <div>
-                                    <input name="price" type="text" placeholder="Price" onChange={handleChange} className="w-full text-xs p-2 border border-gray-400 rounded-lg mb-3" />
+                                    <input name="price" type="text" placeholder="Price" onChange={handleChange} disabled={isPriceDisabled} className={`w-full text-xs p-2 border border-gray-400 rounded-lg mb-3
+        ${isPriceDisabled ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : ''}`} />
                                     {errors.price && <p className="text-red-500 text-xs mt-1">{errors.price}</p>}
                                 </div>
 
@@ -182,7 +189,8 @@ export default function CreateMaterials() {
 
                     {/* Confirmation */}
                     <div className="flex items-center mt-1">
-                        <input type="checkbox" name="confirmation" className="mr-2" required />
+                        <input checked={agreed}
+                            onChange={handleCheckboxChange} type="checkbox" name="confirmation" className="mr-2" required />
                         <p className="text-xs text-gray-500">I confirm that this material information is accurate and I have the right to list it.</p>
                     </div>
 
@@ -191,7 +199,9 @@ export default function CreateMaterials() {
                         <button type="button" onClick={closeMaterialModal} className="text-gray-500 px-4 py-2 rounded-full hover:bg-gray-300">
                             {loading ? 'Cancel' : 'Cancel'}
                         </button>
-                        <button type="submit" className="cursor-pointer bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700">
+                        <button type="submit" disabled={!agreed}
+                            className={`w-full text-sm py-2 rounded-full mt-1 transition-colors duration-200
+                            ${agreed ? 'bg-green-600 hover:bg-green-700 cursor-pointer text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}>
                             {loading ? 'Uploading...' : 'Upload Material'}
                         </button>
                     </div>

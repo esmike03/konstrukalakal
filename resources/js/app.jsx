@@ -6,6 +6,7 @@ import Layout from '@/Layouts/Layout';
 import { ModalProvider } from '@/Context/ModalContext';
 import LoginModal from '@/Components/LoginModal';
 import CreateModal from '@/Components/CreateModal';
+import TermnServicesModal from '@/Components/TermnServicesModal';
 import CreateMaterialModal from '@/Components/CreateMaterials';
 
 createInertiaApp({
@@ -22,8 +23,10 @@ createInertiaApp({
     createRoot(el).render(
         <ModalProvider>
             <App {...props} />
+
             <LoginModal />
             <CreateModal />
+            <TermnServicesModal />
             <CreateMaterialModal />
         </ModalProvider>
         )

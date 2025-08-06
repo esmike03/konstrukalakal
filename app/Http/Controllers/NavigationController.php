@@ -117,7 +117,15 @@ class NavigationController extends Controller
             'condition' => 'required|string',
             'forbdt' => 'required|string',
             'availability' => 'required|string',
-            'price' => 'required|numeric',
+                'price' => [
+        'nullable',
+        'numeric',
+        function ($attribute, $value, $fail) use ($request) {
+            if ($request->forbdt === 'Sale' && (is_null($value) || $value === '')) {
+                $fail('The price field is required for items for sale.');
+            }
+        }
+    ],
             'quantity' => 'required|integer',
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5048', // Validate image

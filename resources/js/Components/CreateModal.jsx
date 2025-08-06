@@ -4,7 +4,8 @@ import { X } from 'lucide-react';
 import { router, Link } from '@inertiajs/react';
 
 export default function RegisterModal() {
-    const { isRegisterModalOpen, closeRegisterModal, openLoginModal } = useModal();
+    const { isRegisterModalOpen, closeRegisterModal, openLoginModal, openTermnServicesModal } = useModal();
+    const [agreed, setAgreed] = useState(false);
     const [form, setForm] = useState({
         name: '',
         email: '',
@@ -16,6 +17,9 @@ export default function RegisterModal() {
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
 
+    const handleCheckboxChange = () => {
+        setAgreed(!agreed);
+    };
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
@@ -79,10 +83,17 @@ export default function RegisterModal() {
                     </div>
                     {errors.password && <p className="text-red-500 text-xs">{errors.password}</p>}
                     <label className="flex items-center text-xs mt-2 ml-1">
-                            <input type="checkbox" className="mr-2 text-xs" /> I agree to the  <span className="text-green-500 mx-1"> Terms of Service</span> and <span className="text-green-500 mx-1"> Privacy Policy</span>
+                    <input checked={agreed}
+                        onChange={handleCheckboxChange}
+                        onClick={openTermnServicesModal} type="checkbox" className="mr-2 text-xs" /> I agree to the  <span className="text-green-500 mx-1"> Terms of Service</span> and <span className="text-green-500 mx-1"> Privacy Policy</span>
                     </label>
 
-                    <button type="submit" className="w-full cursor-pointer bg-green-600 text-white text-sm py-2 rounded-full mt-4 hover:bg-green-700">
+                    <button
+                        type="submit"
+                        disabled={!agreed}
+                        className={`w-full text-sm py-2 rounded-full mt-4 transition-colors duration-200
+                            ${agreed ? 'bg-green-600 hover:bg-green-700 cursor-pointer text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+                    >
                         Sign Up
                     </button>
                 </form>

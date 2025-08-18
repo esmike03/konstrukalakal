@@ -47,6 +47,7 @@ Route::get('/materials/{id}', [MaterialController::class, 'show'])->name('materi
 Route::get('/materials-edit/{id}', [MaterialController::class, 'editMaterial'])->name('materials.edit');
 
 Route::get('/message/{id}', [MaterialController::class, 'sendMessage'])->name('message.show');
+Route::get('/message2/{start}', [MaterialController::class, 'sendMessage2'])->name('message2.show');
 Route::post('/messages/send', [MaterialController::class, 'send']);
 
 

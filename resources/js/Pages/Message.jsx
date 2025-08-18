@@ -7,9 +7,9 @@ export default function Messages() {
     conversations = [],
   } = usePage().props;
 
-  // Exclude the current user from the conversations list
+  // Filter out invalid self-chat edge cases
   const otherChats = conversations.filter(
-    (chat) => chat.user.id !== authUser.id
+    (chat) => chat.user && chat.user.id !== authUser.id
   );
 
   return (
@@ -20,20 +20,19 @@ export default function Messages() {
         <div className="space-y-3">
           {otherChats.map((chat) => (
             <Link
-              key={chat.user.id}
-
-              href={`/message/${chat.material_id}`}
+              key={chat.conversation_id} // ✅ unique conversation ID
+              href={`/message2/${chat.conversation_id}`} // ✅ link by conversation ID
               className="block"
             >
               <div className="flex items-center p-4 bg-white rounded-lg shadow hover:bg-gray-50 transition">
                 <img
-                  src={`/storage/${chat.user.profile_image}`}
+                  src={`/storage/${chat.material_image}`}
                   alt={chat.user.name}
                   className="h-12 w-12 rounded-full object-cover"
                 />
                 <div className="ml-4 flex-1">
                   <p className="text-sm font-medium text-gray-900">
-                    {chat.user.name}
+                    {chat.user.name} | {chat.material_name}
                   </p>
                   <p className="text-xs text-gray-500 truncate">
                     {chat.last_message.content}

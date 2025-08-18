@@ -71,41 +71,45 @@ class NavigationController extends Controller
 
     public function toMessages()
     {
+        $me = auth()->id();
 
-
-        $me = auth()->user()->id;
-
-        // Fetch all messages where user is sender or recipient
-        $msgs = \App\Models\Message::where('sender_id', $me)
-            ->orWhere('recipient_id', $me)
+        // Get all messages where user is sender or recipient
+        $msgs = \App\Models\Message::where(function ($q) use ($me) {
+            $q->where('sender_id', $me)
+                ->orWhere('recipient_id', $me);
+        })
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Group by the other user
-        $groups = $msgs->groupBy(function ($msg) use ($me) {
-            return $msg->sender_id === $me
-                ? $msg->recipient_id
-                : $msg->sender_id;
-        });
+        // Group by conversation (start)
+        $groups = $msgs->groupBy('start');
 
-        $conversations = $groups->map(function ($msgs, $otherUserId) {
-            $last = $msgs->first(); // because we ordered desc
-            $other = $last->sender_id === auth()->id()
+        $conversations = $groups->map(function ($msgs) use ($me) {
+            $last = $msgs->first(); // newest message because of desc order
+
+            // Find the "other" user in this conversation
+            $other = $last->sender_id === $me
                 ? $last->recipient
                 : $last->sender;
+
             return [
-                'user'          => $other,
-                'last_message'  => $last,
-                'material_id'   => $last->material_id,
+                'conversation_id' => $last->start,   // unique id for thread
+                'user'            => $other,         // the other user
+                'last_message'    => $last,          // preview
+                'material_id'     => $last->material_id, // related item
+                'material_name'   => optional($last->material)->material_name,
+                'material_image'   => optional($last->material)->image,
             ];
         })->values();
 
-        $cartItemCount = Cart::where('user_id', auth()->id())->count();
+        $cartItemCount = Cart::where('user_id', $me)->count();
+
         return inertia('Message', [
             'cartItemCount' => $cartItemCount,
             'conversations' => $conversations,
         ]);
     }
+
 
     public function materialStore(Request $request)
     {
@@ -117,15 +121,15 @@ class NavigationController extends Controller
             'condition' => 'required|string',
             'forbdt' => 'required|string',
             'availability' => 'required|string',
-                'price' => [
-        'nullable',
-        'numeric',
-        function ($attribute, $value, $fail) use ($request) {
-            if ($request->forbdt === 'Sale' && (is_null($value) || $value === '')) {
-                $fail('The price field is required for items for sale.');
-            }
-        }
-    ],
+            'price' => [
+                'nullable',
+                'numeric',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->forbdt === 'Sale' && (is_null($value) || $value === '')) {
+                        $fail('The price field is required for items for sale.');
+                    }
+                }
+            ],
             'quantity' => 'required|integer',
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5048', // Validate image

@@ -13,6 +13,7 @@ class Message extends Model
         'sender_id',
         'recipient_id',
         'material_id',
+        'start',
         'content',
     ];
 
@@ -28,6 +29,6 @@ class Message extends Model
 
     public function material()
     {
-        return $this->belongsTo(Material::class);
+        return $this->belongsTo(Material::class, 'material_id');
     }
 }

@@ -7,7 +7,9 @@ use App\Models\User;
 use App\Models\Trade;
 use App\Models\Message;
 use App\Models\Material;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+
 
 class MaterialController extends Controller
 {
@@ -61,23 +63,49 @@ class MaterialController extends Controller
         ]);
     }
 
+
+
     public function send(Request $request)
     {
         $request->validate([
-            'message' => 'required|string|max:1000',
+            'message'      => 'required|string|max:1000',
             'recipient_id' => 'required|exists:users,id',
-            'material_id' => 'required|exists:materials,id',
+            'material_id'  => 'required|exists:materials,id',
         ]);
 
+        $authId = auth()->id();
+
+        // Check if there's already a conversation between these two users for this material
+        $existingMessage = Message::where('material_id', $request->material_id)
+            ->where(function ($q) use ($authId, $request) {
+                $q->where(function ($q2) use ($authId, $request) {
+                    $q2->where('sender_id', $authId)
+                        ->where('recipient_id', $request->recipient_id);
+                })->orWhere(function ($q2) use ($authId, $request) {
+                    $q2->where('sender_id', $request->recipient_id)
+                        ->where('recipient_id', $authId);
+                });
+            })
+            ->first();
+
+        // Generate new UUID only if no existing conversation
+        $start = $existingMessage && $existingMessage->start
+            ? $existingMessage->start
+            : Str::uuid()->toString();
+
         Message::create([
-            'sender_id' => auth()->id(),
+            'sender_id'    => $authId,
             'recipient_id' => $request->recipient_id,
-            'material_id' => $request->material_id,
-            'content' => $request->message,
+            'material_id'  => $request->material_id,
+            'start'        => $start,
+            'content'      => $request->message,
         ]);
 
         return back()->with('success', 'Message sent!');
     }
+
+
+
 
 
     //to send message
@@ -86,31 +114,81 @@ class MaterialController extends Controller
         $cartItemCount = Cart::where('user_id', auth()->id())->count();
         $material = Material::findOrFail($id);
         $user = User::findOrFail($material->user_id);
+        $authId = auth()->id();
+        $ownerId = $material->user_id;
 
-        $authId  = auth()->id();
-        $otherId = $material->user_id;
+        // Find the conversation identifier (start)
+        $conversation = Message::where('material_id', $material->id)
+            ->where(function ($query) use ($authId, $ownerId) {
+                $query->where(function ($q) use ($authId, $ownerId) {
+                    $q->where('sender_id', $authId)
+                        ->where('recipient_id', $ownerId);
+                })
+                    ->orWhere(function ($q) use ($authId, $ownerId) {
+                        $q->where('sender_id', $ownerId)
+                            ->where('recipient_id', $authId);
+                    });
+            })
+            ->first();
 
-        $messages = Message::where('material_id', $material->id)
-            ->where(function ($q) use ($authId, $otherId) {
-                // messages I sent to them
-                $q->where('sender_id',    $authId)
-                    ->where('recipient_id', $otherId);
-            })
-            ->orWhere(function ($q) use ($authId, $otherId) {
-                // messages they sent to me
-                $q->where('sender_id',    $otherId)
-                    ->where('recipient_id', $authId);
-            })
-            ->orderBy('created_at')
-            ->get();
+        $start = $conversation ? $conversation->start : null;
+
+        // Now fetch all messages using start if it exists
+        $messages = $start
+            ? Message::where('start', $start)->orderBy('created_at', 'asc')->get()
+            : collect(); // empty if no conversation yet
 
         return inertia('SendMessage', [
-            'material' => $material,
-            'cartItemCount' => $cartItemCount,
-            'user' => $user,
-            'messages' => $messages,
+            'material'       => $material,
+            'cartItemCount'  => $cartItemCount,
+            'user'           => $user,
+            'messages'       => $messages,
+            'conversationId' => $start, // pass conversation id if you need it
         ]);
     }
+
+    public function sendMessage2($start)
+    {
+        $cartItemCount = Cart::where('user_id', auth()->id())->count();
+        $messageId = Message::where('start', $start)->firstOrFail();
+
+        $material = Material::findOrFail($messageId->material_id);
+        $user = User::findOrFail($material->user_id);
+        $authId = auth()->id();
+        $ownerId = $material->user_id;
+
+        // Find the conversation identifier (start)
+        $conversation = Message::where('material_id', $material->id)
+            ->where(function ($query) use ($authId, $ownerId) {
+                $query->where(function ($q) use ($authId, $ownerId) {
+                    $q->where('sender_id', $authId)
+                        ->where('recipient_id', $ownerId);
+                })
+                    ->orWhere(function ($q) use ($authId, $ownerId) {
+                        $q->where('sender_id', $ownerId)
+                            ->where('recipient_id', $authId);
+                    });
+            })
+            ->first();
+
+        $start = $conversation ? $conversation->start : null;
+
+        // Now fetch all messages using start if it exists
+        $messages = $start
+            ? Message::where('start', $start)->orderBy('created_at', 'asc')->get()
+            : collect(); // empty if no conversation yet
+
+        return inertia('SendMessage', [
+            'material'       => $material,
+            'cartItemCount'  => $cartItemCount,
+            'user'           => $user,
+            'messages'       => $messages,
+            'conversationId' => $start, // pass conversation id if you need it
+        ]);
+    }
+
+
+
 
     public function back()
     {
@@ -164,9 +242,9 @@ class MaterialController extends Controller
     {
         $user = auth()->user();
         $trades = Trade::with('material')
-                    ->where('user_id', $user->id)
-                    ->latest()
-                    ->get();
+            ->where('user_id', $user->id)
+            ->latest()
+            ->get();
 
         return inertia('MyTrades', [
             'trades' => $trades,

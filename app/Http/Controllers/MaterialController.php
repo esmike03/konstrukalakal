@@ -65,49 +65,49 @@ class MaterialController extends Controller
 
 
 
-   public function send(Request $request)
-{
-    $request->validate([
-        'message'      => 'required|string|max:1000',
-        'recipient_id' => 'required|exists:users,id',
-        'material_id'  => 'required|exists:materials,id',
-        'start'        => 'nullable|string', // Accept start from frontend
-    ]);
+    public function send(Request $request)
+    {
+        $request->validate([
+            'message'      => 'required|string|max:1000',
+            'recipient_id' => 'required|exists:users,id',
+            'material_id'  => 'required|exists:materials,id',
+            'start'        => 'nullable|string', // Accept start from frontend
+        ]);
 
-    $authId = auth()->id();
+        $authId = auth()->id();
 
-    // Use start from request if provided, otherwise check existing conversation
-    if (!empty($request->start)) {
-        $start = $request->start;
-    } else {
-        $existingMessage = Message::where('material_id', $request->material_id)
-            ->where(function ($q) use ($authId, $request) {
-                $q->where(function ($q2) use ($authId, $request) {
-                    $q2->where('sender_id', $authId)
-                       ->where('recipient_id', $request->recipient_id);
-                })->orWhere(function ($q2) use ($authId, $request) {
-                    $q2->where('sender_id', $request->recipient_id)
-                       ->where('recipient_id', $authId);
-                });
-            })
-            ->first();
+        // Use start from request if provided, otherwise check existing conversation
+        if (!empty($request->start)) {
+            $start = $request->start;
+        } else {
+            $existingMessage = Message::where('material_id', $request->material_id)
+                ->where(function ($q) use ($authId, $request) {
+                    $q->where(function ($q2) use ($authId, $request) {
+                        $q2->where('sender_id', $authId)
+                            ->where('recipient_id', $request->recipient_id);
+                    })->orWhere(function ($q2) use ($authId, $request) {
+                        $q2->where('sender_id', $request->recipient_id)
+                            ->where('recipient_id', $authId);
+                    });
+                })
+                ->first();
 
-        $start = !empty($existingMessage->start)
-            ? $existingMessage->start
-            : Str::uuid()->toString();
+            $start = !empty($existingMessage->start)
+                ? $existingMessage->start
+                : Str::uuid()->toString();
+        }
+
+        // Save the new message
+        Message::create([
+            'sender_id'    => $authId,
+            'recipient_id' => $request->recipient_id,
+            'material_id'  => $request->material_id,
+            'start'        => $start,
+            'content'      => $request->message,
+        ]);
+
+        return back()->with('success', 'Message sent!');
     }
-
-    // Save the new message
-    Message::create([
-        'sender_id'    => $authId,
-        'recipient_id' => $request->recipient_id,
-        'material_id'  => $request->material_id,
-        'start'        => $start,
-        'content'      => $request->message,
-    ]);
-
-    return back()->with('success', 'Message sent!');
-}
 
 
 
@@ -165,6 +165,7 @@ class MaterialController extends Controller
         $authId = auth()->id();
         $ownerId = $material->user_id;
 
+
         // Find the conversation identifier (start)
         $conversation = Message::where('start', $uq)
             ->where(function ($query) use ($authId, $ownerId, $uq) {
@@ -179,13 +180,18 @@ class MaterialController extends Controller
             })
             ->orderBy('created_at', 'asc')
             ->get();
-            // dd($conversation);
+        // dd($conversation);
         // $start = $conversation ? $conversation->start : null;
-        $messages = $conversation;
+        // $messages = $conversation;
         // Now fetch all messages using start if it exists
         // $messages = $start
         //     ? Message::where('start', $start)->orderBy('created_at', 'asc')->get()
         //     : collect(); // empty if no conversation yet
+        $messages = $conversation->map(function ($msg) {
+            $msg->sender_name = optional(User::find($msg->sender_id))->name ?? 'Unknown';
+            $msg->sender_avatar = optional(User::find($msg->sender_id))->profile_image ?? null;
+            return $msg;
+        });
 
         return inertia('SendMessage', [
             'material'       => $material,

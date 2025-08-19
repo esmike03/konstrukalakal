@@ -107,8 +107,16 @@ const handleSend = (e) => {
                       : "bg-gray-200 text-gray-800"
                   }`}
                 >
+                          {msg.sender_id !== authUser.id && (
+                                <div className="flex items-center gap-1 mb-1">
+                                {msg.sender_avatar && (
+                                    <img src={`/storage/${msg.sender_avatar}`} alt={msg.sender_name} className="h-4 w-4 rounded-full object-cover" />
+                                )}
+                                <p className="text-[10px] font-semibold text-gray-600">{msg.sender_name}</p>
+                                </div>
+                            )}
                   {msg.content}
-                  <div className="text-[10px] text-gray-300 mt-1 text-right">
+                  <div className="text-[10px] text-gray-700 mt-1 text-right">
                     {new Date(msg.created_at).toLocaleTimeString([], {
                       hour: "2-digit",
                       minute: "2-digit",

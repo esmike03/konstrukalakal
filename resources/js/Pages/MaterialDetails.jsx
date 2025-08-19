@@ -91,6 +91,7 @@ export default function Show({ material, user }) {
 
     return (
         <>
+
             <div className="max-w-5xl mx-auto p-6 rounded-lg flex gap-8 mt-10">
             {flash?.message && (
                 <div
@@ -110,13 +111,23 @@ export default function Show({ material, user }) {
                     {flash.message}
                 </div>
             )}
-
+                {!auth?.user && (
+                            <div
+                            className="absolute bottom-0 right-0 mx-10 my-10 bg-orange-400 p-2 rounded-md text-white"
+                            >
+                              <span className="text-sm"> Please log in to send messages and explore more features!</span>
+                            </div>
+                          )}
                 {/* Product Image Section */}
                 <Link href={`/back`}>
                     <button className="absolute top-20 text-gray-500 font-semibold cursor-pointer flex items-center">
                         <ArrowLeft size={20} className="mt-0.5" /> Back
+
+
                     </button>
+
                 </Link>
+
 
                 <div className="w-1/2">
                     <img

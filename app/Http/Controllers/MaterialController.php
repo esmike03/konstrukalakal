@@ -221,6 +221,13 @@ class MaterialController extends Controller
 
     public function createTrade(Request $request)
     {
+        if (!auth()->check()) {
+            // Redirect to the login route (trigger login modal)
+            return back()->with(
+                'message',
+                'Please login to add items to your cart.'
+            );
+        }
         return inertia('CreateTrade', [
             'material' => $request->material,
         ]);

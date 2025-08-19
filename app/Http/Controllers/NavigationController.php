@@ -102,6 +102,7 @@ class NavigationController extends Controller
             ];
         })->values();
 
+
         $cartItemCount = Cart::where('user_id', $me)->count();
 
         return inertia('Message', [

@@ -1,11 +1,12 @@
 import { useForm, Link, usePage } from "@inertiajs/react";
 import { ArrowLeft } from "lucide-react";
 
-export default function SendMessage({ material, user, messages }) {
+export default function SendMessage({ material, user, messages, conversationId }) {
   const { data, setData, post, reset, processing } = useForm({
     message: "",
     recipient_id: user.id,
     material_id: material.id,
+    start: conversationId || "",
   });
 
   // get the currently authenticated user
@@ -13,15 +14,19 @@ export default function SendMessage({ material, user, messages }) {
     auth: { user: authUser },
   } = usePage().props;
 
-  const handleSend = (e) => {
-    e.preventDefault();
-    if (!data.message.trim()) return;
+const handleSend = (e) => {
+  e.preventDefault();
+  if (!data.message.trim()) return;
 
-    post("/messages/send", {
-      preserveScroll: true,
-      onSuccess: () => reset("message"),
-    });
-  };
+  post("/messages/send", data, {
+    preserveScroll: true,
+    onSuccess: (res) => {
+      reset("message");
+      if (res.start) setData("start", res.start); // update conversationId after first message
+    },
+  });
+};
+
 
   return (
     <>
@@ -36,7 +41,9 @@ export default function SendMessage({ material, user, messages }) {
         {/* Product Preview Card */}
         <div className="w-full flex justify-center mt-0">
           <div className="w-[300px] h-[100px] bg-white rounded-md shadow-md p-4 flex gap-4">
+
             <div className="w-[40%] relative">
+
               <img
                 src={`/storage/${material.image}`}
                 alt={material.material_name}
@@ -65,10 +72,16 @@ export default function SendMessage({ material, user, messages }) {
                 Price:{" "}
                 <span className="text-green-600 text-xs">
                   ₱{material.price}
+
                 </span>
               </p>
             </div>
           </div>
+        </div>
+        <div className="max-w-5xl mx-auto px-4 mt-4 w-full  items-center justify-center text-center">
+            <p className="text-xs text-gray-500">
+                {conversationId || "New conversation"}
+            </p>
         </div>
 
         {/* Conversation Messages */}
@@ -118,6 +131,15 @@ export default function SendMessage({ material, user, messages }) {
               value={data.message}
               onChange={(e) => setData("message", e.target.value)}
               placeholder="Type your message..."
+              className="flex-1 border rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <input
+              type="text"
+              name="conversationId"
+              hidden
+              value={data.start}
+              onChange={(e) => setData("conversationID", e.target.value)}
+
               className="flex-1 border rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button

@@ -9,7 +9,7 @@ export default function Messages() {
 
   // Filter out invalid self-chat edge cases
   const otherChats = conversations.filter(
-    (chat) => chat.user && chat.user.id !== authUser.id
+    (chat) => chat.user || chat.user.id !== authUser.id
   );
 
   return (
@@ -33,6 +33,9 @@ export default function Messages() {
                 <div className="ml-4 flex-1">
                   <p className="text-sm font-medium text-gray-900">
                     {chat.user.name} | {chat.material_name}
+                    <span className="text-gray-300">
+                         | {chat.conversation_id.slice(0, 8) + '...'}
+                    </span>
                   </p>
                   <p className="text-xs text-gray-500 truncate">
                     {chat.last_message.content}

@@ -14,6 +14,7 @@ class Trade extends Model
         'trade_for',
         'item_title',
         'item_image',
+        'owner',
         'status',
     ];
 

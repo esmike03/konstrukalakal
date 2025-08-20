@@ -19,7 +19,7 @@ use App\Http\Controllers\NavigationController;
 // Route::inertia('/', 'Home');
 Route::get('/', [PostController::class, 'index']);
 
-Route::get('/materials', [NavigationController::class, 'toMaterials']);
+Route::get('/materials', [NavigationController::class, 'toMaterials'])->name('material.tradex');
 Route::post('/materials/store', [NavigationController::class, 'materialStore']);
 
 Route::resource('posts', PostController::class)->except('index');

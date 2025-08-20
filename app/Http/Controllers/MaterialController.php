@@ -231,9 +231,19 @@ class MaterialController extends Controller
             // Redirect to the login route (trigger login modal)
             return back()->with(
                 'message',
-                'Please login to add items to your cart.'
+                'Please login to trade.'
             );
         }
+
+        $user = auth()->id();
+        $exist = Trade::where('user_id', $user)
+            ->where('trade_for', $request->material['id'])
+            ->get();
+
+        if ($exist->isNotEmpty()) {
+            return back()->with('message', 'You have a pending trade with this item!');
+        }
+
         return inertia('CreateTrade', [
             'material' => $request->material,
         ]);
@@ -241,11 +251,16 @@ class MaterialController extends Controller
 
     public function storeTrade(Request $request)
     {
+        // dd($request->trade_for);
+
         $request->validate([
             'item_title' => 'required|string|max:255',
             'item_image' => 'required|image',
             'trade_for' => 'required|integer',
         ]);
+        $material_user = Material::where('id', $request->trade_for)->firstorFail();
+        // dd($material_user);
+
 
         $imagePath = $request->file('item_image')->store('trades', 'public');
 
@@ -254,22 +269,29 @@ class MaterialController extends Controller
             'item_title' => $request->item_title,
             'item_image' => $imagePath,
             'trade_for' => $request->trade_for,
+            'owner' => $material_user->user_id,
             'status' => 'pending',
         ]);
 
-        return back()->with('message', 'Trade Pending.');
+        return redirect()
+            ->route('material.tradex')
+            ->with('message', 'Trade Pending!');
     }
 
     public function myTrades()
     {
         $user = auth()->user();
+
         $trades = Trade::with('material')
-            ->where('user_id', $user->id)
-            ->latest()
+            ->where(function ($q) use ($user) {
+                $q->where('user_id', $user->id)
+                    ->orWhere('owner', $user->id);
+            })
             ->get();
 
         return inertia('MyTrades', [
             'trades' => $trades,
+
         ]);
     }
 }

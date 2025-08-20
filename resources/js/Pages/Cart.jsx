@@ -6,7 +6,7 @@ export default function Cart() {
   const { cartItems, flash } = usePage().props;
   const [showMessage, setShowMessage] = useState(false);
   const [activeTab, setActiveTab] = useState("sale");
-  const [selectedItems, setSelectedItems] = useState([]);
+  const [selectedItem, setSelectedItem] = useState(null);
 
   useEffect(() => {
     if (flash?.message) {
@@ -20,19 +20,12 @@ export default function Cart() {
     (item) => item.material.forbdt.toLowerCase() === activeTab
   );
 
-  const handleSelectItem = (itemId) => {
-    setSelectedItems((prev) =>
-      prev.includes(itemId)
-        ? prev.filter((id) => id !== itemId)
-        : [...prev, itemId]
-    );
-  };
+    const handleSelectItem = (itemId) => {
+    setSelectedItem((prev) => (prev === itemId ? null : itemId));
+    };
 
   // build a query string like "items[]=3&items[]=7&items[]=12"
-  const checkoutQuery =
-    selectedItems.length > 0
-      ? `?${selectedItems.map((id) => `items[]=${id}`).join("&")}`
-      : "";
+  const checkoutQuery = selectedItem ? `?items[]=${selectedItem}` : "";
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
@@ -93,11 +86,12 @@ export default function Cart() {
             >
               <div className="flex items-center gap-4">
                 <input
-                  type="checkbox"
-                  checked={selectedItems.includes(item.id)}
-                  onChange={() => handleSelectItem(item.id)}
-                  className="w-5 h-5"
+                type="checkbox"
+                checked={selectedItem === item.id}
+                onChange={() => handleSelectItem(item.id)}
+                className="w-5 h-5"
                 />
+
                 <img
                   src={`/storage/${item.material.image}`}
                   alt={item.material.material_name}
@@ -140,17 +134,18 @@ export default function Cart() {
       )}
 
       {/* Proceed to Checkout (with query string) */}
-      {selectedItems.length > 0 && (
+        {selectedItem && (
         <div className="mt-8 text-center">
-          <Link
+            <Link
             href={`/checkout${checkoutQuery}`}
             className="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-md text-lg font-semibold transition"
-          >
+            >
             <ShoppingCart size={20} />
-            Proceed to Checkout ({selectedItems.length})
-          </Link>
+            Confirm
+            </Link>
         </div>
-      )}
+        )}
+
     </div>
   );
 }

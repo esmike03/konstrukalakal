@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\Trade;
 use App\Models\Material;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -169,5 +170,26 @@ class NavigationController extends Controller
             'materials' => $materials,
             'cartItemCount' => $cartItemCount,
         ]);
+    }
+
+
+    //Trade function
+    public function rejectTrade($id)
+    {
+        $trade = Trade::findOrFail($id);
+
+
+        $trade->update(['status' => 'rejected']);
+
+        return redirect()->back()->with('message', 'Trade rejected successfully!');
+    }
+
+    public function cancelTrade($id)
+    {
+        $trade = Trade::findOrFail($id);
+
+        $trade->update(['status' => 'cancelled']);
+
+        return redirect()->back()->with('message', 'Trade cancelled successfully!');
     }
 }

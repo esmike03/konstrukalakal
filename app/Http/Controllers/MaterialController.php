@@ -281,17 +281,29 @@ class MaterialController extends Controller
     public function myTrades()
     {
         $user = auth()->user();
+        $userId = auth()->id();
 
-        $trades = Trade::with('material')
+        $trades = Trade::with('material', 'user')
             ->where(function ($q) use ($user) {
                 $q->where('user_id', $user->id)
                     ->orWhere('owner', $user->id);
             })
             ->get();
 
-        return inertia('MyTrades', [
-            'trades' => $trades,
+        // dd($trades->first()->user_id);
 
-        ]);
+        if($trades->first()->user_id == $userId){
+            return inertia('MyTrades', [
+                'trades' => $trades,
+                'isUser' => True,
+            ]);
+
+        } else{
+
+            return inertia('MyTrades', [
+                'trades' => $trades,
+                'isUser' => False,
+            ]);
+        }
     }
 }

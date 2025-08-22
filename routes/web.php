@@ -69,6 +69,11 @@ Route::post('/profile/update', [ProfileController::class, 'update'])
      ->name('profile.update');
 
 Route::get('/checkout', [CartController::class, 'checkout'])->middleware('auth');
+
+//Trades
 Route::get('/trade/create', [MaterialController::class, 'createTrade'])->name('trade.create');
 Route::post('/trade/submit', [MaterialController::class, 'storeTrade']);
 Route::get('/my-trades', [MaterialController::class, 'myTrades'])->middleware('auth');
+Route::post('/trades/{id}/reject', [NavigationController::class, 'rejectTrade'])->name('trades.rejectTrade');
+Route::post('/trades/{id}/cancel', [NavigationController::class, 'cancelTrade'])->name('trades.cancelTrade');
+

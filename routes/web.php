@@ -76,4 +76,5 @@ Route::post('/trade/submit', [MaterialController::class, 'storeTrade']);
 Route::get('/my-trades', [MaterialController::class, 'myTrades'])->middleware('auth');
 Route::post('/trades/{id}/reject', [NavigationController::class, 'rejectTrade'])->name('trades.rejectTrade');
 Route::post('/trades/{id}/cancel', [NavigationController::class, 'cancelTrade'])->name('trades.cancelTrade');
+Route::post('/trades/{id}/accept', [NavigationController::class, 'acceptTrade'])->name('trades.acceptTrade');
 

@@ -192,4 +192,71 @@ class NavigationController extends Controller
 
         return redirect()->back()->with('message', 'Trade cancelled successfully!');
     }
+
+    // public function acceptTrade($id)
+    // {
+    //     $trade = Trade::findOrFail($id);
+
+    //     // ✅ Step 1: Accept the selected trade
+    //     $trade->update(['status' => 'accepted']);
+
+    //     // ✅ Step 2: Reject all other trades with the same trade_for
+    //     Trade::where('trade_for', $trade->trade_for)
+    //         ->where('id', '!=', $trade->id)
+    //         ->update(['status' => 'rejected']);
+
+    //     return back()->with('message', 'Trade accepted successfully.');
+    // }
+
+    public function acceptTrade($id)
+    {
+        $trade = Trade::findOrFail($id);
+
+        // ✅ Accept this trade
+        $trade->update(['status' => 'accepted']);
+
+        // ✅ Reject all other trades with the same trade_for
+        Trade::where('trade_for', $trade->trade_for)
+            ->where('id', '!=', $trade->id)
+            ->update(['status' => 'rejected']);
+
+        $authId = auth()->id();
+        $otherUserId = $trade->user_id; // user you're trading with
+        $materialId = $trade->trade_for;
+
+        // check if conversation already exists between these users for this material
+        $existingMessage = \App\Models\Message::where('material_id', $materialId)
+            ->where(function ($q) use ($authId, $otherUserId) {
+                $q->where(function ($q2) use ($authId, $otherUserId) {
+                    $q2->where('sender_id', $authId)
+                        ->where('recipient_id', $otherUserId);
+                })->orWhere(function ($q2) use ($authId, $otherUserId) {
+                    $q2->where('sender_id', $otherUserId)
+                        ->where('recipient_id', $authId);
+                });
+            })
+            ->first();
+
+        if ($existingMessage) {
+            // continue conversation (insert new message with same start key)
+            \App\Models\Message::create([
+                'start' => $existingMessage->start,
+                'sender_id' => $authId,
+                'recipient_id' => $otherUserId,
+                'material_id' => $materialId,
+                'content' => 'Trade accepted successfully!',
+            ]);
+        } else {
+            // start new conversation
+            \App\Models\Message::create([
+                'start' => \Illuminate\Support\Str::uuid(),
+                'sender_id' => $authId,
+                'recipient_id' => $otherUserId,
+                'material_id' => $materialId,
+                'content' => 'Trade accepted successfully!',
+            ]);
+
+            return back()->with('message', 'Trade accepted and message sent.');
+        }
+    }
 }

@@ -9,7 +9,9 @@ class Donate extends Model
     protected $fillable = [
         'user_id',
         'material_id',
-        'quantity',
+        'owner',
+        'status',
+        'quantity'
     ];
 
     public function user()
@@ -17,11 +19,8 @@ class Donate extends Model
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Get the material associated with this cart item.
-     */
     public function material()
     {
-        return $this->belongsTo(Material::class);
+        return $this->belongsTo(Material::class, 'material_id');
     }
 }

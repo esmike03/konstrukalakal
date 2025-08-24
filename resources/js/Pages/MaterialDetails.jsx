@@ -10,6 +10,7 @@ export default function Show({ material, user }) {
     const { post, processing } = useForm({
         material_id: material.id,
         quantity: 1,
+        user_idx: user.id,
     });
 
     useEffect(() => {
@@ -41,7 +42,7 @@ export default function Show({ material, user }) {
             openLoginModal();
           }else{
 
-            post('/cart/add', {
+            post('/donate/submit', {
                 onSuccess: () => {
                     console.log('Added to cart successfully!');
                 },

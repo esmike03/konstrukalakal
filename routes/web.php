@@ -54,7 +54,7 @@ Route::post('/messages/send', [MaterialController::class, 'send']);
 Route::get('/back', [MaterialController::class, 'back'])->name('materials.back');
 
 Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
-
+Route::post('/donate/submit', [cartController::class, 'storeDonate']);
 Route::get('/cart', [CartController::class, 'toCart']);
 Route::get('/cart/donate', [CartController::class, 'todonate']);
 Route::get('/cart/delete/{id}', [CartController::class, 'destroy'])->name('cart.delete');
@@ -78,3 +78,7 @@ Route::post('/trades/{id}/reject', [NavigationController::class, 'rejectTrade'])
 Route::post('/trades/{id}/cancel', [NavigationController::class, 'cancelTrade'])->name('trades.cancelTrade');
 Route::post('/trades/{id}/accept', [NavigationController::class, 'acceptTrade'])->name('trades.acceptTrade');
 
+//Donate
+Route::post('/donate/{id}/reject', [NavigationController::class, 'rejectDonate'])->name('trades.rejectDonate');
+Route::post('/donate/{id}/cancel', [NavigationController::class, 'cancelDonate'])->name('trades.cancelDonate');
+Route::post('/donate/{id}/accept', [NavigationController::class, 'acceptDonate'])->name('trades.acceptDonate');

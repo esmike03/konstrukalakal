@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use Inertia\Inertia;
+use App\Models\Donate;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
@@ -30,22 +31,31 @@ class CartController extends Controller
 
     public function todonate()
     {
-        if (!auth()->check()) {
-            // Redirect to the login route (trigger login modal)
-            return back()->with(
-                'message',
-                'Please login to add items to your cart.'
-            );  // You can also return a custom location for your login modal
-        }
-        $cartItemCount = Cart::where('user_id', auth()->id())->count();
-        $cartItems = Cart::with('material') // Eager load the 'material' relationship
-            ->where('user_id', auth()->id())
+         $user = auth()->user();
+        $userId = auth()->id();
+
+        $donate = Donate::with('material', 'user')
+            ->where(function ($q) use ($user) {
+                $q->where('user_id', $user->id)
+                    ->orWhere('owner', $user->id);
+            })
             ->get();
 
-        return inertia('DonateCart', [
-            'cartItems' => $cartItems,
-            'cartItemCount' => $cartItemCount,
-        ]);
+
+
+        if($donate->first()->user_id == $userId){
+            return inertia('DonateCart', [
+                'trades' => $donate,
+                'isUser' => True,
+            ]);
+
+        } else{
+
+            return inertia('DonateCart', [
+                'trades' => $donate,
+                'isUser' => False,
+            ]);
+        }
     }
 
     public function add(Request $request)
@@ -82,6 +92,45 @@ class CartController extends Controller
         }
 
         return back()->with('message', 'Material added to cart!');
+    }
+
+    public function storeDonate(Request $request)
+    {
+        if (!auth()->check()) {
+            // Redirect to the login route (trigger login modal)
+            return back()->with(
+                'message',
+                'Please login to add items to your cart.'
+            );
+        }
+        $validated = $request->validate([
+            'material_id' => 'required|exists:materials,id',
+            'quantity'    => 'required|integer|min:1',
+            'user_idx'   => 'required'
+        ]);
+
+        // Check if the material is already in the cart
+        $cart = Donate::where('user_id', auth()->id())
+            ->where('material_id', $validated['material_id'])
+            ->first();
+
+        if ($cart) {
+            // If the item exists in the cart, update the quantity
+            // $cart->quantity += $validated['quantity'];  // Add the quantity to the existing quantity
+            // $cart->save();
+            return back()->with('message', 'Pending Transactions!');
+        } else {
+            // If the item doesn't exist, create a new cart entry
+            Donate::create([
+                'user_id'     => auth()->id(),
+                'owner'       => $validated['user_idx'],
+                'material_id' => $validated['material_id'],
+                'quantity'    => $validated['quantity'],
+            ]);
+            return back()->with('message', 'Material added to cart!');
+        }
+
+
     }
 
 

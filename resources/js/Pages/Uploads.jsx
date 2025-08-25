@@ -147,20 +147,7 @@ export default function Materials() {
                             </button>
                         </div>
                     </div>
-                    <div className="flex gap-4">
-                        <div className="bg-white mt-4 shadow-md rounded-lg p-4 w-full max-w-sm border border-gray-200">
-                            <h3 className="text-lg font-semibold text-gray-800 mb-2">Inventory Summary</h3>
-                            <p className="text-sm text-gray-700">
-                            Total Items in Stock: <span className="font-bold text-green-600">{totalQuantity}</span>
-                            </p>
-                        </div>
-                        <div className="bg-white mt-4 shadow-md rounded-lg p-4 w-full max-w-sm border border-gray-200">
-                            <h3 className="text-lg font-semibold text-gray-800 mb-2">Sales</h3>
-                            <p className="text-sm text-gray-700">
-                            Total Sales: <span className="font-bold text-green-600">---</span>
-                            </p>
-                        </div>
-                    </div>
+
 
 
 

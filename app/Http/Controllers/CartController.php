@@ -6,6 +6,7 @@ use App\Models\Cart;
 use Inertia\Inertia;
 use App\Models\Donate;
 use App\Models\Orders;
+use App\Models\Material;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
@@ -45,7 +46,7 @@ class CartController extends Controller
 
 
 
-        if ($donate->first()->user_id == $userId) {
+        if ($donate->isNotEmpty() && $donate->first()->user_id == $userId) {
             return inertia('DonateCart', [
                 'trades' => $donate,
                 'isUser' => True,
@@ -54,6 +55,35 @@ class CartController extends Controller
 
             return inertia('DonateCart', [
                 'trades' => $donate,
+                'isUser' => False,
+            ]);
+        }
+    }
+
+    public function toOrders()
+    {
+        $user = auth()->user();
+        // dd($user);
+        $userId = auth()->id();
+        // dd($userId);
+        $orders = Orders::with('material', 'user')
+            ->where(function ($q) use ($user) {
+                $q->where('user_id', $user->id)
+                    ->orWhere('owner', $user->id);
+            })
+            ->get();
+
+
+
+        if ($orders->isNotEmpty() && $orders->first()->user_id == $userId) {
+            return inertia('Orders', [
+                'trades' => $orders,
+                'isUser' => True,
+            ]);
+        } else {
+
+            return inertia('Orders', [
+                'trades' => $orders,
                 'isUser' => False,
             ]);
         }
@@ -81,8 +111,10 @@ class CartController extends Controller
 
         if ($cart) {
             // If the item exists in the cart, update the quantity
-            $cart->quantity += $validated['quantity'];  // Add the quantity to the existing quantity
-            $cart->save();
+            // $cart->quantity += $validated['quantity'];  // Add the quantity to the existing quantity
+            // $cart->save();
+
+            return back()->with('message', 'Material already added to cart!');
         } else {
             // If the item doesn't exist, create a new cart entry
             Cart::create([
@@ -128,7 +160,7 @@ class CartController extends Controller
                 'material_id' => $validated['material_id'],
                 'quantity'    => $validated['quantity'],
             ]);
-            return back()->with('message', 'Material added to cart!');
+            return back()->with('message', 'Inquire successfully!');
         }
     }
 
@@ -165,33 +197,35 @@ class CartController extends Controller
     public function storeOrder(Request $request)
     {
 
+        $cart = Cart::where('id', $request->material_id)->first();
+
+        $ownerId = $cart->user_id;
+
+        $materialId = $cart->material_id;
+
+        $userMaterial = Material::where('id', $materialId)->first();
+        $materialUser = $userMaterial->user_id;
+
         if (!auth()->check()) {
             // Redirect to the login route (trigger login modal)
             return back()->with(
                 'message',
                 'Please login to add items to your cart.'
             );
+
         }
-        $validated = $request->validate([
-            'items'   => 'required|array',
-            'items.*' => 'exists:carts,id',
-        ]);
 
-        foreach ($validated['items'] as $cartId) {
-            $cartItem = Cart::where('id', $cartId)
-                ->where('user_id', auth()->id())
-                ->first();
-
-            if ($cartItem) {
+        if ($cart) {
                 Orders::create([
                     'user_id'     => auth()->id(),
-                    'material_id' => $cartItem->material_id,
-                    'owner'    => $cartItem->material_id->id,
+                    'material_id' => $materialId,
+                    'owner'    => $materialUser,
                     'status'      => 'pending',
                 ]);
-            }
+        $cart->delete();
+        return back()->with('message', 'Order placed successfully!');
         }
 
-        return back()->with('message', 'Order placed successfully!');
+        return back()->with('message', 'Error Occured!');
     }
 }

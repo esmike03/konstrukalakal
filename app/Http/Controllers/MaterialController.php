@@ -6,6 +6,7 @@ use App\Models\Cart;
 use App\Models\User;
 use App\Models\Trade;
 use App\Models\Donate;
+use App\Models\Orders;
 use App\Models\Message;
 use App\Models\Material;
 use Illuminate\Support\Str;
@@ -241,6 +242,49 @@ class MaterialController extends Controller
         ]);
     }
 
+    public function sendMessagexxx($id, $userId)
+    {
+        $DonateUser = Orders::where('material_id', $id)
+        ->where('user_id', $userId)
+        ->first();
+
+        $cartItemCount = Cart::where('user_id', auth()->id())->count();
+        $material = Material::findOrFail($DonateUser->material_id);
+        $user = User::findOrFail($material->user_id);
+        $authId = $DonateUser->user_id;
+
+        $ownerId = $material->user_id;
+
+        // Find the conversation identifier (start)
+        $conversation = Message::where('material_id', $material->id)
+            ->where(function ($query) use ($authId, $ownerId) {
+                $query->where(function ($q) use ($authId, $ownerId) {
+                    $q->where('sender_id', $authId)
+                        ->where('recipient_id', $ownerId);
+                })
+                    ->orWhere(function ($q) use ($authId, $ownerId) {
+                        $q->where('sender_id', $ownerId)
+                            ->where('recipient_id', $authId);
+                    });
+            })
+            ->first();
+
+        $start = $conversation ? $conversation->start : null;
+
+        // Now fetch all messages using start if it exists
+        $messages = $start
+            ? Message::where('start', $start)->orderBy('created_at', 'asc')->get()
+            : collect(); // empty if no conversation yet
+
+        return inertia('SendMessage', [
+            'material'       => $material,
+            'cartItemCount'  => $cartItemCount,
+            'user'           => $user,
+            'messages'       => $messages,
+            'conversationId' => $start, // pass conversation id if you need it
+        ]);
+    }
+
 
     public function sendMessage2($start)
     {
@@ -381,7 +425,7 @@ class MaterialController extends Controller
 
         // dd($trades->first()->user_id);
 
-        if($trades->first()->user_id == $userId){
+        if($trades->isNotEmpty() && $trades->first()->user_id == $userId){
             return inertia('MyTrades', [
                 'trades' => $trades,
                 'isUser' => True,

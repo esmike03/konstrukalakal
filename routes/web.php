@@ -52,7 +52,7 @@ Route::post('/messages/send', [MaterialController::class, 'send']);
 Route::get('/messagex/{id}', [MaterialController::class, 'sendMessagex'])->name('messagex.showx');
 Route::get('/messagex/{id}/{userId}', [MaterialController::class, 'sendMessagexx'])->name('messagexx.showxx');
 Route::get('/back', [MaterialController::class, 'back'])->name('materials.back');
-
+Route::get('/messagexx/{id}/{userId}', [MaterialController::class, 'sendMessagexxx'])->name('messagexxx.showxxx');
 Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
 Route::post('/donate/submit', [CartController::class, 'storeDonate']);
 
@@ -62,7 +62,7 @@ Route::get('/cart', [CartController::class, 'toCart']);
 Route::get('/cart/donate', [CartController::class, 'todonate']);
 Route::get('/cart/delete/{id}', [CartController::class, 'destroy'])->name('cart.delete');
 Route::get('/uploads/delete/{id}', [MaterialController::class, 'uploadDestroy'])->name('upload.delete');
-
+Route::get('/Orders', [CartController::class, 'toOrders']);
 Route::post('/profile/update-image', [ProfileController::class, 'updateProfileImage'])->middleware('auth');
 
 Route::put('/materials-update/{material}', [MaterialController::class, 'updateMaterial'])
@@ -85,3 +85,8 @@ Route::post('/trades/{id}/accept', [NavigationController::class, 'acceptTrade'])
 Route::post('/donate/{id}/reject', [NavigationController::class, 'rejectDonate'])->name('trades.rejectDonate');
 Route::post('/donate/{id}/cancel', [NavigationController::class, 'cancelDonate'])->name('trades.cancelDonate');
 Route::post('/donate/{id}/accept', [NavigationController::class, 'acceptDonate'])->name('trades.acceptDonate');
+
+//ORders
+Route::post('/order/{id}/reject', [NavigationController::class, 'rejectOrder'])->name('trades.rejectOrder');
+Route::post('/order/{id}/cancel', [NavigationController::class, 'cancelOrder'])->name('trades.cancelOrder');
+Route::post('/order/{id}/accept', [NavigationController::class, 'acceptOrder'])->name('trades.acceptOrder');

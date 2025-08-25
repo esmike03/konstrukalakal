@@ -3,20 +3,20 @@ import { useState, useEffect } from "react";
 import { ShoppingCart, CheckCircle, X } from "lucide-react";
 
 export default function Cart() {
-  const { cartItems, flash } = usePage().props;
-  const [showMessage, setShowMessage] = useState(false);
-  const [activeTab, setActiveTab] = useState("sale");
-  const [selectedItem, setSelectedItem] = useState(null);
-  const { post } = useForm();
-
-  const handleConfirm = () => {
-    if (!selectedItem) return;
-
-    post("/order/submit", {
-      material_id: selectedItem,
-
+    const { cartItems, flash } = usePage().props;
+    const [showMessage, setShowMessage] = useState(false);
+    const [activeTab, setActiveTab] = useState("sale");
+    const [selectedItem, setSelectedItem] = useState(null);
+    const form = useForm({
+    material_id: null,
     });
-  };
+
+
+    const handleConfirm = () => {
+    if (!selectedItem) return;
+    form.post("/order/submit");
+    };
+
 
   useEffect(() => {
     if (flash?.message) {
@@ -34,7 +34,9 @@ export default function Cart() {
 
     const handleSelectItem = (itemId) => {
     setSelectedItem((prev) => (prev === itemId ? null : itemId));
+    form.setData("material_id", itemId);  // ✅ make sure form has data
     };
+
 
   // build a query string like "items[]=3&items[]=7&items[]=12"
   const checkoutQuery = selectedItem ? `?items[]=${selectedItem}` : "";
@@ -69,6 +71,9 @@ export default function Cart() {
         </Link>
         <Link href="/my-trades" className="bg-green-500 px-2 rounded-md text-white cursor-pointer">
             Trades
+        </Link>
+        <Link href="/Orders" className="bg-green-500 px-2 rounded-md text-white cursor-pointer">
+            Orders
         </Link>
 
 
@@ -146,7 +151,7 @@ export default function Cart() {
       )}
 
       {/* Proceed to Checkout (with query string) */}
-        {selectedItem && (
+        {selectedItem != null && (
         <div className="mt-8 text-center">
             <button
             onClick={handleConfirm}

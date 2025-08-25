@@ -42,7 +42,7 @@ export default function Show({ material, user }) {
             openLoginModal();
           }else{
 
-            post('/donate/submit', {
+            post('/cart/add', {
                 onSuccess: () => {
                     console.log('Added to cart successfully!');
                 },
@@ -79,7 +79,7 @@ export default function Show({ material, user }) {
             openLoginModal();
           }else{
 
-            post('/donate/add', {
+            post('/donate/submit', {
                 onSuccess: () => {
                     console.log('Inquire Successfully!');
                 },
@@ -210,7 +210,7 @@ export default function Show({ material, user }) {
 
                     ) : (
                             <button
-                            onClick={addToCart}
+                            onClick={addToDonate}
                             disabled={false} // You can replace this with a processing state if needed
                             className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-all duration-200"
                             >

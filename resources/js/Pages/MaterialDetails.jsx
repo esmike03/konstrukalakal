@@ -167,8 +167,8 @@ export default function Show({ material, user }) {
 
                     <div className="flex items-center mt-2 space-x-4">
 
-                        {(material.forbdt !== "Trade" && material.forbdt !== "Donate") && (
 
+                        {(!material.forbdt === "Donation" || !material.forbdt === "Trade" || material.forbdt === "Sale") && (
 
                             <p className="text-green-600 font-bold content-center items-center">
                             Price: <span className="text-green-600">₱{material.price}</span>

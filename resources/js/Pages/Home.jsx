@@ -9,6 +9,9 @@ export default function Home() {
     const { flash } = usePage().props;
     const [showMessage, setShowMessage] = useState(false);
     const { openRegisterModal } = useModal();
+
+    const { props } = usePage()
+    const user = props.auth?.user
     useEffect(() => {
         if (flash?.message) {
             setShowMessage(true); // Show the message
@@ -196,7 +199,7 @@ export default function Home() {
                     </div>
                 </div>
             </section>
-
+            {!user && (
             <section className="bg-green-600 text-white py-16 text-center">
                 <div className="max-w-4xl mx-auto px-4">
                     <h2 className="text-2xl font-bold">Ready to Join Our Community?</h2>
@@ -209,6 +212,7 @@ export default function Home() {
                     </button>
                 </div>
             </section>
+            )}
 
             <footer className="bg-green-800 text-gray-100 py-10">
                 <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8">

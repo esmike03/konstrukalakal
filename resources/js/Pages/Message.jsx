@@ -31,12 +31,15 @@ export default function Messages() {
                   className="h-12 w-12 rounded-full object-cover"
                 />
                 <div className="ml-4 flex-1">
-                  <p className="text-sm font-medium text-gray-900">
-                    {chat.user.name} | {chat.material_name}
-                    <span className="text-gray-300">
-                         | {chat.conversation_id.slice(0, 8) + '...'}
-                    </span>
-                  </p>
+                  <div>
+                    <p className="text-md font-bold text-gray-900">
+                        {chat.user.name}
+                    </p>
+                    <p className="text-xs text-gray-700">
+                        {chat.material_name} | <span className="text-xs text-gray-400">{chat.conversation_id.slice(0, 8) + '...'}</span>
+                    </p>
+
+                </div>
                   <p className="text-xs text-gray-500 truncate">
                     {chat.last_message.content}
                   </p>

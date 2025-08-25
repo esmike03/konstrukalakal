@@ -120,8 +120,14 @@ export default function Home() {
                                     </div>
                                     <div>
                                         <div className="flex mt-1 gap-2 justify-between">
-                                            <p className="text-green-600 font-bold content-center  items-center">₱ {material.price}</p>
-                                            <p className="text-xs text-gray-500 mt-1">Qty: {material.quantity}</p>
+                                        {(!material.forbdt === "Donation" || !material.forbdt === "Trade" || material.forbdt === "Sale") && (
+                                        <p className="text-green-600 font-bold content-center items-center">
+                                            ₱ {material.price}
+                                        </p>
+                                        )}
+
+
+
                                         </div>
                                         <Link href={`/materials/${material.id}`} className="cursor-pointer">
                                             <button className=" bottom-0 w-full mt-2 text-sm bg-green-600 text-white py-1 rounded-full hover:bg-green-700">View Details</button>

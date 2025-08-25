@@ -69,11 +69,17 @@ const handleSend = (e) => {
                 {material.material_name}
               </h1>
               <p className="text-xs font-semibold text-gray-800 mt-2">
-                Price:{" "}
+
+                {(!material.forbdt === "Donation" || !material.forbdt === "Trade" || material.forbdt === "Sale") && (
+
                 <span className="text-green-600 text-xs">
+                  Price:{" "}
                   ₱{material.price}
 
                 </span>
+
+                )}
+
               </p>
             </div>
           </div>

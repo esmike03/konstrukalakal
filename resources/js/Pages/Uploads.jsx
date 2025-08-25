@@ -183,7 +183,11 @@ export default function Materials() {
                                     </div>
                                     <div>
                                         <div className="flex mt-1 gap-2 justify-between">
+                                        {(!material.forbdt === "Donation" || !material.forbdt === "Trade" || material.forbdt === "Sale") && (
+
                                             <p className="text-green-600 font-bold content-center  items-center">₱ {material.price}</p>
+                                        )}
+
                                             <p className="text-xs text-gray-500 mt-1">Qty: {material.quantity}</p>
                                         </div>
                                         <div className="flex w-full justify-between">

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Cart;
 use Inertia\Inertia;
 use App\Models\Donate;
+use App\Models\Orders;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
@@ -31,7 +32,8 @@ class CartController extends Controller
 
     public function todonate()
     {
-         $user = auth()->user();
+        $user = auth()->user();
+        // dd($user);
         $userId = auth()->id();
 
         $donate = Donate::with('material', 'user')
@@ -43,13 +45,12 @@ class CartController extends Controller
 
 
 
-        if($donate->first()->user_id == $userId){
+        if ($donate->first()->user_id == $userId) {
             return inertia('DonateCart', [
                 'trades' => $donate,
                 'isUser' => True,
             ]);
-
-        } else{
+        } else {
 
             return inertia('DonateCart', [
                 'trades' => $donate,
@@ -129,8 +130,6 @@ class CartController extends Controller
             ]);
             return back()->with('message', 'Material added to cart!');
         }
-
-
     }
 
 
@@ -161,5 +160,38 @@ class CartController extends Controller
             'selectedItems' => $selectedItems,
             'cartItemCount' => $cartItemCount,
         ]);
+    }
+
+    public function storeOrder(Request $request)
+    {
+
+        if (!auth()->check()) {
+            // Redirect to the login route (trigger login modal)
+            return back()->with(
+                'message',
+                'Please login to add items to your cart.'
+            );
+        }
+        $validated = $request->validate([
+            'items'   => 'required|array',
+            'items.*' => 'exists:carts,id',
+        ]);
+
+        foreach ($validated['items'] as $cartId) {
+            $cartItem = Cart::where('id', $cartId)
+                ->where('user_id', auth()->id())
+                ->first();
+
+            if ($cartItem) {
+                Orders::create([
+                    'user_id'     => auth()->id(),
+                    'material_id' => $cartItem->material_id,
+                    'owner'    => $cartItem->material_id->id,
+                    'status'      => 'pending',
+                ]);
+            }
+        }
+
+        return back()->with('message', 'Order placed successfully!');
     }
 }

@@ -1,4 +1,4 @@
-import { usePage, Link } from "@inertiajs/react";
+import { usePage, Link, useForm } from "@inertiajs/react";
 import { useState, useEffect } from "react";
 import { ShoppingCart, CheckCircle, X } from "lucide-react";
 
@@ -7,6 +7,16 @@ export default function Cart() {
   const [showMessage, setShowMessage] = useState(false);
   const [activeTab, setActiveTab] = useState("sale");
   const [selectedItem, setSelectedItem] = useState(null);
+  const { post } = useForm();
+
+  const handleConfirm = () => {
+    if (!selectedItem) return;
+
+    post("/order/submit", {
+      material_id: selectedItem,
+
+    });
+  };
 
   useEffect(() => {
     if (flash?.message) {
@@ -15,6 +25,8 @@ export default function Cart() {
       return () => clearTimeout(timer);
     }
   }, [flash]);
+
+
 
   const filteredItems = cartItems.filter(
     (item) => item.material.forbdt.toLowerCase() === activeTab
@@ -136,13 +148,13 @@ export default function Cart() {
       {/* Proceed to Checkout (with query string) */}
         {selectedItem && (
         <div className="mt-8 text-center">
-            <Link
-            href={`/checkout${checkoutQuery}`}
+            <button
+            onClick={handleConfirm}
             className="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-md text-lg font-semibold transition"
             >
             <ShoppingCart size={20} />
             Confirm
-            </Link>
+            </button>
         </div>
         )}
 

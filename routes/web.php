@@ -49,12 +49,15 @@ Route::get('/materials-edit/{id}', [MaterialController::class, 'editMaterial'])-
 Route::get('/message/{id}', [MaterialController::class, 'sendMessage'])->name('message.show');
 Route::get('/message2/{start}', [MaterialController::class, 'sendMessage2'])->name('message2.show');
 Route::post('/messages/send', [MaterialController::class, 'send']);
-
-
+Route::get('/messagex/{id}', [MaterialController::class, 'sendMessagex'])->name('messagex.showx');
+Route::get('/messagex/{id}/{userId}', [MaterialController::class, 'sendMessagexx'])->name('messagexx.showxx');
 Route::get('/back', [MaterialController::class, 'back'])->name('materials.back');
 
 Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
-Route::post('/donate/submit', [cartController::class, 'storeDonate']);
+Route::post('/donate/submit', [CartController::class, 'storeDonate']);
+
+Route::post('/order/submit', [CartController::class, 'storeOrder'])->name('order');
+
 Route::get('/cart', [CartController::class, 'toCart']);
 Route::get('/cart/donate', [CartController::class, 'todonate']);
 Route::get('/cart/delete/{id}', [CartController::class, 'destroy'])->name('cart.delete');

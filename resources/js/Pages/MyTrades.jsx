@@ -198,6 +198,13 @@ export default function MyTrades({ trades, isUser }) {
                                         >
                                             Reject Trade
                                         </button>
+                                        <Link
+                                            href={`/messagex/${trade.item_title}`}
+                                            className="flex items-center gap-1 bg-blue-500 text-white px-2 py-1 rounded-md"
+                                        >
+                                            <MessageCircle className="w-4 h-4" />
+                                            Message
+                                        </Link>
 
                                         <button
                                             onClick={() => acceptTrade(trade.id)}

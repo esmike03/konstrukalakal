@@ -43,7 +43,7 @@ export default function DonateCart({ trades, isUser }) {
 
     return (
         <>
-            <Head title="My Trades" />
+            <Head title="Donates" />
 
             <div className="max-w-6xl mx-auto py-10 px-6">
                 {/* Flash message */}
@@ -188,7 +188,13 @@ export default function DonateCart({ trades, isUser }) {
                                         >
                                             Reject
                                         </button>
-
+                                        <Link
+                                            href={`/messagex/${trade.material_id}/${trade.user_id}`}
+                                            className="flex items-center gap-1 bg-blue-500 text-white px-2 py-1 rounded-md"
+                                        >
+                                            <MessageCircle className="w-4 h-4" />
+                                            Message
+                                        </Link>
                                         <button
                                             onClick={() => acceptDonate(trade.id)}
                                             disabled={

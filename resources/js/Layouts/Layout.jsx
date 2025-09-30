@@ -1,16 +1,18 @@
 import { useState } from "react";
 import { Link, Head, usePage } from "@inertiajs/react";
 import { useModal } from "@/context/ModalContext";
-import { ShoppingCart, LogOut, User, Menu, X, Bell, MessageCircle, Upload } from "lucide-react";
+import { ShoppingCart, Clock, LogOut, User, Menu, X, Bell, MessageCircle, Upload } from "lucide-react";
 
 export default function Layout({ children }) {
   const { openLoginModal, openRegisterModal } = useModal();
   const { auth } = usePage().props;
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
-
+  const [showNotif, setShowNotif] = useState(true);
   const toggleMobileMenu = () => setMobileMenuOpen(!isMobileMenuOpen);
   const closeMobileMenu = () => setMobileMenuOpen(false);
   const { cartItemCount } = usePage().props;
+  const { notifcount } = usePage().props;
+  const { item } = usePage().props;
   return (
     <>
       <Head>
@@ -103,11 +105,16 @@ export default function Layout({ children }) {
                     <MessageCircle size={20} className="mr-2 text-gray-700 cursor-pointer hover:text-green-600"/>
                 </Link>
 
-                    <div className="relative group">
-                    <Bell size={20} className="mr-2 text-gray-700 cursor-pointer hover:text-green-600"/>
-                    <div className="absolute z-50   w-40 bg-white border rounded-md shadow-lg hidden group-hover:block">
-                        <p className="text-xs px-3 p-1 text-center">No New Notifications</p>
-                    </div>
+                    <div className="relative group" onMouseEnter={() => setShowNotif(false)}>
+                        <Bell size={20} className="mr-2 text-gray-700 cursor-pointer hover:text-green-600"/>
+                        {showNotif && notifcount > 0 && (
+                            <span className="absolute -top-2 -right-0 bg-red-500 text-white text-xs rounded-full px-1">
+                            {notifcount}
+                            </span>
+                        )}
+                        <div className="absolute z-50 w-40 bg-white border rounded-md shadow-lg hidden group-hover:block">
+                            <p className="text-xs px-3 p-1 text-center">No New Notifications</p>
+                        </div>
                   </div>
                 </div>
               )}
@@ -131,7 +138,7 @@ export default function Layout({ children }) {
                         </button>
                   </div>
 
-                    <div className="absolute right-0 mt-0.5 w-40 bg-white border rounded-md shadow-lg hidden group-hover:block">
+                    <div className="absolute right-0 mt-0.5 w-40 z-50 bg-white border rounded-md shadow-lg hidden group-hover:block">
                       <Link
                         href="/profile"
                         className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-gray-100"
@@ -144,6 +151,14 @@ export default function Layout({ children }) {
                         className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 w-full text-left"
                       >
                         <Upload size={18} /> My Uploads
+                      </Link>
+
+                      <Link
+                        href="/uploaded"
+
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 w-full text-left"
+                      >
+                        <Clock size={18} /> History
                       </Link>
                       <Link
                         href="/logout"

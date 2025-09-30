@@ -1,22 +1,47 @@
 import { usePage, Link, useForm } from "@inertiajs/react";
-import { useState, useEffect } from "react";
-import { ShoppingCart, CheckCircle, X } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { ShoppingCart, CheckCircle, X, ArrowLeft, MessageCircle } from "lucide-react";
 
 export default function Cart() {
-    const { cartItems, flash } = usePage().props;
-    const [showMessage, setShowMessage] = useState(false);
-    const [activeTab, setActiveTab] = useState("sale");
-    const [selectedItem, setSelectedItem] = useState(null);
-    const form = useForm({
-    material_id: null,
-    });
+  const { cartItems, flash, auth } = usePage().props;
+  const [showMessage, setShowMessage] = useState(false);
+  const [activeTab, setActiveTab] = useState("sale");
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [filter, setFilter] = useState("pending");
 
+  // ✅ Single useForm
+  const form = useForm({ material_id: null });
+  const { post } = form;
 
-    const handleConfirm = () => {
-    if (!selectedItem) return;
-    form.post("/order/submit");
+  const rejectDonate = (id) => {
+    if (confirm("Are you sure you want to reject this Inquiry?")) {
+      post(`/donate/${id}/reject`);
+    }
+  };
+
+  const cancelDonate = (id) => {
+    if (confirm("Are you sure you want to cancel this Inquiry?")) {
+      post(`/donate/${id}/cancel`);
+    }
+  };
+
+    const handleConfirm = (id) => {
+        if (confirm("Are you sure you want to confirm this Item?")) {
+        post(`/order/${id}/submit`);
+        }
+        // form.post("/order/submit");
     };
 
+  const acceptDonate = (id) => {
+    if (confirm("Are you sure you want to accept this Inquiry?")) {
+      post(`/donate/${id}/accept`);
+    }
+  };
+
+  // ✅ Filtered trades from cartItems
+  const filteredTrades = cartItems.filter(
+    (trade) => filter === "all" || trade.status === filter
+  );
 
   useEffect(() => {
     if (flash?.message) {
@@ -26,19 +51,16 @@ export default function Cart() {
     }
   }, [flash]);
 
-
-
+  // (fix this to match your real data field)
   const filteredItems = cartItems.filter(
-    (item) => item.material.forbdt.toLowerCase() === activeTab
+    (item) => item.material.category?.toLowerCase() === activeTab
   );
 
-    const handleSelectItem = (itemId) => {
+  const handleSelectItem = (itemId) => {
     setSelectedItem((prev) => (prev === itemId ? null : itemId));
-    form.setData("material_id", itemId);  // ✅ make sure form has data
-    };
+    form.setData("material_id", itemId);
+  };
 
-
-  // build a query string like "items[]=3&items[]=7&items[]=12"
   const checkoutQuery = selectedItem ? `?items[]=${selectedItem}` : "";
 
   return (
@@ -64,105 +86,168 @@ export default function Cart() {
       )}
 
       {/* Header */}
-      <h1 className="text-3xl font-bold text-center mb-6">Cart</h1>
+
+
+      {/* Nav */}
       <div className="gap-2 flex">
-        <Link href="/cart/donate" className="bg-green-500 px-2 rounded-md text-white cursor-pointer">
-            Donation
+        <Link href="/cart/donate" className="bg-green-500 px-2 py-1 rounded-md text-white">
+          Donation
         </Link>
-        <Link href="/my-trades" className="bg-green-500 px-2 rounded-md text-white cursor-pointer">
-            Trades
+        <Link href="/my-trades" className="bg-green-500 px-2 py-1 rounded-md text-white">
+          Trades
         </Link>
-        <Link href="/Orders" className="bg-green-500 px-2 rounded-md text-white cursor-pointer">
-            Orders
+        <Link href="/Orders" className="bg-green-500 px-2 py-1 rounded-md text-white">
+          Orders
         </Link>
-
-
       </div>
-      {/* Tabs */}
-      <div className="flex justify-center space-x-4 mb-6">
-        {["sale"].map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 rounded-md ${
-              activeTab === tab ? "bg-blue-500 text-white" : "bg-gray-200"
-            }`}
-          >
-            {tab.charAt(0).toUpperCase() + tab.slice(1)}
-          </button>
-        ))}
-      </div>
-
-      {/* Items */}
-      {filteredItems.length ? (
-        <ul className="space-y-4">
-          {filteredItems.map((item) => (
-            <li
-              key={item.id}
-              className="flex justify-between items-center border-b pb-4"
+      <div className="mt-2 w-full flex justify-between">
+            <h1 className="text-3xl font-bold text-center mb-6">Sale Cart</h1>
+          <div>
+            <label className="mr-2 font-semibold">Filter by status:</label>
+            <select
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+              className="border rounded-md px-3 py-1"
             >
-              <div className="flex items-center gap-4">
-                <input
-                type="checkbox"
-                checked={selectedItem === item.id}
-                onChange={() => handleSelectItem(item.id)}
-                className="w-5 h-5"
-                />
-
-                <img
-                  src={`/storage/${item.material.image}`}
-                  alt={item.material.material_name}
-                  className="w-16 h-16 object-cover rounded-md"
-                />
-                <div>
-                  <h3 className="text-lg font-semibold">
-                    {item.material.material_name}
-                  </h3>
-
-                    <p className="text-sm text-gray-500">
-                    {item.quantity} x{" "}
-                    {(item.material.forbdt !== "Trade" && item.material.forbdt !== "Donation") ? (
-                      `₱${item.material.price}`
-                    ) : (
-                      ""
-                    )}
-                  </p>
-
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-              {(item.material.forbdt !== "Trade" && item.material.forbdt !== "Donation") && (
-                <span className="font-semibold text-gray-800">
-                  ₱{item.quantity * item.material.price}
-                </span>
-               )}
-
-                <Link href={`/cart/delete/${item.id}`}>
-                  <button className="bg-red-500 text-white px-3 py-1 rounded-md">
-                    Remove
-                  </button>
-                </Link>
-              </div>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="text-center text-gray-500">Your cart is empty.</p>
-      )}
-
-      {/* Proceed to Checkout (with query string) */}
-        {selectedItem != null && (
-        <div className="mt-8 text-center">
-            <button
-            onClick={handleConfirm}
-            className="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-md text-lg font-semibold transition"
-            >
-            <ShoppingCart size={20} />
-            Confirm
-            </button>
+              <option value="all">All</option>
+              <option value="pending">Pending</option>
+              <option value="accepted">Accepted</option>
+              <option value="rejected">Rejected</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
         </div>
-        )}
 
+
+      {/* Filter & Trades */}
+      <div className="mt-1">
+
+
+        {filteredTrades.length === 0 ? (
+          <p className="text-gray-500">No trades match this filter.</p>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {filteredTrades.map((trade) => {
+              const isUser = trade.user_id === auth.user.id; // ✅ define isUser here
+
+              return (
+                <div
+                  key={trade.id}
+                  className="bg-white group hover:shadow-lg hover:scale-[1.02] transition-transform shadow-md rounded-lg w-fit py-2 px-6 border border-gray-200"
+                >
+                  {/* Status */}
+                  <div className="mb-2">
+                    <p
+                      className={`text-sm rounded-md py-1 text-gray-50 text-center w-full
+                        ${trade.status === "pending" ? "bg-amber-400" : ""}
+                        ${trade.status === "accepted" ? "bg-green-500" : ""}
+                        ${trade.status === "rejected" ? "bg-red-500" : ""}
+                        ${trade.status === "cancelled" ? "bg-red-500" : ""}
+                      `}
+                    >
+                      <span className="font-semibold uppercase">{trade.status}</span>
+                    </p>
+                  </div>
+
+                  {/* Trader */}
+                  <div className="w-full text-center text-xs mb-2">
+                    {!isUser ? trade.user.name : "Owner"}
+                  </div>
+
+                  {/* Material */}
+                  <div className="flex justify-center">
+                    <Link href={`/materials/${trade.material.id}`} className="text-center">
+                      <img
+                        src={`/storage/${trade.material.image}`}
+                        alt={trade.material.material_name}
+                        className="w-16 h-16 object-cover rounded-md mx-auto"
+                      />
+                      <p className="font-bold text-sm">{trade.material.material_name}</p>
+                    </Link>
+                  </div>
+
+                  {/* Actions */}
+                  {isUser ? (
+                    <div className="w-full py-2 gap-3 flex justify-between">
+                      <button
+                        disabled={trade.status === "rejected" || trade.status === "cancelled"}
+                        onClick={() => cancelDonate(trade.id)}
+                        className={`px-2 py-1 rounded-md text-white
+                          ${
+                            trade.status === "rejected" || trade.status === "cancelled"
+                              ? "bg-gray-400 cursor-not-allowed"
+                              : "bg-red-500 hover:bg-red-600"
+                          }`}
+                      >
+                        Cancel
+                      </button>
+                        <button
+                            onClick={() => handleConfirm(trade.id)}
+                            className="flex items-center gap-1 bg-green-500 text-white px-2 py-1 rounded-md"
+                        >
+                            Confirm
+                        </button>
+                        <Link
+                            href={`/message/${trade.material_id}`}
+                            className="flex items-center gap-1 bg-blue-500 text-white px-2 py-1 rounded-md"
+                        >
+                            <MessageCircle className="w-4 h-4" />
+
+                        </Link>
+                    </div>
+                  ) : (
+                    <div className="w-full py-2 gap-3 flex justify-between">
+                      <button
+                        disabled={
+                          trade.status === "rejected" ||
+                          trade.status === "cancelled" ||
+                          trade.status === "accepted"
+                        }
+                        onClick={() => rejectDonate(trade.id)}
+                        className={`px-2 py-1 rounded-md text-white
+                          ${
+                            trade.status === "rejected" ||
+                            trade.status === "cancelled" ||
+                            trade.status === "accepted"
+                              ? "bg-gray-400 cursor-not-allowed"
+                              : "bg-red-500 hover:bg-red-600"
+                          }`}
+                      >
+                        Reject
+                      </button>
+                      <Link
+                        href={`/messagex/${trade.material_id}/${trade.user_id}`}
+                        className="flex items-center gap-1 bg-blue-500 text-white px-2 py-1 rounded-md"
+                      >
+                        <MessageCircle className="w-4 h-4" />
+                        Message
+                      </Link>
+                      <button
+                        onClick={() => acceptDonate(trade.id)}
+                        disabled={
+                          trade.status === "rejected" ||
+                          trade.status === "cancelled" ||
+                          trade.status === "accepted"
+                        }
+                        className={`px-2 py-1 rounded-md text-white
+                          ${
+                            trade.status === "rejected" ||
+                            trade.status === "cancelled" ||
+                            trade.status === "accepted"
+                              ? "bg-gray-400 cursor-not-allowed"
+                              : "bg-green-500 hover:bg-green-600"
+                          }`}
+                      >
+                        Accept
+                      </button>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

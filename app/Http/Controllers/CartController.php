@@ -8,6 +8,7 @@ use App\Models\Donate;
 use App\Models\Orders;
 use App\Models\Material;
 use Illuminate\Http\Request;
+use App\Models\Notifications;
 
 class CartController extends Controller
 {
@@ -25,10 +26,36 @@ class CartController extends Controller
             ->where('user_id', auth()->id())
             ->get();
 
-        return inertia('Cart', [
-            'cartItems' => $cartItems,
-            'cartItemCount' => $cartItemCount,
-        ]);
+        $user = auth()->user();
+        // dd($user);
+        $userId = auth()->id();
+
+        $donate = Cart::with('material', 'user')
+            ->where(function ($q) use ($user) {
+                $q->where('user_id', $user->id)
+                    ->orWhere('owner', $user->id);
+            })
+            ->get();
+
+
+
+        if ($donate->isNotEmpty() && $donate->first()->user_id == $userId) {
+            return inertia('Cart', [
+                'trades' => $donate,
+                'isUser' => True,
+                'cartItems' => $cartItems,
+                'cartItemCount' => $cartItemCount,
+            ]);
+        } else {
+
+            return inertia('Cart', [
+                'trades' => $donate,
+                'isUser' => False,
+                'cartItems' => $cartItems,
+                'cartItemCount' => $cartItemCount,
+            ]);
+        }
+
     }
 
     public function todonate()
@@ -108,6 +135,9 @@ class CartController extends Controller
         $cart = Cart::where('user_id', auth()->id())
             ->where('material_id', $validated['material_id'])
             ->first();
+        $notification = Notifications::where('user_id', auth()->id())
+            ->where('material_id', $validated['material_id'])
+            ->first();
 
         if ($cart) {
             // If the item exists in the cart, update the quantity
@@ -118,6 +148,12 @@ class CartController extends Controller
         } else {
             // If the item doesn't exist, create a new cart entry
             Cart::create([
+                'user_id'     => auth()->id(),
+                'material_id' => $validated['material_id'],
+                'quantity'    => $validated['quantity'],
+            ]);
+
+            Notifications::create([
                 'user_id'     => auth()->id(),
                 'material_id' => $validated['material_id'],
                 'quantity'    => $validated['quantity'],
@@ -208,14 +244,15 @@ class CartController extends Controller
         ]);
     }
 
-    public function storeOrder(Request $request)
+    public function storeOrder(Request $request, $id)
     {
 
-        $cart = Cart::where('id', $request->material_id)->first();
+        $ids = Cart::findOrFail($id);
+        // $cart = Cart::where('id', $ids->material_id)->first();
 
-        $ownerId = $cart->user_id;
+        // $ownerId = $cart->user_id;
 
-        $materialId = $cart->material_id;
+        $materialId = $ids->material_id;
 
         $userMaterial = Material::where('id', $materialId)->first();
         $materialUser = $userMaterial->user_id;
@@ -229,14 +266,14 @@ class CartController extends Controller
 
         }
 
-        if ($cart) {
+        if ($ids) {
                 Orders::create([
                     'user_id'     => auth()->id(),
                     'material_id' => $materialId,
                     'owner'    => $materialUser,
                     'status'      => 'pending',
                 ]);
-        $cart->delete();
+        $ids->delete();
         return back()->with('message', 'Order placed successfully!');
         }
 

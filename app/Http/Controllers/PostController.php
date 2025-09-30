@@ -7,6 +7,7 @@ use App\Models\Post;
 use Inertia\Inertia;
 use App\Models\Material;
 use Illuminate\Http\Request;
+use App\Models\Notifications;
 
 class PostController extends Controller
 {
@@ -15,14 +16,19 @@ class PostController extends Controller
      */
     public function index()
     {
-
+        $logon = auth()->id();
         $materials = Material::latest()->paginate(3)->toArray(); // Convert to array
+
+        $notifcount = Notifications::where('user_id', $logon)->count();
+        $item = Notifications::where('user_id', $logon)->latest()->get();
 
         $cartItemCount = Cart::where('user_id', auth()->id())->count();
 
         return Inertia::render('Home', [
             'materials' => $materials,
             'cartItemCount' => $cartItemCount, // Send the full paginated data
+            'notifcount' => $notifcount,
+            'item' => $item,
         ]);
     }
 

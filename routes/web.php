@@ -56,7 +56,7 @@ Route::get('/messagexx/{id}/{userId}', [MaterialController::class, 'sendMessagex
 Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
 Route::post('/donate/submit', [CartController::class, 'storeDonate']);
 
-Route::post('/order/submit', [CartController::class, 'storeOrder'])->name('order');
+Route::post('/order/{id}/submit', [CartController::class, 'storeOrder'])->name('order');
 
 Route::get('/cart', [CartController::class, 'toCart']);
 Route::get('/cart/donate', [CartController::class, 'todonate']);

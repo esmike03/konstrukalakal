@@ -13,6 +13,8 @@ class Cart extends Model
         'user_id',
         'material_id',
         'quantity',
+        'owner',
+        'status'
     ];
 
     /**
@@ -30,4 +32,6 @@ class Cart extends Model
     {
         return $this->belongsTo(Material::class);
     }
+
+
 }

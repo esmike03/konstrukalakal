@@ -188,7 +188,11 @@ export default function Show({ material, user }) {
 
                     {/* Buttons */}
                     <div className="mt-6 flex flex-wrap gap-4">
+                        {auth?.user?.id === user.id ? (
+                            <p>You can edit this one in My Uploads.</p>
+                        ) : (
 
+                            <>
                     {material.forbdt === "Sale" ? (
                             <button
                                 onClick={addToCart}
@@ -231,7 +235,10 @@ export default function Show({ material, user }) {
                               ✉️ <span className="text-sm">Message</span>
                             </Link>
                           )}
+                          </>
+                        )}
                     </div>
+
                 </div>
             </div>
         </>

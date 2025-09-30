@@ -67,19 +67,31 @@ export default function Home() {
 
 
                     <div className="relative flex items-center sm:m-10">
-                        <div
-                        className="absolute -top-10 md:-top-20 -left-10 sm:w-32 sm:h-32 lg:w-64 lg:h-64 bg-green-500 rotate-12 rounded-lg border-green-700 border-b-4 border-r-8 max-sm:hidden">
-                        </div>
-                        <div className="relative z-10 bg-white  p-4 sm:p-4 -right-1/2 -translate-x-1/2 grow text-center shadow-2xl -rotate-2 rounded-xl text-nowrap border-green-700 border-b-4 border-r-8">
-                            <h2 className="text-2xl sm:text-3xl font-extrabold  text-gray-800 ">
-                                Eco-friendly Impact
-                            </h2>
-                            <p className="mt-1 text-sm sm:text-base font-light text-gray-400 dark:text-gray-400">
-                                1000+ materials recycled
-                            </p>
-                        </div>
-                        <div className="absolute -bottom-10 md:-bottom-20 -right-16 sm:w-32 sm:h-32 lg:w-64 lg:h-64 bg-green-400 -rotate-12 rounded-lg border-green-700 border-r-4 border-b-8 max-sm:hidden"></div>
-                    </div>
+  {/* Left Construction Material Image */}
+  <img
+    src="/images/const1.jpg" // <-- replace with your image path
+    alt="Construction Material"
+    className="absolute -top-10 md:-top-20 -left-10 sm:w-32 sm:h-32 lg:w-64 lg:h-64 object-cover rounded-lg border-green-700 border-b-4 border-r-8 max-sm:hidden rotate-12"
+  />
+
+    {/* Center Card */}
+    <div className="relative z-10 bg-black/50  p-4 sm:p-4 -right-1/2 -translate-x-1/2 grow text-center shadow-2xl -rotate-2 rounded-xl text-nowrap ">
+        <h2 className="text-2xl sm:text-3xl  font-extrabold text-white">
+        Eco-friendly Impact
+        </h2>
+        <p className="mt-1 text-sm sm:text-base font-light text-gray-50 dark:text-gray-50">
+        1000+ materials recycled
+        </p>
+    </div>
+
+    {/* Right Construction Material Image */}
+    <img
+        src="/images/const2.jpg" // <-- replace with your image path
+        alt="Construction Material"
+        className="absolute -bottom-10 md:-bottom-20 -right-16 sm:w-32 sm:h-32 lg:w-64 lg:h-64 object-cover rounded-lg border-green-700 border-r-4 border-b-8 max-sm:hidden -rotate-12"
+    />
+    </div>
+
                     </div>
                 </div>
                 </div>

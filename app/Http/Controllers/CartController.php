@@ -147,11 +147,25 @@ class CartController extends Controller
             ->where('material_id', $validated['material_id'])
             ->first();
 
+
         if ($cart) {
             // If the item exists in the cart, update the quantity
             // $cart->quantity += $validated['quantity'];  // Add the quantity to the existing quantity
             // $cart->save();
-            return back()->with('message', 'Pending Transactions!');
+
+
+            if($cart->status == 'pending'){
+               return back()->with('message', 'Pending Transactions!');
+            } else if($cart->status == 'cancelled' || $cart->status == 'rejected'){
+
+                 Donate::create([
+                    'user_id'     => auth()->id(),
+                    'owner'       => $validated['user_idx'],
+                    'material_id' => $validated['material_id'],
+                    'quantity'    => $validated['quantity'],
+                ]);
+                return back()->with('message', 'Inquire successfully!');
+            }
         } else {
             // If the item doesn't exist, create a new cart entry
             Donate::create([

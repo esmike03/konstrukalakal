@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Head, Link, useForm, usePage } from "@inertiajs/react";
-import { ArrowRight, MessageCircle, CheckCircle, X } from "lucide-react";
+import { ArrowLeft, MessageCircle, CheckCircle, X } from "lucide-react";
 
 export default function Orders({ trades, isUser }) {
     const { post } = useForm();
@@ -72,7 +72,11 @@ export default function Orders({ trades, isUser }) {
 
                 {/* ✅ Filter Dropdown */}
                 <div className="mb-6  w-full flex justify-between">
-                <div><h1 className="text-2xl font-bold mb-6">Orders</h1></div>
+                <div className="flex gap-4">
+                <a className="mt-1 flex" href="/cart">
+                <ArrowLeft className="hover:scale-110 "/>
+                </a>
+                <h1 className="text-2xl font-bold mb-6">Orders</h1></div>
                     <div>
                         <label className="mr-2 font-semibold">Filter by status:</label>
                             <select

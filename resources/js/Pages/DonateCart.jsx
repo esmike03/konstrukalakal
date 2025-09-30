@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Head, Link, useForm, usePage } from "@inertiajs/react";
-import { ArrowRight, MessageCircle, CheckCircle, X } from "lucide-react";
+import { ArrowLeft, MessageCircle, CheckCircle, X } from "lucide-react";
 
 export default function DonateCart({ trades, isUser }) {
     const { post } = useForm();
@@ -72,7 +72,11 @@ export default function DonateCart({ trades, isUser }) {
 
                 {/* ✅ Filter Dropdown */}
                 <div className="mb-6  w-full flex justify-between">
-                <div><h1 className="text-2xl font-bold mb-6">Donate Cart</h1></div>
+                <div className="flex gap-4">
+                <a className="mt-1 flex" href="/cart">
+                <ArrowLeft className="hover:scale-110 "/>
+                </a>
+                <h1 className="text-2xl font-bold mb-6">Donate Cart</h1></div>
                     <div>
                         <label className="mr-2 font-semibold">Filter by status:</label>
                             <select
@@ -93,7 +97,7 @@ export default function DonateCart({ trades, isUser }) {
                 {filteredTrades.length === 0 ? (
                     <p className="text-gray-500">No trades match this filter.</p>
                 ) : (
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {filteredTrades.map((trade) => (
                             <div
                                 key={trade.id}

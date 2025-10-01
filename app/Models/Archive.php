@@ -8,10 +8,13 @@ class Archive extends Model
 {
     protected $fillable = [
         'user_id',
+        'users',
         'material_id',
         'owner',
         'status',
-        'quantity'
+        'quantity',
+        'item_title',
+        'item_image'
     ];
 
     public function user()

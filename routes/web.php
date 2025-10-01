@@ -60,6 +60,7 @@ Route::post('/order/{id}/submit', [CartController::class, 'storeOrder'])->name('
 
 Route::get('/cart', [CartController::class, 'toCart']);
 Route::get('/cart/donate', [CartController::class, 'todonate']);
+Route::get('/history', [CartController::class, 'tohistory']);
 Route::get('/cart/delete/{id}', [CartController::class, 'destroy'])->name('cart.delete');
 Route::get('/uploads/delete/{id}', [MaterialController::class, 'uploadDestroy'])->name('upload.delete');
 Route::get('/Orders', [CartController::class, 'toOrders']);

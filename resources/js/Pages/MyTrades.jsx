@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Head, Link, useForm, usePage } from "@inertiajs/react";
-import { ArrowLeft, MessageCircle, CheckCircle, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, MessageCircle, CheckCircle, X } from "lucide-react";
 
 export default function MyTrades({ trades, isUser }) {
     const { post } = useForm();

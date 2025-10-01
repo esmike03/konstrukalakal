@@ -6,6 +6,7 @@ use App\Models\Cart;
 use Inertia\Inertia;
 use App\Models\Donate;
 use App\Models\Orders;
+use App\Models\Archive;
 use App\Models\Material;
 use Illuminate\Http\Request;
 use App\Models\Notifications;
@@ -81,6 +82,35 @@ class CartController extends Controller
         } else {
 
             return inertia('DonateCart', [
+                'trades' => $donate,
+                'isUser' => False,
+            ]);
+        }
+    }
+
+    public function tohistory()
+    {
+        $user = auth()->user();
+        // dd($user);
+        $userId = auth()->id();
+
+        $donate = Archive::with('material', 'user')
+            ->where(function ($q) use ($user) {
+                $q->where('user_id', $user->id)
+                    ->orWhere('owner', $user->id);
+            })
+            ->get();
+
+
+
+        if ($donate->isNotEmpty() && $donate->first()->user_id == $userId) {
+            return inertia('Archive', [
+                'trades' => $donate,
+                'isUser' => True,
+            ]);
+        } else {
+
+            return inertia('Archive', [
                 'trades' => $donate,
                 'isUser' => False,
             ]);

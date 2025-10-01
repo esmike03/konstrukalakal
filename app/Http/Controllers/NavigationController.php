@@ -6,6 +6,7 @@ use App\Models\Cart;
 use App\Models\Trade;
 use App\Models\Donate;
 use App\Models\Orders;
+use App\Models\Archive;
 use App\Models\Material;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -182,8 +183,18 @@ class NavigationController extends Controller
     {
         $trade = Trade::findOrFail($id);
 
+        // $trade->update(['status' => 'rejected']);
+        Archive::create([
+                    'user_id'     => $trade->user_id,
+                    'users' => auth()->id(),
+                    'material_id' => $trade->trade_for,
+                    'owner'    => $trade->owner,
+                    'status'      => 'rejected',
+                    'item_title' => $trade->item_title,
+                    'item_image' => $trade->item_image
+        ]);
 
-        $trade->update(['status' => 'rejected']);
+        $trade->delete();
 
         return redirect()->back()->with('message', 'Trade rejected successfully!');
     }
@@ -192,7 +203,18 @@ class NavigationController extends Controller
     {
         $trade = Trade::findOrFail($id);
 
-        $trade->update(['status' => 'cancelled']);
+        // $trade->update(['status' => 'cancelled']);
+
+        Archive::create([
+                    'user_id'     => $trade->user_id,
+                    'users' => auth()->id(),
+                    'material_id' => $trade->trade_for,
+                    'owner'    => $trade->owner,
+                    'status'      => 'rejected',
+                    'item_title' => $trade->item_title,
+                    'item_image' => $trade->item_image
+        ]);
+        $trade->delete();
 
         return redirect()->back()->with('message', 'Trade cancelled successfully!');
     }
@@ -271,8 +293,16 @@ class NavigationController extends Controller
     {
         $trade = Donate::findOrFail($id);
 
+        // $trade->update(['status' => 'rejected']);
 
-        $trade->update(['status' => 'rejected']);
+        Archive::create([
+                    'user_id'     => $trade->user_id,
+                    'users' => auth()->id(),
+                    'material_id' => $trade->material_id,
+                    'owner'    => $trade->owner,
+                    'status'      => 'rejected',
+        ]);
+        $trade->delete();
 
         return redirect()->back()->with('message', 'Inquiry rejected successfully!');
     }
@@ -281,7 +311,17 @@ class NavigationController extends Controller
     {
         $trade = Donate::findOrFail($id);
 
-        $trade->update(['status' => 'cancelled']);
+        // $trade->update(['status' => 'cancelled']);
+
+        Archive::create([
+                    'user_id'     => $trade->user_id,
+                    'users' => auth()->id(),
+                    'material_id' => $trade->material_id,
+                    'owner'    => $trade->owner,
+                    'status'      => 'cancelled',
+        ]);
+
+        $trade->delete();
 
         return redirect()->back()->with('message', 'Inquiry cancelled successfully!');
     }
@@ -345,7 +385,15 @@ class NavigationController extends Controller
     public function rejectOrder($id)
     {
         $trade = Orders::findOrFail($id);
-        $trade->update(['status' => 'rejected']);
+        // $trade->update(['status' => 'rejected']);
+        Archive::create([
+                    'user_id'     => $trade->user_id,
+                    'users' => auth()->id(),
+                    'material_id' => $trade->material_id,
+                    'owner'    => $trade->owner,
+                    'status'      => 'rejected',
+        ]);
+        $trade->delete();
 
         return redirect()->back()->with('message', 'Order rejected successfully!');
     }
@@ -353,7 +401,16 @@ class NavigationController extends Controller
     public function cancelOrder($id)
     {
         $trade = Orders::findOrFail($id);
-        $trade->update(['status' => 'cancelled']);
+        // $trade->update(['status' => 'cancelled']);
+
+        Archive::create([
+                    'user_id'     => $trade->user_id,
+                    'users' => auth()->id(),
+                    'material_id' => $trade->material_id,
+                    'owner'    => $trade->owner,
+                    'status'      => 'cancelled',
+        ]);
+        $trade->delete();
 
         return redirect()->back()->with('message', 'Order cancelled successfully!');
     }

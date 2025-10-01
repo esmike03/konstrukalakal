@@ -95,7 +95,7 @@ export default function DonateCart({ trades, isUser }) {
                 </div>
 
                 {filteredTrades.length === 0 ? (
-                    <p className="text-gray-500">No trades match this filter.</p>
+                    <p className="text-gray-500">No item match this filter.</p>
                 ) : (
                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {filteredTrades.map((trade) => (

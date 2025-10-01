@@ -76,7 +76,7 @@ export default function MyTrades({ trades, isUser }) {
                 <a className="mt-1 flex" href="/cart">
                 <ArrowLeft className="hover:scale-110 "/>
                 </a>
-                <h1 className="text-2xl font-bold mb-6">My Trades</h1></div>
+                <h1 className="text-2xl font-bold mb-6">Trades</h1></div>
                     <div>
                         <label className="mr-2 font-semibold">Filter by status:</label>
                             <select

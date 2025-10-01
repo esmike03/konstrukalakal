@@ -191,90 +191,97 @@ export default function Layout({ children }) {
           </div>
 
           {/* Mobile Navigation Menu */}
-          {isMobileMenuOpen && (
-            <div className="md:hidden mt-2 border-t pt-2">
-              <div className="flex flex-col space-y-2 text-black text-sm">
-                <Link href="/" onClick={closeMobileMenu} className="hover:text-green-600">
-                  Home
-                </Link>
-                <Link href="/materials" onClick={closeMobileMenu} className="hover:text-green-600">
-                  Materials
-                </Link>
-                    <div className="ml-3 ">
-                        <Link href="/trade-materials" onClick={closeMobileMenu} className=" hover:text-green-600 text-gray-700">
-                            Trade Materials
-                        </Link><br></br>
-                        <Link href="/buy-materials" onClick={closeMobileMenu} className="hover:text-green-600 text-gray-700">
-                            Buy Materials
-                        </Link><br></br>
-                        <Link href="/donate-materials" onClick={closeMobileMenu} className="hover:text-green-600 text-gray-700">
-                            Donate Materials
-                        </Link><br></br>
-                    </div>
-                <Link href="/about" onClick={closeMobileMenu} className="hover:text-green-600">
-                  About
-                </Link>
-                {auth.user && (
-                  <button onClick={closeMobileMenu} className="relative flex items-center">
-                    <ShoppingCart className="text-gray-700 hover:text-green-600" size={18} />
-                    <span className="ml-2 text-gray-700">Cart (0)</span>
-                  </button>
-                )}
-              </div>
-              <div className="mt-4 border-t pt-2">
-                {auth.user ? (
-                  <div className="flex flex-col space-y-2">
-                    <Link
-                      href="/profile"
-                      onClick={closeMobileMenu}
-                      className="flex items-center gap-2 text-gray-800 text-sm hover:text-green-600"
-                    >
-                      <User size={18} /> Profile
-                    </Link>
-                    <Link
-                      href="/uploaded"
-                      method="post"
-                      as="button"
-                      onClick={closeMobileMenu}
-                      className="flex items-center gap-2 text-gray-800 text-sm hover:text-green-600"
-                    >
-                      <Upload size={18} /> My Uploads
-                    </Link>
-                    <Link
-                      href="/logout"
-                      method="post"
-                      as="button"
-                      onClick={closeMobileMenu}
-                      className="flex items-center gap-2 text-gray-800 text-sm hover:text-green-600"
-                    >
-                      <LogOut size={18} /> Logout
-                    </Link>
-                  </div>
-                ) : (
-                  <div className="flex flex-col space-y-2">
-                    <button
-                      onClick={() => {
-                        openLoginModal();
-                        closeMobileMenu();
-                      }}
-                      className="w-full bg-green-600 text-white text-sm py-2 rounded-full hover:bg-green-700"
-                    >
-                      Log In
-                    </button>
-                    <button
-                      onClick={() => {
-                        openRegisterModal();
-                        closeMobileMenu();
-                      }}
-                      className="w-full bg-green-600 text-white text-sm py-2 rounded-full hover:bg-green-700"
-                    >
-                      Register
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
+          {/* Mobile Navigation Menu */}
+{isMobileMenuOpen && (
+  <div className="md:hidden mt-2 border-t pt-2">
+    <div className="flex flex-col space-y-2 text-black text-sm">
+      <Link href="/" onClick={closeMobileMenu} className="hover:text-green-600">
+        Home
+      </Link>
+
+      {/* Materials with sub-options */}
+      <Link href="/materials" onClick={closeMobileMenu} className="hover:text-green-600">
+        Materials
+      </Link>
+      <div className="ml-3">
+        <Link href="/trade-materials" onClick={closeMobileMenu} className="hover:text-green-600 text-gray-700">
+          Trade Materials
+        </Link><br />
+        <Link href="/buy-materials" onClick={closeMobileMenu} className="hover:text-green-600 text-gray-700">
+          Buy Materials
+        </Link><br />
+        <Link href="/donate-materials" onClick={closeMobileMenu} className="hover:text-green-600 text-gray-700">
+          Donate Materials
+        </Link><br />
+      </div>
+
+      <Link href="/about" onClick={closeMobileMenu} className="hover:text-green-600">
+        About
+      </Link>
+
+      {auth.user && (
+        <>
+          {/* Cart */}
+          <Link href="/cart" onClick={closeMobileMenu} className="relative flex items-center">
+            <ShoppingCart className="text-gray-700 hover:text-green-600" size={18} />
+            <span className="ml-2 text-gray-700">Cart ({total})</span>
+          </Link>
+
+          {/* Messages */}
+          <Link href="/messages" onClick={closeMobileMenu} className="flex items-center gap-2 text-gray-800 text-sm hover:text-green-600">
+            <MessageCircle size={18} /> Messages
+          </Link>
+
+          {/* Notifications */}
+          <Link href="/notifications" onClick={closeMobileMenu} className="flex items-center gap-2 text-gray-800 text-sm hover:text-green-600 relative">
+            <Bell size={18} /> Notifications
+            {notifcount > 0 && (
+              <span className="absolute -top-2 left-20 bg-red-500 text-white text-xs rounded-full px-1">
+                {notifcount}
+              </span>
+            )}
+          </Link>
+        </>
+      )}
+    </div>
+
+    {/* Mobile: Profile & Auth */}
+    <div className="mt-4 border-t pt-2">
+      {auth.user ? (
+        <div className="flex flex-col space-y-2">
+          <Link href="/profile" onClick={closeMobileMenu} className="flex items-center gap-2 text-gray-800 text-sm hover:text-green-600">
+            <User size={18} /> Profile
+          </Link>
+          <Link href="/uploaded" onClick={closeMobileMenu} className="flex items-center gap-2 text-gray-800 text-sm hover:text-green-600">
+            <Upload size={18} /> My Uploads
+          </Link>
+          <Link href="/history" onClick={closeMobileMenu} className="flex items-center gap-2 text-gray-800 text-sm hover:text-green-600">
+            <Clock size={18} /> History
+          </Link>
+          <Link href="/logout" method="post" as="button" onClick={closeMobileMenu} className="flex items-center gap-2 text-gray-800 text-sm hover:text-green-600">
+            <LogOut size={18} /> Logout
+          </Link>
+        </div>
+      ) : (
+        <div className="flex flex-col space-y-2">
+          <button
+            onClick={() => { openLoginModal(); closeMobileMenu(); }}
+            className="w-full bg-green-600 text-white text-sm py-2 rounded-full hover:bg-green-700"
+          >
+            Log In
+          </button>
+          <button
+            onClick={() => { openRegisterModal(); closeMobileMenu(); }}
+            className="w-full bg-green-600 text-white text-sm py-2 rounded-full hover:bg-green-700"
+          >
+            Register
+          </button>
+        </div>
+      )}
+    </div>
+  </div>
+)}
+
         </nav>
       </header>
       <main>{children}</main>

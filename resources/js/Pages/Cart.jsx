@@ -8,7 +8,10 @@ export default function Cart() {
   const [activeTab, setActiveTab] = useState("sale");
   const [selectedItem, setSelectedItem] = useState(null);
   const [filter, setFilter] = useState("pending");
-
+  const { cartItemCount } = usePage().props;
+  const { donateItemCount } = usePage().props;
+  const { tradeItemCount } = usePage().props;
+  const { orderItemCount } = usePage().props;
   // ✅ Single useForm
   const form = useForm({ material_id: null });
   const { post } = form;
@@ -90,32 +93,37 @@ export default function Cart() {
 
       {/* Nav */}
       <div className="gap-2 flex">
-        <Link href="/cart/donate" className="bg-green-500 px-2 py-1 rounded-md text-white">
-          Donation
-        </Link>
+
+        <div className="relative">
+            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
+                                {donateItemCount}
+            </span>
+            <Link href="/cart/donate" className="bg-green-500 px-2 py-1 rounded-md text-white">
+            Donation
+            </Link>
+        </div>
+      <div className="relative">
+        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
+                                {tradeItemCount}
+        </span>
         <Link href="/my-trades" className="bg-green-500 px-2 py-1 rounded-md text-white">
           Trades
         </Link>
+      </div>
+
+      <div className="relative">
+            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
+                                {orderItemCount}
+            </span>
         <Link href="/Orders" className="bg-green-500 px-2 py-1 rounded-md text-white">
           Orders
         </Link>
       </div>
+
+      </div>
       <div className="mt-2 w-full flex justify-between">
             <h1 className="text-3xl font-bold text-center mb-6">Sale Cart</h1>
-          <div>
-            <label className="mr-2 font-semibold">Filter by status:</label>
-            <select
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
-              className="border rounded-md px-3 py-1"
-            >
-              <option value="all">All</option>
-              <option value="pending">Pending</option>
-              <option value="accepted">Accepted</option>
-              <option value="rejected">Rejected</option>
-              <option value="cancelled">Cancelled</option>
-            </select>
-          </div>
+
         </div>
 
 

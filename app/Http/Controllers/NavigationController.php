@@ -17,10 +17,15 @@ class NavigationController extends Controller
     {
         sleep(1);
         $cartItemCount = Cart::where('user_id', auth()->id())->count();
+        $donateItemCount = Donate::where('user_id', auth()->id())->count();
+        $tradeItemCount = Trade::where('user_id', auth()->id())->count();
+        $orderItemCount = Orders::where('user_id', auth()->id())->count();
+        $total = $cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount;
         $materials = Material::where('status', 'on')->get();
         return inertia('Materials', [
             'materials' => $materials,
             'cartItemCount' => $cartItemCount,
+            'total' => $total,
         ]);
     }
 
@@ -62,8 +67,13 @@ class NavigationController extends Controller
     public function about()
     {
         $cartItemCount = Cart::where('user_id', auth()->id())->count();
+        $donateItemCount = Donate::where('user_id', auth()->id())->count();
+        $tradeItemCount = Trade::where('user_id', auth()->id())->count();
+        $orderItemCount = Orders::where('user_id', auth()->id())->count();
+        $total = $cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount;
         return inertia('About', [
             'cartItemCount' => $cartItemCount,
+            'total' => $total,
         ]);
     }
 
@@ -110,10 +120,14 @@ class NavigationController extends Controller
 
 
         $cartItemCount = Cart::where('user_id', $me)->count();
-
+        $donateItemCount = Donate::where('user_id', auth()->id())->count();
+        $tradeItemCount = Trade::where('user_id', auth()->id())->count();
+        $orderItemCount = Orders::where('user_id', auth()->id())->count();
+        $total = $cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount;
         return inertia('Message', [
             'cartItemCount' => $cartItemCount,
             'conversations' => $conversations,
+            'total' => $total
         ]);
     }
 
@@ -169,11 +183,16 @@ class NavigationController extends Controller
     public function uploadedMaterials()
     {
         sleep(1);
-        $cartItemCount = Cart::where('user_id', auth()->id())->count();
+        $cartItemCount = Donate::where('user_id', auth()->id())->count();
+        $donateItemCount = Donate::where('user_id', auth()->id())->count();
+        $tradeItemCount = Trade::where('user_id', auth()->id())->count();
+        $orderItemCount = Orders::where('user_id', auth()->id())->count();
+        $total = ($cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount)-1;
         $materials = Material::where('user_id', auth()->id())->get();
         return inertia('Uploads', [
             'materials' => $materials,
             'cartItemCount' => $cartItemCount,
+            'total' => $total
         ]);
     }
 

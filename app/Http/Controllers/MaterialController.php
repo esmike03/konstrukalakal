@@ -17,13 +17,20 @@ class MaterialController extends Controller
 {
     public function show($id)
     {
-        $cartItemCount = Cart::where('user_id', auth()->id())->count();
+
+        $cartItemCount = Donate::where('user_id', auth()->id())->count();
+        $donateItemCount = Donate::where('user_id', auth()->id())->count();
+        $tradeItemCount = Trade::where('user_id', auth()->id())->count();
+        $orderItemCount = Orders::where('user_id', auth()->id())->count();
+        $total = ($cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount)-1;
+
         $material = Material::findOrFail($id);
         $user = User::findOrFail($material->user_id);
         return inertia('MaterialDetails', [
             'material' => $material,
             'cartItemCount' => $cartItemCount,
             'user' => $user,
+            'total' => $total
         ]);
     }
 
@@ -424,11 +431,17 @@ class MaterialController extends Controller
             ->get();
 
         // dd($trades->first()->user_id);
+        $cartItemCount = Donate::where('user_id', auth()->id())->count();
+        $donateItemCount = Donate::where('user_id', auth()->id())->count();
+        $tradeItemCount = Trade::where('user_id', auth()->id())->count();
+        $orderItemCount = Orders::where('user_id', auth()->id())->count();
+        $total = $cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount;
 
         if($trades->isNotEmpty() && $trades->first()->user_id == $userId){
             return inertia('MyTrades', [
                 'trades' => $trades,
                 'isUser' => True,
+                'total' => $total
             ]);
 
         } else{
@@ -436,6 +449,7 @@ class MaterialController extends Controller
             return inertia('MyTrades', [
                 'trades' => $trades,
                 'isUser' => False,
+                'total' => $total
             ]);
         }
     }

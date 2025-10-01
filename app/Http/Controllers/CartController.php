@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use Inertia\Inertia;
+use App\Models\Trade;
 use App\Models\Donate;
 use App\Models\Orders;
 use App\Models\Archive;
@@ -23,6 +24,10 @@ class CartController extends Controller
             );  // You can also return a custom location for your login modal
         }
         $cartItemCount = Cart::where('user_id', auth()->id())->count();
+        $donateItemCount = Donate::where('user_id', auth()->id())->count();
+        $tradeItemCount = Trade::where('user_id', auth()->id())->count();
+        $orderItemCount = Orders::where('user_id', auth()->id())->count();
+        $total = $cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount;
         $cartItems = Cart::with('material') // Eager load the 'material' relationship
             ->where('user_id', auth()->id())
             ->get();
@@ -46,6 +51,10 @@ class CartController extends Controller
                 'isUser' => True,
                 'cartItems' => $cartItems,
                 'cartItemCount' => $cartItemCount,
+                'donateItemCount' => $donateItemCount,
+                'tradeItemCount' => $tradeItemCount,
+                'orderItemCount' => $orderItemCount,
+                'total' => $total,
             ]);
         } else {
 
@@ -54,6 +63,10 @@ class CartController extends Controller
                 'isUser' => False,
                 'cartItems' => $cartItems,
                 'cartItemCount' => $cartItemCount,
+                'donateItemCount' => $donateItemCount,
+                'tradeItemCount' => $tradeItemCount,
+                'orderItemCount' => $orderItemCount,
+                'total' => $total,
             ]);
         }
 
@@ -71,19 +84,25 @@ class CartController extends Controller
                     ->orWhere('owner', $user->id);
             })
             ->get();
-
+        $cartItemCount = Donate::where('user_id', auth()->id())->count();
+        $donateItemCount = Donate::where('user_id', auth()->id())->count();
+        $tradeItemCount = Trade::where('user_id', auth()->id())->count();
+        $orderItemCount = Orders::where('user_id', auth()->id())->count();
+        $total = $cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount;
 
 
         if ($donate->isNotEmpty() && $donate->first()->user_id == $userId) {
             return inertia('DonateCart', [
                 'trades' => $donate,
                 'isUser' => True,
+                'total' => $total
             ]);
         } else {
 
             return inertia('DonateCart', [
                 'trades' => $donate,
                 'isUser' => False,
+                'total' => $total
             ]);
         }
     }
@@ -101,18 +120,25 @@ class CartController extends Controller
             })
             ->get();
 
+        $cartItemCount = Donate::where('user_id', auth()->id())->count();
+        $donateItemCount = Donate::where('user_id', auth()->id())->count();
+        $tradeItemCount = Trade::where('user_id', auth()->id())->count();
+        $orderItemCount = Orders::where('user_id', auth()->id())->count();
+        $total = ($cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount)-1;
 
 
         if ($donate->isNotEmpty() && $donate->first()->user_id == $userId) {
             return inertia('Archive', [
                 'trades' => $donate,
                 'isUser' => True,
+                'total' => $total,
             ]);
         } else {
 
             return inertia('Archive', [
                 'trades' => $donate,
                 'isUser' => False,
+                'total' => $total
             ]);
         }
     }
@@ -130,18 +156,24 @@ class CartController extends Controller
             })
             ->get();
 
-
+        $cartItemCount = Donate::where('user_id', auth()->id())->count();
+        $donateItemCount = Donate::where('user_id', auth()->id())->count();
+        $tradeItemCount = Trade::where('user_id', auth()->id())->count();
+        $orderItemCount = Orders::where('user_id', auth()->id())->count();
+        $total = $cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount;
 
         if ($orders->isNotEmpty() && $orders->first()->user_id == $userId) {
             return inertia('Orders', [
                 'trades' => $orders,
                 'isUser' => True,
+                'total' => $total
             ]);
         } else {
 
             return inertia('Orders', [
                 'trades' => $orders,
                 'isUser' => False,
+                'total' => $total
             ]);
         }
     }
@@ -176,18 +208,29 @@ class CartController extends Controller
 
             return back()->with('message', 'Material already added to cart!');
         } else {
-            // If the item doesn't exist, create a new cart entry
-            Cart::create([
-                'user_id'     => auth()->id(),
-                'material_id' => $validated['material_id'],
-                'quantity'    => $validated['quantity'],
-            ]);
 
-            Notifications::create([
-                'user_id'     => auth()->id(),
-                'material_id' => $validated['material_id'],
-                'quantity'    => $validated['quantity'],
-            ]);
+            $orders = Orders::where('user_id', auth()->id())
+            ->where('material_id', $validated['material_id'])
+            ->first();
+
+            if($orders){
+                return back()->with('message', 'Pending Transactions!');
+            } else{
+
+                // If the item doesn't exist, create a new cart entry
+                Cart::create([
+                    'user_id'     => auth()->id(),
+                    'material_id' => $validated['material_id'],
+                    'quantity'    => $validated['quantity'],
+                ]);
+
+                Notifications::create([
+                    'user_id'     => auth()->id(),
+                    'material_id' => $validated['material_id'],
+                    'quantity'    => $validated['quantity'],
+                ]);
+
+            }
         }
 
         return back()->with('message', 'Material added to cart!');

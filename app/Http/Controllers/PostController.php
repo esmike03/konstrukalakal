@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Cart;
 use App\Models\Post;
 use Inertia\Inertia;
+use App\Models\Trade;
+use App\Models\Donate;
+use App\Models\Orders;
 use App\Models\Material;
 use Illuminate\Http\Request;
 use App\Models\Notifications;
@@ -23,12 +26,16 @@ class PostController extends Controller
         $item = Notifications::where('user_id', $logon)->latest()->get();
 
         $cartItemCount = Cart::where('user_id', auth()->id())->count();
-
+        $donateItemCount = Donate::where('user_id', auth()->id())->count();
+        $tradeItemCount = Trade::where('user_id', auth()->id())->count();
+        $orderItemCount = Orders::where('user_id', auth()->id())->count();
+        $total = $cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount;
         return Inertia::render('Home', [
             'materials' => $materials,
             'cartItemCount' => $cartItemCount, // Send the full paginated data
             'notifcount' => $notifcount,
             'item' => $item,
+            'total' => $total,
         ]);
     }
 

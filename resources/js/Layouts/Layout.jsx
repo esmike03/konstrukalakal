@@ -10,7 +10,7 @@ export default function Layout({ children }) {
   const [showNotif, setShowNotif] = useState(true);
   const toggleMobileMenu = () => setMobileMenuOpen(!isMobileMenuOpen);
   const closeMobileMenu = () => setMobileMenuOpen(false);
-  const { cartItemCount } = usePage().props;
+  const { total } = usePage().props;
   const { notifcount } = usePage().props;
   const { item } = usePage().props;
   return (
@@ -88,7 +88,7 @@ export default function Layout({ children }) {
                         size={18}
                         />
                         <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
-                        {cartItemCount}
+                        {total}
                         </span>
                     </button>
 

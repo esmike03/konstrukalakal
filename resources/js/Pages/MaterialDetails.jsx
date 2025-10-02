@@ -3,239 +3,178 @@ import { useState, useEffect } from "react";
 import { ArrowLeft, ShoppingCart, CheckCircle, X } from "lucide-react";
 
 export default function Show({ material, user }) {
-    const { auth } = usePage().props;
-    const { flash } = usePage().props;
-    const [showMessage, setShowMessage] = useState(false);
-    const [buttonText, setButtonText] = useState("");
-    const { post, processing } = useForm({
-        material_id: material.id,
-        quantity: 1,
-        user_idx: user.id,
-    });
+  const { auth } = usePage().props;
+  const { flash } = usePage().props;
+  const [showMessage, setShowMessage] = useState(false);
+  const [buttonText, setButtonText] = useState("");
+  const { post, processing } = useForm({
+    material_id: material.id,
+    quantity: 1,
+    user_idx: user.id,
+  });
 
-    useEffect(() => {
-        // Update the button text based on the material's `forbdt` value
-        if (material.forbdt === "Sale") {
-          setButtonText("Add to Cart");
-        } else if (material.forbdt === "Trade") {
-          setButtonText("Trade");
-        } else if (material.forbdt === "Donation") {
-          setButtonText("Inquire");
-        }
-      }, [material.forbdt]); // Re-run the effect when `material.forbdt` changes
+  useEffect(() => {
+    if (material.forbdt === "Sale") setButtonText("Add to Cart");
+    else if (material.forbdt === "Trade") setButtonText("Trade");
+    else if (material.forbdt === "Donation") setButtonText("Inquire");
+  }, [material.forbdt]);
 
-    useEffect(() => {
-        if (flash?.message) {
-            setShowMessage(true); // Show the message
-            const timer = setTimeout(() => {
-                setShowMessage(false); // Hide after 2 seconds
-            }, 3000);
-
-            return () => clearTimeout(timer);
-        }
-    }, [flash]);
-
-    function addToCart(e) {
-        e.preventDefault();
-        if (status === 401) {
-            // Trigger your login modal here
-            openLoginModal();
-          }else{
-
-            post('/cart/add', {
-                onSuccess: () => {
-                    console.log('Added to cart successfully!');
-                },
-                onError: () => {
-                    console.log('Failed to add to cart.');
-                },
-            });
-          }
-
+  useEffect(() => {
+    if (flash?.message) {
+      setShowMessage(true);
+      const timer = setTimeout(() => setShowMessage(false), 3000);
+      return () => clearTimeout(timer);
     }
+  }, [flash]);
 
-    function addToTrade(e) {
-        e.preventDefault();
-        if (status === 401) {
-            // Trigger your login modal here
-            openLoginModal();
-          }else{
+  function addToCart(e) {
+    e.preventDefault();
+    post("/cart/add");
+  }
 
-            get('/trade/create', {
-                onSuccess: () => {
-                    console.log('Trade Pending!');
-                },
-                onError: () => {
-                    console.log('Failed to Trade.');
-                },
-            });
-          }
-    }
+  function addToDonate(e) {
+    e.preventDefault();
+    post("/donate/submit");
+  }
 
-    function addToDonate(e) {
-        e.preventDefault();
-        if (status === 401) {
-            // Trigger your login modal here
-            openLoginModal();
-          }else{
+  return (
+    <>
+      <div className="relative max-w-6xl mx-auto mt-12 p-6 sm:p-10 rounded-2xl flex flex-col md:flex-row gap-8
+        bg-gradient-to-br from-white/20 to-green-200/30 backdrop-blur-xl border border-white/30 shadow-xl">
 
-            post('/donate/submit', {
-                onSuccess: () => {
-                    console.log('Inquire Successfully!');
-                },
-                onError: () => {
-                    console.log('Failed to Inquire.');
-                },
-            });
-          }
-    }
+        {/* Flash Message */}
+        {flash?.message && (
+          <div
+            className={`fixed top-4 right-4 px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 text-white backdrop-blur-lg
+            ${flash.message.toLowerCase().includes("added") ? "bg-green-500/80" : "bg-red-500/80"}
+            transition-all duration-500 ${showMessage ? "opacity-100" : "opacity-0"}`}
+          >
+            {flash.message.toLowerCase().includes("added") ? (
+              <CheckCircle size={18} />
+            ) : (
+              <X size={18} />
+            )}
+            <span className="text-sm">{flash.message}</span>
+          </div>
+        )}
 
-    return (
-        <>
+        {/* Back Button */}
+        <Link href={`/back`} className="absolute -top-10 left-0 text-gray-500 hover:text-gray-800 flex items-center gap-1">
+          <ArrowLeft size={18} /> <span className="text-sm">Back</span>
+        </Link>
 
-            <div className="max-w-5xl mx-auto p-6 rounded-lg flex flex-col md:flex-row gap-8 mt-10">
-                {/* Flash Message */}
-                {flash?.message && (
-                    <div
-                    className={`${
-                        flash.message.toLowerCase().includes("added")
-                        ? "bg-green-400 border border-green-600"
-                        : "bg-red-400 border border-red-600"
-                    } shadow-lg flex items-center gap-2 w-fit text-white p-3 rounded-md z-50 transition-all duration-500 transform ${
-                        showMessage ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-5"
-                    }`}
-                    >
-                    {flash.message.toLowerCase().includes("added") ? (
-                        <CheckCircle size={20} className="text-white" />
-                    ) : (
-                        <X size={20} className="text-white" />
-                    )}
-                    {flash.message}
-                    </div>
+        {/* Product Image Section */}
+        <div className="w-full md:w-1/2">
+          <img
+            src={`/storage/${material.image}`}
+            alt={material.material_name}
+            className="w-full h-auto object-cover rounded-2xl shadow-lg"
+          />
+        </div>
+
+        {/* Product Details */}
+        <div className="w-full md:w-1/2 flex flex-col">
+          {/* Seller */}
+          <div className="flex items-center gap-3 border-b border-white/40 pb-4 mb-4">
+            <img
+              src={`/storage/${user.profile_image}`}
+              alt={user.name}
+              className="h-12 w-12 object-cover shadow-md rounded-full border border-white/40"
+            />
+            <div>
+              <p className="text-sm font-semibold text-gray-800">{user.name}</p>
+              <p className="text-xs text-gray-600">{user.contact}</p>
+            </div>
+          </div>
+
+          {/* For Sale / Donation / Trade */}
+          <p className="bg-gradient-to-r from-green-500 to-green-700 text-white px-3 py-1 rounded-full text-xs w-fit mb-2 shadow">
+            For {material.forbdt}
+          </p>
+
+          {/* Title */}
+          <h1 className="text-2xl font-bold text-gray-900">{material.material_name}</h1>
+
+          {/* Tags */}
+          <div className="flex flex-wrap gap-2 mt-3">
+            <span className="px-3 py-1 text-xs rounded-full bg-white/30 text-gray-800 backdrop-blur-md shadow">
+              {material.category}
+            </span>
+            <span className="px-3 py-1 text-xs rounded-full bg-white/30 text-gray-800 backdrop-blur-md shadow">
+              {material.condition}
+            </span>
+          </div>
+
+          {/* Price */}
+          {(material.forbdt === "Sale" || material.forbdt === "Trade") && (
+            <p className="mt-3 text-lg font-bold text-green-600">
+              ₱ {material.price}
+            </p>
+          )}
+
+          {/* Description */}
+          <div className="mt-4">
+            <p className="text-gray-700 font-semibold">Product Description:</p>
+            <p className="text-gray-600 mt-1 text-sm leading-relaxed">
+              {material.description}
+            </p>
+          </div>
+
+          {/* Stock */}
+          <p className="text-gray-500 mt-4 text-sm">
+            <span className="font-semibold">Availability:</span>{" "}
+            {material.quantity > 0 ? "In Stock" : "Out of Stock"}
+          </p>
+
+          {/* Buttons */}
+          <div className="mt-6 flex flex-wrap gap-3">
+            {auth?.user?.id === user.id ? (
+              <p className="text-sm text-gray-700">You can edit this in My Uploads.</p>
+            ) : (
+              <>
+                {material.forbdt === "Sale" ? (
+                  <button
+                    onClick={addToCart}
+                    className="flex items-center justify-center gap-2 px-5 py-2 rounded-full
+                    bg-gradient-to-r from-green-500 to-green-700 text-white font-medium shadow-md hover:scale-105 transition"
+                  >
+                    <ShoppingCart size={18} /> {buttonText}
+                  </button>
+                ) : material.forbdt === "Trade" ? (
+                  <Link
+                    href="/trade/create"
+                    data={{ material }}
+                    method="get"
+                    as="button"
+                    className="flex items-center justify-center gap-2 px-5 py-2 rounded-full
+                    bg-gradient-to-r from-blue-500 to-blue-700 text-white font-medium shadow-md hover:scale-105 transition"
+                  >
+                    <ShoppingCart size={18} /> Trade
+                  </Link>
+                ) : (
+                  <button
+                    onClick={addToDonate}
+                    className="flex items-center justify-center gap-2 px-5 py-2 rounded-full
+                    bg-gradient-to-r from-purple-500 to-purple-700 text-white font-medium shadow-md hover:scale-105 transition"
+                  >
+                    <ShoppingCart size={18} /> {buttonText}
+                  </button>
                 )}
 
-                {/* Login Reminder */}
-                {!auth?.user && (
-                    <div className="fixed bottom-4 right-4 bg-orange-400 p-2 rounded-md text-white max-w-xs">
-                    <span className="text-sm">
-                        Please log in to send messages and explore more features!
-                    </span>
-                    </div>
+                {auth?.user && (
+                  <Link
+                    href={`/message/${material.id}`}
+                    className="flex items-center justify-center gap-2 px-5 py-2 rounded-full
+                    bg-white/40 text-gray-800 font-medium shadow hover:bg-white/60 transition backdrop-blur-md"
+                  >
+                    ✉️ Message
+                  </Link>
                 )}
-
-                {/* Back Button */}
-                <Link href={`/back`}>
-                    <button className="absolute top-20 text-gray-500 font-semibold cursor-pointer flex items-center">
-                    <ArrowLeft size={20} className="mt-0.5" /> Back
-                    </button>
-                </Link>
-
-                {/* Product Image Section */}
-                <div className="w-full md:w-1/2">
-                    <img
-                    src={`/storage/${material.image}`}
-                    alt={material.material_name}
-                    className="w-full h-auto object-cover rounded-lg"
-                    />
-                </div>
-
-                {/* Product Details Section */}
-                <div className="w-full md:w-1/2">
-                    <div className="flex gap-2 items-center border-b-2 pb-4 mb-4 border-gray-200">
-                    <img
-                        src={`/storage/${user.profile_image}`}
-                        alt={user.name}
-                        className="h-10 w-10 object-cover shadow-md rounded-full"
-                    />
-                    <div>
-                        <p className="text-sm">{user.name}</p>
-                        <p className="text-xs text-gray-700">{user.contact}</p>
-                    </div>
-                    </div>
-
-                    <p className="bg-green-500 text-white px-2 rounded-md inline-block mb-2">
-                    For {material.forbdt}
-                    </p>
-
-                    <h1 className="text-2xl font-bold">{material.material_name}</h1>
-
-                    <div className="flex flex-wrap gap-2 mt-2">
-                    <p className="w-fit text-xs bg-gray-400 text-white px-2 rounded mt-2">
-                        {material.category}
-                    </p>
-                    <p className="w-fit text-xs bg-gray-400 text-white px-2 rounded mt-2">
-                        {material.condition}
-                    </p>
-                    </div>
-
-                    <div className="flex items-center mt-2">
-                    {(material.forbdt === "Sale" || material.forbdt === "Trade") && (
-                        <p className="text-green-600 font-bold">
-                        Price: <span>₱{material.price}</span>
-                        </p>
-                    )}
-                    </div>
-
-                    {/* Product Description */}
-                    <div className="mt-4">
-                    <p className="text-gray-700 font-semibold">Product Description:</p>
-                    <p className="text-gray-600 mt-1">{material.description}</p>
-                    </div>
-
-                    <p className="text-gray-500 mt-4 text-sm">
-                    <span className="font-semibold">Availability:</span>{" "}
-                    {material.quantity > 0 ? "In Stock" : "Out of Stock"}
-                    </p>
-
-                    {/* Buttons */}
-                    <div className="mt-6 flex flex-wrap gap-4">
-                    {auth?.user?.id === user.id ? (
-                        <p>You can edit this one in My Uploads.</p>
-                    ) : (
-                        <>
-                        {material.forbdt === "Sale" ? (
-                            <button
-                            onClick={addToCart}
-                            className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-all duration-200 w-full sm:w-auto"
-                            >
-                            <ShoppingCart size={18} />
-                            <span className="text-sm">{buttonText}</span>
-                            </button>
-                        ) : material.forbdt === "Trade" ? (
-                            <Link
-                            href="/trade/create"
-                            data={{ material }}
-                            method="get"
-                            as="button"
-                            className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-all duration-200 w-full sm:w-auto"
-                            >
-                            <ShoppingCart size={18} />
-                            <span className="text-sm">Trade</span>
-                            </Link>
-                        ) : (
-                            <button
-                            onClick={addToDonate}
-                            className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-all duration-200 w-full sm:w-auto"
-                            >
-                            <ShoppingCart size={18} />
-                            <span className="text-sm">{buttonText}</span>
-                            </button>
-                        )}
-
-                        {auth?.user && (
-                            <Link
-                            href={`/message/${material.id}`}
-                            className="flex items-center gap-2 bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition-all duration-200 w-full sm:w-auto"
-                            >
-                            ✉️ <span className="text-sm">Message</span>
-                            </Link>
-                        )}
-                        </>
-                    )}
-                    </div>
-                </div>
-                </div>
-
-        </>
-    );
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </>
+  );
 }

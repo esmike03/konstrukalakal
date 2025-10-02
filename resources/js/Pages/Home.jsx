@@ -99,30 +99,34 @@ export default function Home() {
 
             <section id="second" className="bg-white py-12">
   <div className="max-w-6xl mx-auto px-4">
-    <h2 className="text-2xl font-extrabold text-gray-800 text-center mb-6">
+    {/* Section Title */}
+    <h2 className="text-3xl font-bold text-gray-800 text-center mb-10">
       Featured Materials
     </h2>
 
-    {/* ✅ Responsive grid */}
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    {/* Responsive Grid */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
       {materials.data && materials.data.length > 0 ? (
         materials.data.map((material) => (
           <div
             key={material.id}
-            className="bg-gray-100 flex flex-col justify-between p-4 rounded-lg shadow"
+            className="bg-white flex flex-col justify-between rounded-2xl shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition"
           >
-            <div>
-              {material.image && (
-                <img
-                  src={`/storage/${material.image}`}
-                  alt={material.materialName}
-                  className="w-full h-40 object-cover rounded-sm"
-                />
-              )}
+            {/* Image */}
+            {material.image && (
+              <img
+                src={`/storage/${material.image}`}
+                alt={material.materialName}
+                className="w-full h-40 object-cover"
+              />
+            )}
 
-              <div className="flex justify-between items-center mt-2">
-                <div
-                  className={`text-xs text-white px-2 py-1 rounded-sm w-max ${
+            {/* Content */}
+            <div className="p-4 flex flex-col flex-grow">
+              {/* Tag + Location */}
+              <div className="flex justify-between items-center mb-2">
+                <span
+                  className={`text-xs font-medium text-white px-2 py-1 rounded-md ${
                     material.forbdt === "Trade"
                       ? "bg-blue-500"
                       : material.forbdt === "Sale"
@@ -133,24 +137,31 @@ export default function Home() {
                   }`}
                 >
                   For {material.forbdt}
-                </div>
+                </span>
 
-                <p className="text-xs text-gray-500">📍 {material.location}</p>
+                <p className="text-xs text-gray-500 flex items-center gap-1">
+                  📍 {material.location}
+                </p>
               </div>
 
-              <h3 className="text-lg font-bold mt-1">{material.material_name}</h3>
-              <p className="text-sm text-gray-600">{material.description}</p>
-            </div>
+              {/* Title & Description */}
+              <h3 className="text-lg font-bold text-gray-800 mb-1">
+                {material.material_name}
+              </h3>
+              <p className="text-sm text-gray-600 line-clamp-2">
+                {material.description}
+              </p>
 
-            <div>
-              <div className="flex mt-2 gap-2 justify-between items-center">
-                {material.forbdt === "Sale" && (
-                  <p className="text-green-600 font-bold">₱ {material.price}</p>
-                )}
-              </div>
+              {/* Price (only for Sale) */}
+              {material.forbdt === "Sale" && (
+                <p className="text-green-600 font-bold mt-3">
+                  ₱ {material.price}
+                </p>
+              )}
 
-              <Link href={`/materials/${material.id}`}>
-                <button className="w-full mt-2 text-sm bg-green-600 text-white py-2 rounded-full hover:bg-green-700">
+              {/* Button */}
+              <Link href={`/materials/${material.id}`} className="mt-auto">
+                <button className="w-full mt-4 text-sm bg-green-600 text-white py-2.5 rounded-lg font-medium hover:bg-green-700 transition">
                   View Details
                 </button>
               </Link>
@@ -163,6 +174,7 @@ export default function Home() {
     </div>
   </div>
 </section>
+
 
             <section className="bg-green-700 py-12 text-white">
                 <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 text-center">

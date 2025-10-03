@@ -11,7 +11,11 @@ class Notifications extends Model
         'material_id',
         'owner',
         'status',
-        'quantity'
+        'quantity',
+        'message',
+        'image',
+        'ownername',
+        'username'
     ];
 
     public function user()

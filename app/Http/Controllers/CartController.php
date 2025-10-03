@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\User;
 use Inertia\Inertia;
 use App\Models\Trade;
 use App\Models\Donate;
@@ -224,10 +225,20 @@ class CartController extends Controller
                     'quantity'    => $validated['quantity'],
                 ]);
 
+                $user = User::where('id', auth()->id())->first();
+
+                $image = Material::where('id', $validated['material_id'])->first();
+                $owner = User::where('id', $image->user_id)->first();
+
                 Notifications::create([
                     'user_id'     => auth()->id(),
                     'material_id' => $validated['material_id'],
                     'quantity'    => $validated['quantity'],
+                    'message'    => $user->name . ' Added item to their cart',
+                    'username' => $user->name,
+                    'image' => $image->image,
+                    'ownername' => $owner->name,
+                    'owner' => $owner->id,
                 ]);
 
             }

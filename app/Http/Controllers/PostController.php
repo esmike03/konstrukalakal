@@ -11,6 +11,7 @@ use App\Models\Orders;
 use App\Models\Material;
 use Illuminate\Http\Request;
 use App\Models\Notifications;
+use Illuminate\Notifications\Notification;
 
 class PostController extends Controller
 {
@@ -22,13 +23,19 @@ class PostController extends Controller
         $logon = auth()->id();
         $materials = Material::latest()->paginate(3)->toArray(); // Convert to array
 
-        $notifcount = Notifications::where('user_id', $logon)->count();
-        $item = Notifications::where('user_id', $logon)->latest()->get();
+        $notifcount = Notifications::where('user_id', $logon)
+                    ->orWhere('owner', $logon)->count();
+        $item = Notifications::where('owner', $logon)->latest()->take(5)->get();
+        $not = Notifications::get();
+
 
         $cartItemCount = Cart::where('user_id', auth()->id())->count();
-        $donateItemCount = Donate::where('user_id', auth()->id())->count();
-        $tradeItemCount = Trade::where('user_id', auth()->id())->count();
-        $orderItemCount = Orders::where('user_id', auth()->id())->count();
+        $donateItemCount = Donate::where('user_id', auth()->id())
+                                    ->orWhere('owner', auth()->id())->count();
+        $tradeItemCount = Trade::where('user_id', auth()->id())
+                                    ->orWhere('owner', auth()->id())->count();
+        $orderItemCount = Orders::where('user_id', auth()->id())
+                                    ->orWhere('owner', auth()->id())->count();
         $total = $cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount;
         return Inertia::render('Home', [
             'materials' => $materials,

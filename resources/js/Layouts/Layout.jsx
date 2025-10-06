@@ -4,6 +4,7 @@ import { useModal } from "@/context/ModalContext";
 import { ShoppingCart, Clock, LogOut, User, Menu, X, Bell, MessageCircle, Upload } from "lucide-react";
 
 export default function Layout({ children }) {
+
   const { openLoginModal, openRegisterModal } = useModal();
   const { auth } = usePage().props;
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -13,6 +14,8 @@ export default function Layout({ children }) {
   const { total } = usePage().props;
   const { notifcount } = usePage().props;
   const { item } = usePage().props;
+
+
   return (
     <>
       <Head>
@@ -105,17 +108,38 @@ export default function Layout({ children }) {
                     <MessageCircle size={20} className="mr-2 text-gray-700 cursor-pointer hover:text-green-600"/>
                 </Link>
 
-                    <div className="relative group" onMouseEnter={() => setShowNotif(false)}>
+                    <Link href="/notifications" className="relative group" onMouseEnter={() => setShowNotif(false)}>
                         <Bell size={20} className="mr-2 text-gray-700 cursor-pointer hover:text-green-600"/>
                         {showNotif && notifcount > 0 && (
-                            <span className="absolute -top-2 -right-0 bg-red-500 text-white text-xs rounded-full px-1">
-                            {notifcount}
+                            <span className="absolute -top-1 -right-0  p-1 bg-red-500 text-white text-xs rounded-full px-1">
+
                             </span>
                         )}
-                        <div className="absolute z-50 w-40 bg-white border rounded-md shadow-lg hidden group-hover:block">
-                            <p className="text-xs px-3 p-1 text-center">No New Notifications</p>
+                        <div className="absolute -left-65 z-50 w-72 bg-white border rounded-md shadow-lg hidden group-hover:block max-h-64 overflow-y-auto">
+                        {item && item.length > 0 ? (
+                            item.slice(0, 5).map((notif, index) => (
+                            <div
+                                key={index}
+                                className="flex items-center gap-2 p-2 border-b last:border-none hover:bg-gray-50"
+                            >
+                                {/* Notification Image */}
+                                <img
+                                src={notif.image ? `/storage/${notif.image}` : "/images/default.png"}
+                                alt="Notification"
+                                className="w-8 h-8 rounded-full object-cover"
+                                />
+
+                                {/* Notification Message */}
+                                <p className="text-xs text-gray-800">{notif.message}</p>
+                            </div>
+                            ))
+                        ) : (
+                            <p className="text-xs text-gray-500 p-2">No notifications</p>
+                        )}
                         </div>
-                  </div>
+
+
+                  </Link>
                 </div>
               )}
 

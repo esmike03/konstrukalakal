@@ -167,7 +167,7 @@ export default function Orders({ trades, isUser }) {
                                                 className="flex items-center justify-center gap-1 bg-blue-500 text-white px-3 py-2 rounded-md text-sm w-full sm:w-auto"
                                             >
                                                 <MessageCircle className="w-4 h-4" />
-                                                Message
+
                                             </Link>
                                         </div>
                                     ) : (
@@ -195,7 +195,7 @@ export default function Orders({ trades, isUser }) {
                                                 className="flex items-center justify-center gap-1 bg-blue-500 text-white px-3 py-2 rounded-md text-sm w-full sm:w-auto"
                                             >
                                                 <MessageCircle className="w-4 h-4" />
-                                                Message
+
                                             </Link>
                                             <button
                                                 onClick={() => acceptDonate(trade.id)}

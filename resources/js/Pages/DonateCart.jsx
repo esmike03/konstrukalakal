@@ -166,7 +166,7 @@ export default function DonateCart({ trades, isUser }) {
                                         </Link>
                                     </div>
                                 ) : (
-                                    <div className="mt-4 flex justify-between">
+                                    <div className="mt-4 flex gap-1 justify-between">
                                         <button
                                             disabled={
                                                 trade.status === "rejected" ||

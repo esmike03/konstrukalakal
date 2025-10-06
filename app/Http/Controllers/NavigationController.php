@@ -9,6 +9,7 @@ use App\Models\Orders;
 use App\Models\Archive;
 use App\Models\Material;
 use Illuminate\Http\Request;
+use App\Models\Notifications;
 use Illuminate\Support\Facades\Auth;
 
 class NavigationController extends Controller
@@ -16,72 +17,136 @@ class NavigationController extends Controller
     public function toMaterials()
     {
         sleep(1);
+        $logon = auth()->id();
         $cartItemCount = Cart::where('user_id', auth()->id())->count();
-        $donateItemCount = Donate::where('user_id', auth()->id())->count();
-        $tradeItemCount = Trade::where('user_id', auth()->id())->count();
-        $orderItemCount = Orders::where('user_id', auth()->id())->count();
+        $donateItemCount = Donate::where('user_id', auth()->id())
+                        ->orWhere('owner', auth()->id())->count();
+        $tradeItemCount = Trade::where('user_id', auth()->id())
+                        ->orWhere('owner', auth()->id())->count();
+        $orderItemCount = Orders::where('user_id', auth()->id())
+                        ->orWhere('owner', auth()->id())->count();
         $total = $cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount;
         $materials = Material::where('status', 'on')->get();
+        $notifcount = Notifications::where('user_id', $logon)->count();
+        $item = Notifications::where('owner', $logon)->latest()->take(5)->get();
         return inertia('Materials', [
             'materials' => $materials,
             'cartItemCount' => $cartItemCount,
             'total' => $total,
+            'item' => $item,
+            'notifcount' => $notifcount,
         ]);
     }
 
     public function tradeMaterials()
     {
         sleep(1);
-        $cartItemCount = Cart::where('user_id', auth()->id())->count();
+        $logon = auth()->id();
+        $notifcount = Notifications::where('user_id', $logon)->count();
+        $cartItemCount = Donate::where('user_id', auth()->id())->count();
+        $donateItemCount = Donate::where('user_id', auth()->id())
+                    ->orWhere('owner', auth()->id())->count();
+        $tradeItemCount = Trade::where('user_id', auth()->id())
+                    ->orWhere('owner', auth()->id())->count();
+        $orderItemCount = Orders::where('user_id', auth()->id())
+                    ->orWhere('owner', auth()->id())->count();
+        $total = ($cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount);
         $materials = Material::where('forbdt', 'Trade')->get();
+        $item = Notifications::where('owner', $logon)->latest()->take(5)->get();
         return inertia('TradeMaterials', [
             'materials' => $materials,
             'cartItemCount' => $cartItemCount,
+            'notifcount' => $notifcount,
+            'item' => $item,
+            'total' => $total
         ]);
     }
 
     public function buyMaterials()
     {
         sleep(1);
+        $logon = auth()->id();
+        $notifcount = Notifications::where('user_id', $logon)->count();
         $cartItemCount = Cart::where('user_id', auth()->id())->count();
+        $donateItemCount = Donate::where('user_id', auth()->id())
+                    ->orWhere('owner', auth()->id())->count();
+        $tradeItemCount = Trade::where('user_id', auth()->id())
+                    ->orWhere('owner', auth()->id())->count();
+        $orderItemCount = Orders::where('user_id', auth()->id())
+                    ->orWhere('owner', auth()->id())->count();
+        $total = ($cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount);
         $materials = Material::where('forbdt', 'Sale')->get();
+        $item = Notifications::where('owner', $logon)->latest()->take(5)->get();
         return inertia('BuyMaterials', [
             'materials' => $materials,
             'cartItemCount' => $cartItemCount,
+            'notifcount' => $notifcount,
+            'item' => $item,
+            'total' => $total
         ]);
     }
 
     public function donateMaterials()
     {
         sleep(1);
+        $logon = auth()->id();
+        $notifcount = Notifications::where('user_id', $logon)->count();
         $cartItemCount = Cart::where('user_id', auth()->id())->count();
+        $donateItemCount = Donate::where('user_id', auth()->id())
+                    ->orWhere('owner', auth()->id())->count();
+        $tradeItemCount = Trade::where('user_id', auth()->id())
+                    ->orWhere('owner', auth()->id())->count();
+        $orderItemCount = Orders::where('user_id', auth()->id())
+                    ->orWhere('owner', auth()->id())->count();
+        $total = ($cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount);
         $materials = Material::where('forbdt', 'Donation')
         ->where('status', 'on')
         ->get();
+        $item = Notifications::where('owner', $logon)->latest()->take(5)->get();
         return inertia('DonateMaterials', [
             'materials' => $materials,
             'cartItemCount' => $cartItemCount,
+            'notifcount' => $notifcount,
+            'item' => $item,
+            'total' => $total
         ]);
     }
 
     public function about()
     {
+        $logon = auth()->id();
         $cartItemCount = Cart::where('user_id', auth()->id())->count();
-        $donateItemCount = Donate::where('user_id', auth()->id())->count();
-        $tradeItemCount = Trade::where('user_id', auth()->id())->count();
-        $orderItemCount = Orders::where('user_id', auth()->id())->count();
+        $donateItemCount = Donate::where('user_id', auth()->id())
+                        ->orWhere('owner', auth()->id())->count();
+        $tradeItemCount = Trade::where('user_id', auth()->id())
+                        ->orWhere('owner', auth()->id())->count();
+        $orderItemCount = Orders::where('user_id', auth()->id())
+                        ->orWhere('owner', auth()->id())->count();
         $total = $cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount;
+        $item = Notifications::where('owner', $logon)->latest()->take(5)->get();
         return inertia('About', [
             'cartItemCount' => $cartItemCount,
             'total' => $total,
+            'item' => $item,
         ]);
     }
 
     public function toProfile()
     {
+        $logon = auth()->id();
+        $item = Notifications::where('owner', $logon)->latest()->take(5)->get();
         $cartItemCount = Cart::where('user_id', auth()->id())->count();
+        $donateItemCount = Donate::where('user_id', auth()->id())
+                    ->orWhere('owner', auth()->id())->count();
+        $tradeItemCount = Trade::where('user_id', auth()->id())
+                    ->orWhere('owner', auth()->id())->count();
+        $orderItemCount = Orders::where('user_id', auth()->id())
+                    ->orWhere('owner', auth()->id())->count();
+        $total = ($cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount);
         return inertia('Profile', [
             'cartItemCount' => $cartItemCount,
+            'total' => $total,
+            'item' => $item,
         ]);
     }
 
@@ -120,9 +185,12 @@ class NavigationController extends Controller
 
 
         $cartItemCount = Cart::where('user_id', $me)->count();
-        $donateItemCount = Donate::where('user_id', auth()->id())->count();
-        $tradeItemCount = Trade::where('user_id', auth()->id())->count();
-        $orderItemCount = Orders::where('user_id', auth()->id())->count();
+        $donateItemCount = Donate::where('user_id', auth()->id())
+                            ->orWhere('owner', auth()->id())->count();
+        $tradeItemCount = Trade::where('user_id', auth()->id())
+                            ->orWhere('owner', auth()->id())->count();
+        $orderItemCount = Orders::where('user_id', auth()->id())
+                            ->orWhere('owner', auth()->id())->count();
         $total = $cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount;
         return inertia('Message', [
             'cartItemCount' => $cartItemCount,
@@ -183,16 +251,22 @@ class NavigationController extends Controller
     public function uploadedMaterials()
     {
         sleep(1);
+        $logon = auth()->id();
+        $item = Notifications::where('owner', $logon)->latest()->take(5)->get();
         $cartItemCount = Donate::where('user_id', auth()->id())->count();
-        $donateItemCount = Donate::where('user_id', auth()->id())->count();
-        $tradeItemCount = Trade::where('user_id', auth()->id())->count();
-        $orderItemCount = Orders::where('user_id', auth()->id())->count();
-        $total = ($cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount)-1;
+        $donateItemCount = Donate::where('user_id', auth()->id())
+                    ->orWhere('owner', auth()->id())->count();
+        $tradeItemCount = Trade::where('user_id', auth()->id())
+                    ->orWhere('owner', auth()->id())->count();
+        $orderItemCount = Orders::where('user_id', auth()->id())
+                    ->orWhere('owner', auth()->id())->count();
+        $total = ($cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount);
         $materials = Material::where('user_id', auth()->id())->get();
         return inertia('Uploads', [
             'materials' => $materials,
             'cartItemCount' => $cartItemCount,
-            'total' => $total
+            'total' => $total,
+            'item' => $item,
         ]);
     }
 

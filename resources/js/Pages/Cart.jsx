@@ -17,8 +17,8 @@ export default function Cart() {
   };
 
   const cancelDonate = (id) => {
-    if (confirm("Are you sure you want to cancel this Inquiry?")) {
-      post(`/donate/${id}/cancel`);
+    if (confirm("Are you sure you want to cancel this Item?")) {
+      post(`/cart/delete/${id}`);
     }
   };
 

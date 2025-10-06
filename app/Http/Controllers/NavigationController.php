@@ -153,9 +153,10 @@ class NavigationController extends Controller
     public function toMessages()
     {
         $me = auth()->id();
+        $logon = auth()->id();
 
         // Get all messages where user is sender or recipient
-        $msgs = \App\Models\Message::where(function ($q) use ($me) {
+        $msgs = \App\Models\Convo::where(function ($q) use ($me) {
             $q->where('sender_id', $me)
                 ->orWhere('recipient_id', $me);
         })
@@ -169,18 +170,39 @@ class NavigationController extends Controller
             $last = $msgs->first(); // newest message because of desc order
 
             // Find the "other" user in this conversation
-            $other = $last->_id === $me
-                ? $last->recipient
+
+            if($last->recipient_id === $me){
+                $other = $last->_id == $me
+                ? $last->sender
                 : $last->sender;
 
-            return [
+                return [
                 'conversation_id' => $last->start,   // unique id for thread
                 'user'            => $other,         // the other user
                 'last_message'    => $last,          // preview
                 'material_id'     => $last->material_id, // related item
                 'material_name'   => optional($last->material)->material_name,
                 'material_image'   => optional($last->material)->image,
-            ];
+
+                ];
+            }else{
+                $other = $last->_id != $me
+                ? $last->recipient
+                : $last->recipient;
+
+                return [
+                'conversation_id' => $last->start,   // unique id for thread
+                'user'            => $other,         // the other user
+                'last_message'    => $last,          // preview
+                'material_id'     => $last->material_id, // related item
+                'material_name'   => optional($last->material)->material_name,
+                'material_image'   => optional($last->material)->image,
+
+                ];
+            }
+
+
+
         })->values();
 
 
@@ -192,10 +214,16 @@ class NavigationController extends Controller
         $orderItemCount = Orders::where('user_id', auth()->id())
                             ->orWhere('owner', auth()->id())->count();
         $total = $cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount;
+        $notifcount = Notifications::where('user_id', $logon)
+                    ->orWhere('owner', $logon)->count();
+        $item = Notifications::where('owner', $logon)->latest()->take(5)->get();
         return inertia('Message', [
             'cartItemCount' => $cartItemCount,
             'conversations' => $conversations,
-            'total' => $total
+            'total' => $total,
+            'item' => $item,
+            'notifcount' =>$notifcount,
+
         ]);
     }
 

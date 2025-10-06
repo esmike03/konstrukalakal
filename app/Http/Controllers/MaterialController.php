@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\User;
+use App\Models\Convo;
 use App\Models\Trade;
 use App\Models\Donate;
 use App\Models\Orders;
 use App\Models\Message;
 use App\Models\Material;
+use App\Models\ConvoList;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\Notifications;
@@ -92,6 +94,8 @@ class MaterialController extends Controller
         // Use start from request if provided, otherwise check existing conversation
         if (!empty($request->start)) {
             $start = $request->start;
+
+
         } else {
             $existingMessage = Message::where('material_id', $request->material_id)
                 ->where(function ($q) use ($authId, $request) {
@@ -108,7 +112,17 @@ class MaterialController extends Controller
             $start = !empty($existingMessage->start)
                 ? $existingMessage->start
                 : Str::uuid()->toString();
+            if (empty($existingMessage)){
+                Convo::create([
+                'sender_id'    => $authId,
+                'recipient_id' => $request->recipient_id,
+                'material_id'  => $request->material_id,
+                'start'        => $start,
+                'content'      => 'Open to see conversations.',
+                ]);
         }
+        }
+
 
         // Save the new message
         Message::create([

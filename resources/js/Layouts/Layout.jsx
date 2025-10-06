@@ -108,38 +108,51 @@ export default function Layout({ children }) {
                     <MessageCircle size={20} className="mr-2 text-gray-700 cursor-pointer hover:text-green-600"/>
                 </Link>
 
-                    <Link href="/notifications" className="relative group" onMouseEnter={() => setShowNotif(false)}>
-                        <Bell size={20} className="mr-2 text-gray-700 cursor-pointer hover:text-green-600"/>
-                        {showNotif && notifcount > 0 && (
-                            <span className="absolute -top-1 -right-0  p-1 bg-red-500 text-white text-xs rounded-full px-1">
+                    <Link
+  href="/notifications"
+  className="relative group flex items-center"
+  onMouseEnter={() => setShowNotif(false)}
+>
+  {/* Bell Icon */}
+  <div className="relative">
+    <Bell
+      size={22}
+      className="text-gray-700 transition-all duration-200 hover:text-green-600 hover:scale-110"
+    />
+    {notifcount > 0 && (
+      <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse" />
+    )}
+  </div>
 
-                            </span>
-                        )}
-                        <div className="absolute -left-65 z-50 w-72 bg-white border rounded-md shadow-lg hidden group-hover:block max-h-64 overflow-y-auto">
-                        {item && item.length > 0 ? (
-                            item.slice(0, 5).map((notif, index) => (
-                            <div
-                                key={index}
-                                className="flex items-center gap-2 p-2 border-b last:border-none hover:bg-gray-50"
-                            >
-                                {/* Notification Image */}
-                                <img
-                                src={notif.image ? `/storage/${notif.image}` : "/images/default.png"}
-                                alt="Notification"
-                                className="w-8 h-8 rounded-full object-cover"
-                                />
+  {/* Dropdown */}
+  <div className="absolute right-0 mt-3 z-50 w-72 backdrop-blur-lg bg-white/70 border border-gray-200/60 rounded-2xl shadow-xl hidden group-hover:block transition-all duration-200">
+    {item && item.length > 0 ? (
+      item.slice(0, 5).map((notif, index) => (
+        <div
+          key={index}
+          className="flex items-center gap-3 p-3 border-b border-gray-100 last:border-none hover:bg-white/50 transition-colors duration-150"
+        >
+          {/* Notification Image */}
+          <img
+            src={notif.image ? `/storage/${notif.image}` : "/images/default.png"}
+            alt="Notification"
+            className="w-9 h-9 rounded-full object-cover ring-1 ring-gray-200"
+          />
 
-                                {/* Notification Message */}
-                                <p className="text-xs text-gray-800">{notif.message}</p>
-                            </div>
-                            ))
-                        ) : (
-                            <p className="text-xs text-gray-500 p-2">No notifications</p>
-                        )}
-                        </div>
+          {/* Notification Message */}
+          <p className="text-sm text-gray-700 leading-tight">
+            {notif.message}
+          </p>
+        </div>
+      ))
+    ) : (
+      <p className="text-sm text-gray-500 text-center py-4">
+        No notifications yet
+      </p>
+    )}
+  </div>
+</Link>
 
-
-                  </Link>
                 </div>
               )}
 

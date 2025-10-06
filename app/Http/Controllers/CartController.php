@@ -176,14 +176,29 @@ class CartController extends Controller
                 ->get();
 
             // All notifications for notifications page
-            $allNotifications = Notifications::where('user_id', $logon)
+            $not = Notifications::where('user_id', $logon)->first();
+
+            if($not === $logon){
+                $allNotifications = Notifications::where('user_id', $logon)
                 ->latest()
                 ->paginate(10); // paginate for better performance
-
-            return Inertia::render('Notifications', [
+                return Inertia::render('Notifications', [
                 'latestNotifications' => $latestNotifications,
                 'allNotifications' => $allNotifications,
             ]);
+            } else{
+
+                $allNotifications = Notifications::where('owner', $logon)
+                ->latest()
+                ->paginate(10); // paginate for better performance
+                return Inertia::render('Notifications', [
+                'latestNotifications' => $latestNotifications,
+                'allNotifications' => $allNotifications,
+            ]);
+            }
+
+
+
     }
 
     public function toOrders()

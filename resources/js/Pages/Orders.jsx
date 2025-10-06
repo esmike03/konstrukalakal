@@ -190,13 +190,7 @@ export default function Orders({ trades, isUser }) {
                                             >
                                                 Reject
                                             </button>
-                                            <Link
-                                                href={`/messagexx/${trade.material_id}/${trade.user_id}`}
-                                                className="flex items-center justify-center gap-1 bg-blue-500 text-white px-3 py-2 rounded-md text-sm w-full sm:w-auto"
-                                            >
-                                                <MessageCircle className="w-4 h-4" />
 
-                                            </Link>
                                             <button
                                                 onClick={() => acceptDonate(trade.id)}
                                                 disabled={

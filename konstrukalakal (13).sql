@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 25, 2025 at 06:06 AM
+-- Generation Time: Oct 06, 2025 at 06:49 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,6 +20,34 @@ SET time_zone = "+00:00";
 --
 -- Database: `konstrukalakal`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `archives`
+--
+
+CREATE TABLE `archives` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `users` varchar(255) DEFAULT NULL,
+  `owner` varchar(255) NOT NULL,
+  `material_id` varchar(255) NOT NULL,
+  `status` enum('pending','accepted','rejected','cancelled') NOT NULL DEFAULT 'pending',
+  `item_title` varchar(255) DEFAULT NULL,
+  `item_image` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `archives`
+--
+
+INSERT INTO `archives` (`id`, `user_id`, `users`, `owner`, `material_id`, `status`, `item_title`, `item_image`, `created_at`, `updated_at`) VALUES
+(3, 2, '2', '3', '7', 'cancelled', NULL, NULL, '2025-10-01 05:49:14', '2025-10-01 05:49:14'),
+(4, 3, '3', '2', '4', 'rejected', 'This is the best item in world.', 'trades/nE0CoT3TVeQ3IpEiQr0Z7nPrQbM70HFbJ1i64Wfc.png', '2025-10-01 06:01:37', '2025-10-01 06:01:37'),
+(5, 2, '2', '3', '6', 'cancelled', NULL, NULL, '2025-10-03 07:12:14', '2025-10-03 07:12:14');
 
 -- --------------------------------------------------------
 
@@ -56,6 +84,56 @@ CREATE TABLE `carts` (
   `user_id` bigint(20) UNSIGNED NOT NULL,
   `material_id` bigint(20) UNSIGNED NOT NULL,
   `quantity` int(11) NOT NULL DEFAULT 1,
+  `owner` varchar(255) DEFAULT NULL,
+  `status` enum('pending','accepted','rejected','cancelled') NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `carts`
+--
+
+INSERT INTO `carts` (`id`, `user_id`, `material_id`, `quantity`, `owner`, `status`, `created_at`, `updated_at`) VALUES
+(49, 2, 6, 1, NULL, 'pending', '2025-10-06 08:08:12', '2025-10-06 08:08:12');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `convos`
+--
+
+CREATE TABLE `convos` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `sender_id` bigint(20) UNSIGNED NOT NULL,
+  `recipient_id` bigint(20) UNSIGNED NOT NULL,
+  `material_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `start` varchar(255) NOT NULL,
+  `content` text NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `convos`
+--
+
+INSERT INTO `convos` (`id`, `sender_id`, `recipient_id`, `material_id`, `start`, `content`, `created_at`, `updated_at`) VALUES
+(1, 2, 3, 6, '4a402ba0-c1ff-4749-9df4-a2e709aab1c7', 'Open to see conversations.', '2025-10-06 08:37:49', '2025-10-06 08:37:49');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `convo_lists`
+--
+
+CREATE TABLE `convo_lists` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `sender_id` varchar(255) NOT NULL,
+  `recipient_id` varchar(255) NOT NULL,
+  `material_id` varchar(255) NOT NULL,
+  `start` varchar(255) NOT NULL,
+  `content` varchar(255) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -71,7 +149,7 @@ CREATE TABLE `donates` (
   `user_id` bigint(20) UNSIGNED NOT NULL,
   `owner` varchar(255) NOT NULL,
   `material_id` varchar(255) NOT NULL,
-  `status` enum('pending','accepted','rejected') NOT NULL DEFAULT 'pending',
+  `status` enum('pending','accepted','rejected','cancelled') NOT NULL DEFAULT 'pending',
   `quantity` int(11) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -82,7 +160,7 @@ CREATE TABLE `donates` (
 --
 
 INSERT INTO `donates` (`id`, `user_id`, `owner`, `material_id`, `status`, `quantity`, `created_at`, `updated_at`) VALUES
-(6, 2, '3', '7', 'pending', 1, '2025-08-24 20:01:59', '2025-08-24 20:01:59');
+(35, 2, '3', '7', 'pending', 1, '2025-10-06 01:10:02', '2025-10-06 01:10:02');
 
 -- --------------------------------------------------------
 
@@ -191,23 +269,7 @@ CREATE TABLE `messages` (
 --
 
 INSERT INTO `messages` (`id`, `sender_id`, `recipient_id`, `material_id`, `start`, `content`, `created_at`, `updated_at`) VALUES
-(46, 2, 3, 6, '23ae47e8-1a69-47bb-8d72-a205e7dd9469', 'haloo', '2025-08-18 21:36:20', '2025-08-18 21:36:20'),
-(48, 2, 3, 6, '23ae47e8-1a69-47bb-8d72-a205e7dd9469', 'sup', '2025-08-18 21:46:30', '2025-08-18 21:46:30'),
-(50, 2, 3, 6, '23ae47e8-1a69-47bb-8d72-a205e7dd9469', 'heyoo', '2025-08-18 22:00:16', '2025-08-18 22:00:16'),
-(51, 3, 3, 6, '23ae47e8-1a69-47bb-8d72-a205e7dd9469', 'nice', '2025-08-18 22:00:38', '2025-08-18 22:00:38'),
-(52, 2, 3, 7, '0c7dc39a-0784-48c4-99e1-d560b31bcee2', 'new hello', '2025-08-18 22:01:02', '2025-08-18 22:01:02'),
-(53, 3, 3, 7, '0c7dc39a-0784-48c4-99e1-d560b31bcee2', 'sup men', '2025-08-18 22:01:27', '2025-08-18 22:01:27'),
-(55, 4, 3, 6, '97633ec3-0faa-451d-bc5d-bb2855fe5b55', 'yo', '2025-08-18 22:15:53', '2025-08-18 22:15:53'),
-(56, 3, 2, 3, '56624356-aea9-45ea-825e-055af6ed5a6d', 'halooo', '2025-08-18 22:19:33', '2025-08-18 22:19:33'),
-(57, 3, 3, 6, '97633ec3-0faa-451d-bc5d-bb2855fe5b55', 'look', '2025-08-18 22:21:44', '2025-08-18 22:21:44'),
-(58, 3, 2, 4, 'db48c647-742c-4b01-bdb4-7449678feca3', 'haloooo', '2025-08-18 23:53:18', '2025-08-18 23:53:18'),
-(59, 2, 2, 4, 'db48c647-742c-4b01-bdb4-7449678feca3', 'yooooo', '2025-08-18 23:55:36', '2025-08-18 23:55:36'),
-(61, 2, 3, 4, 'db48c647-742c-4b01-bdb4-7449678feca3', 'Trade accepted successfully!', '2025-08-23 06:03:33', '2025-08-23 06:03:33'),
-(62, 2, 3, 7, '0c7dc39a-0784-48c4-99e1-d560b31bcee2', 'sup', '2025-08-23 06:35:15', '2025-08-23 06:35:15'),
-(63, 3, 2, 7, '0c7dc39a-0784-48c4-99e1-d560b31bcee2', 'Inquiry accepted successfully!', '2025-08-24 07:13:10', '2025-08-24 07:13:10'),
-(64, 3, 2, 7, '0c7dc39a-0784-48c4-99e1-d560b31bcee2', 'Inquiry accepted successfully!', '2025-08-24 07:19:25', '2025-08-24 07:19:25'),
-(65, 4, 2, 4, '4ea31592-b46e-4476-bd2c-52cedddc255b', 'okkkkkk', '2025-08-24 17:43:23', '2025-08-24 17:43:23'),
-(66, 3, 2, 6, '23ae47e8-1a69-47bb-8d72-a205e7dd9469', 'Order accepted successfully!', '2025-08-24 19:52:35', '2025-08-24 19:52:35');
+(143, 2, 3, 6, '4a402ba0-c1ff-4749-9df4-a2e709aab1c7', 'start', '2025-10-06 08:37:49', '2025-10-06 08:37:49');
 
 -- --------------------------------------------------------
 
@@ -237,7 +299,32 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (14, '2025_05_03_013954_create_donates_table', 5),
 (15, '2025_05_03_031317_create_trades_table', 5),
 (16, '2025_08_24_133114_create_donates_table', 6),
-(17, '2025_08_24_154257_create_orders_table', 7);
+(17, '2025_08_24_154257_create_orders_table', 7),
+(18, '2025_09_30_053409_create_notifications_table', 8),
+(19, '2025_09_30_063134_create_archives_table', 8),
+(20, '2025_10_06_144958_create_convo_lists_table', 9),
+(21, '2025_10_06_163403_create_convos_table', 10);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notifications`
+--
+
+CREATE TABLE `notifications` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) NOT NULL,
+  `owner` varchar(255) DEFAULT NULL,
+  `material_id` varchar(255) NOT NULL,
+  `status` enum('pending','accepted','rejected','cancelled') NOT NULL,
+  `quantity` varchar(255) NOT NULL,
+  `message` varchar(255) DEFAULT NULL,
+  `image` varchar(255) DEFAULT NULL,
+  `ownername` varchar(255) DEFAULT NULL,
+  `username` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -260,7 +347,7 @@ CREATE TABLE `orders` (
 --
 
 INSERT INTO `orders` (`id`, `user_id`, `material_id`, `owner`, `status`, `created_at`, `updated_at`) VALUES
-(5, 2, '6', '3', 'pending', '2025-08-24 19:38:16', '2025-08-24 19:52:35');
+(10, 3, '3', '2', 'pending', '2025-10-06 00:57:12', '2025-10-06 00:57:12');
 
 -- --------------------------------------------------------
 
@@ -307,8 +394,8 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('5nlSIoWF9pXue5K6ywHf9GHe8huIIrWunMmxYfn6', 3, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:142.0) Gecko/20100101 Firefox/142.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoibU9CWXhRdENGajdIOEJlSHVTYUFGMm90ZWJKa1I1RDVxZVdCQlhGeSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzM6Imh0dHA6Ly9rb25zdHJ1a2FsYWthbC50ZXN0L09yZGVycyI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjM7fQ==', 1756094719),
-('9HCnxl1vvd5EWzlr3evYeTlULQ7I6c3aguCmFtw6', 2, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiSVR3SEVEZlJJTWV5QVJuZ2dMY1JCY2plZ1hXMWw2SkdyTGpHOWs5USI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzM6Imh0dHA6Ly9rb25zdHJ1a2FsYWthbC50ZXN0L09yZGVycyI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjI7fQ==', 1756094758);
+('j6sjyAhIk5FlYsYwpOzKyhKTokE7Mt7k56ro2UoQ', 3, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoia2o0ekpMVEZDQlVvakpYTFQ3UkxGNU5rdk5GRXBvOUdrZlhsc2xkQyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjY6Imh0dHA6Ly9rb25zdHJ1a2FsYWthbC50ZXN0Ijt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6Mzt9', 1759769256),
+('kWbWQ0QuC49KC358NEiAtGSywx0arQtM1KlPX6Ol', 2, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiRlFCZlRzY3dZdXVESzdPbmdIZVVDRlpTMHFFanZ4bWN4M2ZIS2FzMCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NDA6Imh0dHA6Ly9rb25zdHJ1a2FsYWthbC50ZXN0L25vdGlmaWNhdGlvbnMiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToyO30=', 1759769321);
 
 -- --------------------------------------------------------
 
@@ -333,7 +420,7 @@ CREATE TABLE `trades` (
 --
 
 INSERT INTO `trades` (`id`, `user_id`, `owner`, `trade_for`, `item_title`, `item_image`, `status`, `created_at`, `updated_at`) VALUES
-(12, 3, 2, 4, 'Wooddyyy', 'trades/TlIxrxItuXHrKdBSKZ0xWxqKk72LHFdczkYbR6Ge.jpg', 'pending', '2025-08-24 20:03:37', '2025-08-24 20:03:37');
+(14, 3, 2, 4, 'Tubo', 'trades/PLzNHB7VFZ5eme8CKBQ0JAD50mRml0y3bTa03Tn0.png', 'pending', '2025-10-02 06:12:57', '2025-10-02 06:12:57');
 
 -- --------------------------------------------------------
 
@@ -360,13 +447,20 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `contact`, `address`, `profile_image`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(2, 'Earl Mike H. Sarabia', 'sarabiaearlmike14@gmail.com', '09925318606', 'Dampas Tagbilaran City, Bohol', 'profile_images/l9x0gX9lIyKEfpfMDwG8qFFA0IPnPRge7OioHr5C.jpg', NULL, '$2y$12$u52ar64MRhfsep0yqdOMvuC/NZaESFWQ7CnaoHlhDvChWIAyu0yY6', NULL, '2025-03-31 00:51:05', '2025-04-01 21:42:52'),
-(3, 'Ira Jane Renoblas', 'irajane@gmail.com', '09364355837', 'Antequera, Bohol', 'profile_images/hkIkA36Cs3wwqYlLrl8XIAK9oQkbGEJtGVjxiPHW.jpg', NULL, '$2y$12$u52ar64MRhfsep0yqdOMvuC/NZaESFWQ7CnaoHlhDvChWIAyu0yY6', NULL, '2025-04-24 18:08:11', '2025-04-24 21:58:50'),
-(4, 'Peter Kyle Gingo', 'peter@gmail.com', '09812348981', 'Tiptip Tagbilaran City', NULL, NULL, '$2y$12$NZwGJ834nVl5QF8WPkBajOSd1hdVxY1d2Fc9bBYD.d3lbnnikhsFC', NULL, '2025-04-25 22:59:15', '2025-04-25 22:59:15');
+(2, 'Michael Jordan', 'michael@gmail.com', '09925318606', 'Dampas Tagbilaran City, Bohol', 'profile_images/l9x0gX9lIyKEfpfMDwG8qFFA0IPnPRge7OioHr5C.jpg', NULL, '$2y$12$u52ar64MRhfsep0yqdOMvuC/NZaESFWQ7CnaoHlhDvChWIAyu0yY6', NULL, '2025-03-31 00:51:05', '2025-04-01 21:42:52'),
+(3, 'Selena Gomez', 'selena@gmail.com', '09364355837', 'Antequera, Bohol', 'profile_images/hkIkA36Cs3wwqYlLrl8XIAK9oQkbGEJtGVjxiPHW.jpg', NULL, '$2y$12$u52ar64MRhfsep0yqdOMvuC/NZaESFWQ7CnaoHlhDvChWIAyu0yY6', NULL, '2025-04-24 18:08:11', '2025-04-24 21:58:50'),
+(4, 'Peter Dafo', 'peter@gmail.com', '09812348981', 'Tiptip Tagbilaran City', NULL, NULL, '$2y$12$NZwGJ834nVl5QF8WPkBajOSd1hdVxY1d2Fc9bBYD.d3lbnnikhsFC', NULL, '2025-04-25 22:59:15', '2025-04-25 22:59:15');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `archives`
+--
+ALTER TABLE `archives`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `archives_user_id_foreign` (`user_id`);
 
 --
 -- Indexes for table `cache`
@@ -387,6 +481,21 @@ ALTER TABLE `carts`
   ADD PRIMARY KEY (`id`),
   ADD KEY `carts_user_id_foreign` (`user_id`),
   ADD KEY `carts_material_id_foreign` (`material_id`);
+
+--
+-- Indexes for table `convos`
+--
+ALTER TABLE `convos`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `convos_sender_id_foreign` (`sender_id`),
+  ADD KEY `convos_recipient_id_foreign` (`recipient_id`),
+  ADD KEY `convos_material_id_foreign` (`material_id`);
+
+--
+-- Indexes for table `convo_lists`
+--
+ALTER TABLE `convo_lists`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `donates`
@@ -436,6 +545,12 @@ ALTER TABLE `migrations`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `orders`
 --
 ALTER TABLE `orders`
@@ -482,16 +597,34 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT for table `archives`
+--
+ALTER TABLE `archives`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- AUTO_INCREMENT for table `carts`
 --
 ALTER TABLE `carts`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
+
+--
+-- AUTO_INCREMENT for table `convos`
+--
+ALTER TABLE `convos`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `convo_lists`
+--
+ALTER TABLE `convo_lists`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `donates`
 --
 ALTER TABLE `donates`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -515,19 +648,25 @@ ALTER TABLE `materials`
 -- AUTO_INCREMENT for table `messages`
 --
 ALTER TABLE `messages`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=144;
 
 --
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+
+--
+-- AUTO_INCREMENT for table `notifications`
+--
+ALTER TABLE `notifications`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `posts`
@@ -539,7 +678,7 @@ ALTER TABLE `posts`
 -- AUTO_INCREMENT for table `trades`
 --
 ALTER TABLE `trades`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -552,11 +691,25 @@ ALTER TABLE `users`
 --
 
 --
+-- Constraints for table `archives`
+--
+ALTER TABLE `archives`
+  ADD CONSTRAINT `archives_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `carts`
 --
 ALTER TABLE `carts`
   ADD CONSTRAINT `carts_material_id_foreign` FOREIGN KEY (`material_id`) REFERENCES `materials` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `carts_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `convos`
+--
+ALTER TABLE `convos`
+  ADD CONSTRAINT `convos_material_id_foreign` FOREIGN KEY (`material_id`) REFERENCES `materials` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `convos_recipient_id_foreign` FOREIGN KEY (`recipient_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `convos_sender_id_foreign` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `donates`

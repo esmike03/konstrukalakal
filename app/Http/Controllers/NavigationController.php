@@ -914,6 +914,15 @@ class NavigationController extends Controller
                     'ownername' => $user2->name,
                     'owner' => $user->id,
                 ]);
+
+                 Archive::create([
+                    'user_id'     => $trade->user_id,
+                    'users' => auth()->id(),
+                    'material_id' => $trade->material_id,
+                    'owner'    => $trade->owner,
+                    'status'      => 'completed',
+        ]);
+                return back()->with('message', 'Order completed.');
         } else {
             // start new conversation
 

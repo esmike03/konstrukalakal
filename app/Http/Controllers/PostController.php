@@ -27,21 +27,43 @@ class PostController extends Controller
                     ->orWhere('owner', $logon)->count();
         $item = Notifications::where('owner', $logon)->latest()->take(5)->get();
         $not = Notifications::get();
+        $donateCount = Donate::where('owner', auth()->id())->count();
+        $tradeCount = Trade::where('owner', auth()->id())->count();
+        $orderCount = Orders::where('owner', auth()->id())->count();
+        $totaling = ($donateCount + $tradeCount + $orderCount);
 
+                $cartItemCount = Cart::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+            $donateItemCount = Donate::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
 
-        $cartItemCount = Cart::where('user_id', auth()->id())->count();
-        $donateItemCount = Donate::where('user_id', auth()->id())
-                                    ->orWhere('owner', auth()->id())->count();
-        $tradeItemCount = Trade::where('user_id', auth()->id())
-                                    ->orWhere('owner', auth()->id())->count();
-        $orderItemCount = Orders::where('user_id', auth()->id())
-                                    ->orWhere('owner', auth()->id())->count();
+            $tradeItemCount = Trade::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+            $orderItemCount = Orders::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
         $total = $cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount;
         return Inertia::render('Home', [
             'materials' => $materials,
             'cartItemCount' => $cartItemCount, // Send the full paginated data
             'notifcount' => $notifcount,
             'item' => $item,
+            'totaling' => $totaling,
             'total' => $total,
         ]);
     }

@@ -49,7 +49,7 @@ Route::get('/materials-edit/{id}', [MaterialController::class, 'editMaterial'])-
 Route::get('/message/{id}', [MaterialController::class, 'sendMessage'])->name('message.show');
 Route::get('/message2/{start}', [MaterialController::class, 'sendMessage2'])->name('message2.show');
 Route::post('/messages/send', [MaterialController::class, 'send']);
-Route::get('/messagex/{id}', [MaterialController::class, 'sendMessagex'])->name('messagex.showx');
+Route::get('/messagext/{id}', [MaterialController::class, 'sendMessagex'])->name('messagex.showx');
 Route::get('/messagex/{id}/{userId}', [MaterialController::class, 'sendMessagexx'])->name('messagexx.showxx');
 Route::get('/back', [MaterialController::class, 'back'])->name('materials.back');
 Route::get('/messagexx/{id}/{userId}', [MaterialController::class, 'sendMessagexxx'])->name('messagexxx.showxxx');
@@ -60,11 +60,13 @@ Route::post('/order/{id}/submit', [CartController::class, 'storeOrder'])->name('
 
 Route::get('/cart', [CartController::class, 'toCart']);
 Route::get('/cart/donate', [CartController::class, 'todonate']);
+Route::get('/donate-list', [CartController::class, 'donateList']);
 Route::get('/history', [CartController::class, 'tohistory']);
 Route::get('/notifications', [CartController::class, 'tonotifications']);
 Route::post('/cart/delete/{id}', [CartController::class, 'destroy'])->name('cart.delete');
 Route::get('/uploads/delete/{id}', [MaterialController::class, 'uploadDestroy'])->name('upload.delete');
 Route::get('/Orders', [CartController::class, 'toOrders']);
+Route::get('/order-list', [CartController::class, 'toOrderList']);
 Route::post('/profile/update-image', [ProfileController::class, 'updateProfileImage'])->middleware('auth');
 
 Route::put('/materials-update/{material}', [MaterialController::class, 'updateMaterial'])
@@ -79,6 +81,7 @@ Route::get('/checkout', [CartController::class, 'checkout'])->middleware('auth')
 Route::get('/trade/create', [MaterialController::class, 'createTrade'])->name('trade.create');
 Route::post('/trade/submit', [MaterialController::class, 'storeTrade']);
 Route::get('/my-trades', [MaterialController::class, 'myTrades'])->middleware('auth');
+Route::get('/trade-list', [MaterialController::class, 'TradeList'])->middleware('auth');
 Route::post('/trades/{id}/reject', [NavigationController::class, 'rejectTrade'])->name('trades.rejectTrade');
 Route::post('/trades/{id}/cancel', [NavigationController::class, 'cancelTrade'])->name('trades.cancelTrade');
 Route::post('/trades/{id}/accept', [NavigationController::class, 'acceptTrade'])->name('trades.acceptTrade');
@@ -92,3 +95,10 @@ Route::post('/donate/{id}/accept', [NavigationController::class, 'acceptDonate']
 Route::post('/order/{id}/reject', [NavigationController::class, 'rejectOrder'])->name('trades.rejectOrder');
 Route::post('/order/{id}/cancel', [NavigationController::class, 'cancelOrder'])->name('trades.cancelOrder');
 Route::post('/order/{id}/accept', [NavigationController::class, 'acceptOrder'])->name('trades.acceptOrder');
+Route::post('/order/{id}/complete', [NavigationController::class, 'completeOrder'])->name('trades.completeOrder');
+Route::post('/order/{id}/cancelbyowner', [NavigationController::class, 'cancelbyOwnerOrder'])->name('trades.cancelOwnerOrder');
+
+
+
+//update the quantity
+Route::post('/cart/updateQuantity/{id}/{newQty}', [CartController::class, 'updateQuantity']);

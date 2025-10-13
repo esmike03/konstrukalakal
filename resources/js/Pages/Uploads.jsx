@@ -1,14 +1,28 @@
 import { useState, useEffect } from "react";
 import { useModal } from "@/context/ModalContext";
-import { CheckCircle, Search, Grid, List, Upload, Filter } from "lucide-react";
-import { usePage, Link } from "@inertiajs/react";
+import { CheckCircle, Search, Grid, List, Upload, Filter, Trash2, ShoppingCart } from "lucide-react";
+import { usePage, Link, useForm } from "@inertiajs/react";
 
 export default function Materials() {
+    const { post } = useForm();
+
+  const updateQuantity = (id, newQty) => {
+    console.log("Updating:", id, newQty);
+    if (newQty < 1) return;
+    post(`/cart/updateQuantity/${id}/${newQty}`, {
+     quantity: newQty,
+  }, {
+    preserveScroll: true,
+    });
+
+  };
   const [view, setView] = useState("grid");
   const { openMaterialModal } = useModal();
   const { materials, flash, auth } = usePage().props;
   const [showMessage, setShowMessage] = useState(false);
-
+  const { order } = usePage().props;
+  const { trade } = usePage().props;
+  const { donate } = usePage().props;
   // Filters & search
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -232,15 +246,33 @@ export default function Materials() {
                   </p>
 
                   <div className="flex justify-between items-center mt-2">
-                    <p className="text-green-600 font-bold">
-                      ₱ {material.price}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      Qty: {material.quantity}
-                    </p>
+                    {material.forbdt === 'Sale' && (
+                      <p className="text-green-600 font-bold">
+                        ₱ {material.price}
+                      </p>
+                    )}
+
+                    <div className="flex items-center bg-gray-50 border border-gray-200 rounded-full px-1.5 py-1">
+                  <button
+                    onClick={() => updateQuantity(material.id, (material.quantity - 1))}
+                    className="text-gray-500 hover:text-red-500 text-sm px-1 transition"
+                  >
+                    −
+                  </button>
+                  <span className="mx-2 text-xs font-semibold text-gray-800 w-6 text-center">
+                    {material.quantity}
+                  </span>
+                  <button
+                    onClick={() => updateQuantity(material.id, (material.quantity + 1))}
+                    className="text-gray-500 hover:text-green-500 text-sm px-1 transition"
+                  >
+                    +
+                  </button>
+                </div>
+
                   </div>
 
-                  <div className="flex gap-2 mt-4 justify-between">
+                  <div className="flex gap-2 mt-4 justify-center">
                     <Link href={`/materials/${material.id}`} className="w-1/3">
                       <button className="w-full bg-green-600 text-white text-sm py-2 rounded-md hover:bg-green-700 transition">
                         View
@@ -254,14 +286,62 @@ export default function Materials() {
                         Edit
                       </button>
                     </Link>
-                    <Link
-                      href={`/uploads/delete/${material.id}`}
-                      className="w-1/3"
-                    >
-                      <button className="w-full bg-red-600 text-white text-sm py-2 rounded-md hover:bg-red-700 transition">
-                        Delete
+                    {material.forbdt === 'Sale' && (
+
+                       <Link href="/order-list" className="w-1/3">
+                        <button className="w-full bg-yellow-400 text-white text-sm py-1.5 px-0.5 rounded-md hover:bg-yellow-500 transition relative flex justify-center items-center">
+                          <div className="relative">
+                            <ShoppingCart className="w-full" />
+                            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
+                              {order}
+                            </span>
+                          </div>
+                        </button>
+                      </Link>
+
+                    )}
+                    {material.forbdt === 'Trade' && (
+
+                        <Link href="/trade-list" className="w-1/3">
+                        <button className="w-full bg-yellow-400 text-white text-sm py-1.5 px-0.5 rounded-md hover:bg-yellow-500 transition relative flex justify-center items-center">
+                          <div className="relative">
+                            <ShoppingCart className="w-full" />
+                            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
+                              {trade}
+                            </span>
+                          </div>
+                        </button>
+                      </Link>
+                    )}
+                    {material.forbdt === 'Donation' && (
+
+                        <Link href="/donate-list" className="w-1/3">
+                        <button className="w-full bg-yellow-400 text-white text-sm py-1.5 px-0.5 rounded-md hover:bg-yellow-500 transition relative flex justify-center items-center">
+                          <div className="relative">
+                            <ShoppingCart className="w-full" />
+                            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
+                              {donate}
+                            </span>
+                          </div>
+                        </button>
+                      </Link>
+                    )}
+
+                    <Link href={`/uploads/delete/${material.id}`} className="w-1/3">
+                      <button
+                        className="w-full bg-red-600 text-white text-sm py-1.5 px-0.5 rounded-md hover:bg-red-700 transition"
+                        onClick={(e) => {
+                          if (!window.confirm("Are you sure you want to delete this item?")) {
+                            e.preventDefault(); // stop navigation if cancelled
+                          }
+                        }}
+                      >
+                        <Trash2 className="text-center flex w-full" />
                       </button>
                     </Link>
+
+
+
                   </div>
                 </div>
               ))

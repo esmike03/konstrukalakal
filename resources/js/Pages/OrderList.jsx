@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Head, Link, useForm, usePage } from "@inertiajs/react";
 import { ArrowLeft, MessageCircle, CheckCircle, X } from "lucide-react";
 
-export default function Orders({ trades, isUser }) {
+export default function OrderList({ trades, isUser }) {
     const { post } = useForm();
     const { flash } = usePage().props;
     const [showMessage, setShowMessage] = useState(false);
@@ -30,15 +30,21 @@ export default function Orders({ trades, isUser }) {
         }
     };
 
+    const acceptDonate = (id) => {
+        if (confirm("Are you sure you want to accept this Order?")) {
+            post(`/order/${id}/accept`);
+        }
+    };
+
     const completeOrder = (id) => {
         if (confirm("Are you sure you want to complete this Order?")) {
             post(`/order/${id}/complete`);
         }
     };
 
-    const acceptDonate = (id) => {
-        if (confirm("Are you sure you want to accept this Order?")) {
-            post(`/order/${id}/accept`);
+    const cancelOrder = (id) => {
+        if (confirm("Are you sure you want to cancel this Order?")) {
+            post(`/order/${id}/cancelbyowner`);
         }
     };
 
@@ -77,11 +83,11 @@ export default function Orders({ trades, isUser }) {
                     {/* Header + Filter */}
                     <div className="mb-6 w-full flex justify-between items-center">
                                         <div className="flex gap-4 items-center">
-                                            <a className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition" href="/cart">
+                                            <a className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition" href="/uploaded">
                                                 <ArrowLeft />
                                             </a>
                                             <h1 className="text-3xl font-extrabold text-gray-800">
-                                                Orders
+                                                Orders List
                                             </h1>
                                         </div>
                                         <div className="backdrop-blur-md bg-gray-100 rounded-xl px-4 py-2 border border-gray-200">
@@ -172,14 +178,14 @@ export default function Orders({ trades, isUser }) {
                                                 href={`/message/${trade.material_id}`}
                                                 className="flex items-center justify-center gap-1 bg-blue-500 text-white px-3 py-2 rounded-md text-sm w-full sm:w-auto"
                                             >
-                                                <MessageCircle className="w-4 h-4" />Message
+                                                <MessageCircle className="w-4 h-4" />
 
                                             </Link>
-
                                         </div>
                                     ) : (
                                         <div className="w-full mt-4 gap-3 flex flex-col sm:flex-row justify-between">
-                                            <button
+                                                {trade.status === "pending" && (
+                                                <button
                                                 disabled={
                                                     trade.status === "rejected" ||
                                                     trade.status === "cancelled" ||
@@ -197,7 +203,35 @@ export default function Orders({ trades, isUser }) {
                                             >
                                                 Reject
                                             </button>
+                                                )}
 
+                                                {trade.status === "accepted" && (
+                                            <button
+                                                disabled={
+                                                    trade.status === "rejected" ||
+                                                    trade.status === "cancelled"
+                                                }
+                                                onClick={() => cancelOrder(trade.id)}
+                                                className={`px-3 py-2 rounded-md text-white w-full sm:w-auto text-sm
+                                                ${
+                                                    trade.status === "rejected" ||
+                                                    trade.status === "cancelled"
+                                                        ? "bg-gray-400 cursor-not-allowed"
+                                                        : "bg-red-500 hover:bg-red-600"
+                                                }`}
+                                            >
+                                                Cancel
+                                            </button>
+                                            )}
+                                            <Link
+                                            ///messagexx/{id}/{userId}
+                                                href={`/messagexx/${trade.material_id}/${trade.user_id}`}
+                                                className="flex items-center justify-center gap-1 bg-blue-500 text-white px-3 py-2 rounded-md text-sm w-full sm:w-auto"
+                                            >
+                                                <MessageCircle className="w-4 h-4" />
+
+                                            </Link>
+                                            {trade.status === "pending" && (
                                             <button
                                                 onClick={() => acceptDonate(trade.id)}
                                                 disabled={
@@ -216,6 +250,25 @@ export default function Orders({ trades, isUser }) {
                                             >
                                                 Accept
                                             </button>
+                                                )}
+                                            {trade.status === "accepted" && (
+                                            <button
+                                                disabled={
+                                                    trade.status === "rejected" ||
+                                                    trade.status === "cancelled"
+                                                }
+                                                onClick={() => completeOrder(trade.id)}
+                                                className={`px-3 py-2 rounded-md text-white w-full sm:w-auto text-sm
+                                                ${
+                                                    trade.status === "rejected" ||
+                                                    trade.status === "cancelled"
+                                                        ? "bg-gray-400 cursor-not-allowed"
+                                                        : "bg-green-500 hover:bg-green-600"
+                                                }`}
+                                            >
+                                                Complete
+                                            </button>
+                                            )}
                                         </div>
                                     )}
                                 </div>

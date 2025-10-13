@@ -5,7 +5,7 @@ import { CheckCircle, X, MessageCircle } from "lucide-react";
 export default function Cart() {
   const { cartItems, flash, auth } = usePage().props;
   const [showMessage, setShowMessage] = useState(false);
-  const [filter, setFilter] = useState("pending");
+  const [filter, setFilter] = useState("all");
   const { donateItemCount, tradeItemCount, orderItemCount } = usePage().props;
   const form = useForm({ material_id: null });
   const { post } = form;

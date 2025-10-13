@@ -12,6 +12,7 @@ export default function Layout({ children }) {
   const toggleMobileMenu = () => setMobileMenuOpen(!isMobileMenuOpen);
   const closeMobileMenu = () => setMobileMenuOpen(false);
   const { total } = usePage().props;
+  const { totaling } = usePage().props;
   const { notifcount } = usePage().props;
   const { item } = usePage().props;
 
@@ -172,7 +173,13 @@ export default function Layout({ children }) {
 
                         <button className="bg-green-600 text-white text-sm px-2 py-1 rounded-full hover:bg-green-700">
                         Hi, {auth.user.name.split(" ")[0]}
+                        {totaling > 0 && (
+                            <span className="hover:hidden absolute -top-2 -right-0 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                              {totaling}
+                            </span>
+                          )}
                         </button>
+                        
                   </div>
 
                     <div className="absolute right-0 mt-0.5 w-40 z-50 bg-white border rounded-md shadow-lg hidden group-hover:block">
@@ -184,11 +191,21 @@ export default function Layout({ children }) {
                       </Link>
                       <Link
                         href="/uploaded"
-
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 w-full text-left"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 w-full text-left relative"
                       >
-                        <Upload size={18} /> My Uploads
+                        <Upload size={18} />
+                        <div className="relative">
+                          
+                           <span>My Uploads</span>
+                          {totaling > 0 && (
+                            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                              {totaling}
+                            </span>
+                          )}
+                        </div>
+                       
                       </Link>
+
 
                       <Link
                         href="/history"

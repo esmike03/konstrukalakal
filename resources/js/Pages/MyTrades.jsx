@@ -6,7 +6,7 @@ export default function MyTrades({ trades, isUser }) {
     const { post } = useForm();
     const { flash } = usePage().props;
     const [showMessage, setShowMessage] = useState(false);
-    const [filter, setFilter] = useState("pending");
+    const [filter, setFilter] = useState("all");
 
     useEffect(() => {
         if (flash?.message) {

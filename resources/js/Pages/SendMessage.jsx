@@ -32,7 +32,7 @@ const handleSend = (e) => {
     <>
       <div className="max-w-5xl mx-auto p-6 rounded-lg gap-8 mt-10 mb-24">
         {/* Back Button */}
-        <Link href="/back">
+        <Link href="/messages">
           <button className="absolute top-20 text-gray-500 font-semibold flex items-center">
             <ArrowLeft size={20} className="mr-1" /> Back
           </button>
@@ -49,9 +49,21 @@ const handleSend = (e) => {
                 alt={material.material_name}
                 className="w-full h-full object-cover rounded-md"
               />
-              <p className="absolute top-1 left-1 bg-green-500 text-[10px] text-white px-1 py-0.5 rounded">
-                For {material.forbdt}
-              </p>
+               {material.status === 'off' &&(
+                <p className="absolute top-1 left-1 bg-red-500 text-[10px] text-white px-1 py-0.5 rounded">
+
+                   Deleted
+                </p>
+                )}
+
+                {material.status === 'on' &&(
+                <p className="absolute top-1 left-1 bg-green-500 text-[10px] text-white px-1 py-0.5 rounded">
+
+                   For {material.forbdt}
+                </p>
+                )}
+
+
             </div>
             <div className="w-[60%]">
               <div className="flex items-center gap-2 border-b pb-1 mb-1 border-gray-200">

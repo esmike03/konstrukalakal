@@ -142,6 +142,7 @@ export default function EditMaterial({ material }) {
 
           {/* Price & Quantity */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {data.forbdt === "Sale" && (
             <div>
               <label className="block font-medium text-sm text-gray-700 mb-1">
                 Price
@@ -158,6 +159,7 @@ export default function EditMaterial({ material }) {
                 <p className="text-red-600 text-xs mt-1">{errors.price}</p>
               )}
             </div>
+          )}
             <div>
               <label className="block font-medium text-sm text-gray-700 mb-1">
                 Quantity

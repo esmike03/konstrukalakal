@@ -32,9 +32,20 @@ export default function Messages() {
                 />
                 <div className="ml-4 flex-1">
                   <div>
-                    <p className="text-md font-bold text-gray-900">
-                        {chat.user.name}
+                  <div className="flex">
+                    <p className="text-md flex font-bold items-center content-center gap-2 text-gray-900">
+                            {chat.user.name}
+                            {chat.status == 'off' &&(
+                                <p className="bg-red-500 items-center content-center h-fit w-fit text-[10px] text-white px-1 py-0.5 rounded">
+
+                                Deleted
+                                </p>
+                            )}
+
+
                     </p>
+                  </div>
+
                     <p className="text-xs text-gray-700">
                         {chat.material_name} | <span className="text-xs text-gray-400">{chat.conversation_id.slice(0, 8) + '...'}</span>
                     </p>

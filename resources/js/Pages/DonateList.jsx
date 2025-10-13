@@ -68,11 +68,11 @@ export default function DonateCart({ trades, isUser }) {
                 {/* Header + Filter */}
                 <div className="mb-6 w-full flex justify-between items-center">
                     <div className="flex gap-4 items-center">
-                        <a className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition" href="/cart">
+                        <a className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition" href="/uploaded">
                             <ArrowLeft />
                         </a>
                         <h1 className="text-3xl font-extrabold text-gray-800">
-                            Donate
+                            Donate List
                         </h1>
                     </div>
                     <div className="backdrop-blur-md bg-gray-100 rounded-xl px-4 py-2 border border-gray-200">
@@ -162,11 +162,12 @@ export default function DonateCart({ trades, isUser }) {
                                             className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition"
                                         >
                                             <MessageCircle className="w-4 h-4" />
-                                            Message
+
                                         </Link>
                                     </div>
                                 ) : (
                                     <div className="mt-4 flex gap-1 justify-between">
+                                    {trade.status === "pending" && (
                                         <button
                                             disabled={
                                                 trade.status === "rejected" ||
@@ -184,13 +185,34 @@ export default function DonateCart({ trades, isUser }) {
                                         >
                                             Reject
                                         </button>
+                                            )}
+
+                                            {trade.status === "accepted" && (
+                                            <button
+                                                disabled={
+                                                    trade.status === "rejected" ||
+                                                    trade.status === "cancelled"
+                                                }
+                                                onClick={() => cancelOrder(trade.id)}
+                                                className={`px-3 py-2 rounded-md text-white w-full sm:w-auto text-sm
+                                                ${
+                                                    trade.status === "rejected" ||
+                                                    trade.status === "cancelled"
+                                                        ? "bg-gray-400 cursor-not-allowed"
+                                                        : "bg-red-500 hover:bg-red-600"
+                                                }`}
+                                            >
+                                                Cancel
+                                            </button>
+                                            )}
                                         <Link
                                             href={`/messagex/${trade.material_id}/${trade.user_id}`}
                                             className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition"
                                         >
                                             <MessageCircle className="w-4 h-4" />
-                                            Message
+
                                         </Link>
+                                        {trade.status === "pending" && (
                                         <button
                                             onClick={() => acceptDonate(trade.id)}
                                             disabled={
@@ -208,6 +230,25 @@ export default function DonateCart({ trades, isUser }) {
                                         >
                                             Accept
                                         </button>
+                                            )}
+                                        {trade.status === "accepted" && (
+                                            <button
+                                                disabled={
+                                                    trade.status === "rejected" ||
+                                                    trade.status === "cancelled"
+                                                }
+                                                onClick={() => completeOrder(trade.id)}
+                                                className={`px-3 py-2 rounded-md text-white w-full sm:w-auto text-sm
+                                                ${
+                                                    trade.status === "rejected" ||
+                                                    trade.status === "cancelled"
+                                                        ? "bg-gray-400 cursor-not-allowed"
+                                                        : "bg-green-500 hover:bg-green-600"
+                                                }`}
+                                            >
+                                                Complete
+                                            </button>
+                                            )}
                                     </div>
                                 )}
                             </div>

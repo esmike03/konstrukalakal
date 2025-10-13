@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Head, Link, useForm, usePage } from "@inertiajs/react";
-import { ArrowLeft, MessageCircle, CheckCircle, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, MessageCircle, CheckCircle, X } from "lucide-react";
 
-export default function DonateCart({ trades, isUser }) {
+export default function MyTrades({ trades, isUser }) {
     const { post } = useForm();
     const { flash } = usePage().props;
     const [showMessage, setShowMessage] = useState(false);
@@ -16,21 +16,21 @@ export default function DonateCart({ trades, isUser }) {
         }
     }, [flash]);
 
-    const rejectDonate = (id) => {
-        if (confirm("Are you sure you want to reject this Inquiry?")) {
-            post(`/donate/${id}/reject`);
+    const rejectTrade = (id) => {
+        if (confirm("Are you sure you want to reject this trade?")) {
+            post(`/trades/${id}/reject`);
         }
     };
 
-    const cancelDonate = (id) => {
-        if (confirm("Are you sure you want to cancel this Inquiry?")) {
-            post(`/donate/${id}/cancel`);
+    const cancelTrade = (id) => {
+        if (confirm("Are you sure you want to cancel this trade?")) {
+            post(`/trades/${id}/cancel`);
         }
     };
 
-    const acceptDonate = (id) => {
-        if (confirm("Are you sure you want to accept this Inquiry?")) {
-            post(`/donate/${id}/accept`);
+    const acceptTrade = (id) => {
+        if (confirm("Are you sure you want to accept this trade?")) {
+            post(`/trades/${id}/accept`);
         }
     };
 
@@ -40,7 +40,7 @@ export default function DonateCart({ trades, isUser }) {
 
     return (
         <>
-            <Head title="Donates" />
+            <Head title="My Trades" />
 
             <div className="min-h-screen bg-white py-10 px-6">
                 {/* Flash message */}
@@ -68,11 +68,14 @@ export default function DonateCart({ trades, isUser }) {
                 {/* Header + Filter */}
                 <div className="mb-6 w-full flex justify-between items-center">
                     <div className="flex gap-4 items-center">
-                        <a className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition" href="/cart">
+                        <a
+                            className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition"
+                            href="/uploaded"
+                        >
                             <ArrowLeft />
                         </a>
                         <h1 className="text-3xl font-extrabold text-gray-800">
-                            Donate
+                            Trade List
                         </h1>
                     </div>
                     <div className="backdrop-blur-md bg-gray-100 rounded-xl px-4 py-2 border border-gray-200">
@@ -96,16 +99,16 @@ export default function DonateCart({ trades, isUser }) {
                 {/* Trades */}
                 {filteredTrades.length === 0 ? (
                     <p className="text-gray-500 text-center text-lg">
-                        No items match this filter.
+                        No trades match this filter.
                     </p>
                 ) : (
-                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {filteredTrades.map((trade) => (
                             <div
                                 key={trade.id}
-                                className="backdrop-blur-md bg-white/70 border border-gray-200 group hover:scale-[1.02] transition-all shadow-lg rounded-2xl p-6"
+                                className="backdrop-blur-md bg-white/70 border border-gray-200 hover:shadow-xl hover:scale-[1.02] transition-all shadow-md rounded-2xl p-6"
                             >
-                                {/* Status */}
+                                {/* Status label */}
                                 <div className="mb-3">
                                     <p
                                         className={`text-xs font-bold uppercase tracking-wide text-center rounded-full px-3 py-1 w-fit mx-auto text-white ${
@@ -122,33 +125,50 @@ export default function DonateCart({ trades, isUser }) {
 
                                 {/* Trader info */}
                                 <p className="text-sm text-center mb-3 text-gray-600">
-                                    {!isUser ? trade.user.name : "Owner"}
+                                    by {trade.user.name}
                                 </p>
 
-                                {/* Material */}
-                                <Link href={`/materials/${trade.material.id}`}>
-                                    <div className="flex flex-col items-center">
+                                {/* Items */}
+                                <div className="flex items-center justify-center gap-6">
+                                    <div className="text-center">
                                         <img
-                                            src={`/storage/${trade.material.image}`}
-                                            alt={trade.material.material_name}
+                                            src={`/storage/${trade.item_image}`}
+                                            alt={trade.item_title}
                                             className="w-20 h-20 object-cover rounded-xl shadow-md"
                                         />
-                                        <p className="font-bold text-base mt-2 text-gray-800">
-                                            {trade.material.material_name}
+                                        <p className="text-sm mt-2 text-gray-600">From</p>
+                                        <p className="font-bold text-gray-800 text-base">
+                                            {trade.item_title}
                                         </p>
                                     </div>
-                                </Link>
+
+                                    <ArrowRight className="w-6 h-6 text-gray-500" />
+
+                                    <Link href={`/materials/${trade.material.id}`}>
+                                        <div className="text-center">
+                                            <img
+                                                src={`/storage/${trade.material.image}`}
+                                                alt={trade.material.material_name}
+                                                className="w-20 h-20 object-cover rounded-xl shadow-md"
+                                            />
+                                            <p className="text-sm mt-2 text-gray-600">For</p>
+                                            <p className="font-bold text-gray-800 text-base">
+                                                {trade.material.material_name}
+                                            </p>
+                                        </div>
+                                    </Link>
+                                </div>
 
                                 {/* Actions */}
                                 {isUser ? (
-                                    <div className="mt-4 flex justify-between">
+                                    <div className="mt-5 flex flex-col sm:flex-row gap-3">
                                         <button
                                             disabled={
                                                 trade.status === "rejected" ||
                                                 trade.status === "cancelled"
                                             }
-                                            onClick={() => cancelDonate(trade.id)}
-                                            className={`px-3 py-1.5 rounded-lg font-medium text-white transition ${
+                                            onClick={() => cancelTrade(trade.id)}
+                                            className={`flex-1 px-3 py-2 rounded-lg font-medium text-white transition ${
                                                 trade.status === "rejected" ||
                                                 trade.status === "cancelled"
                                                     ? "bg-gray-400 cursor-not-allowed"
@@ -158,23 +178,23 @@ export default function DonateCart({ trades, isUser }) {
                                             Cancel
                                         </button>
                                         <Link
-                                            href={`/message/${trade.material_id}`}
-                                            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition"
+                                            href={`/message/${trade.trade_for}`}
+                                            className="flex items-center justify-center gap-1 flex-1 px-3 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition"
                                         >
                                             <MessageCircle className="w-4 h-4" />
                                             Message
                                         </Link>
                                     </div>
                                 ) : (
-                                    <div className="mt-4 flex gap-1 justify-between">
+                                    <div className="mt-5 flex flex-col sm:flex-row gap-3">
                                         <button
                                             disabled={
                                                 trade.status === "rejected" ||
                                                 trade.status === "cancelled" ||
                                                 trade.status === "accepted"
                                             }
-                                            onClick={() => rejectDonate(trade.id)}
-                                            className={`px-3 py-1.5 rounded-lg font-medium text-white transition ${
+                                            onClick={() => rejectTrade(trade.id)}
+                                            className={`flex-1 px-3 py-2 rounded-lg font-medium text-white transition ${
                                                 trade.status === "rejected" ||
                                                 trade.status === "cancelled" ||
                                                 trade.status === "accepted"
@@ -184,21 +204,21 @@ export default function DonateCart({ trades, isUser }) {
                                         >
                                             Reject
                                         </button>
-                                        <Link
-                                            href={`/messagex/${trade.material_id}/${trade.user_id}`}
-                                            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition"
-                                        >
-                                            <MessageCircle className="w-4 h-4" />
-                                            Message
-                                        </Link>
+                                            <Link
+                                                href={`/messagext/${trade.item_title}`}
+                                                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition"
+                                                >
+                                                <MessageCircle className="w-4 h-4" />
+
+                                            </Link>
                                         <button
-                                            onClick={() => acceptDonate(trade.id)}
+                                            onClick={() => acceptTrade(trade.id)}
                                             disabled={
                                                 trade.status === "rejected" ||
                                                 trade.status === "cancelled" ||
                                                 trade.status === "accepted"
                                             }
-                                            className={`px-3 py-1.5 rounded-lg font-medium text-white transition ${
+                                            className={`flex-1 px-3 py-2 rounded-lg font-medium text-white transition ${
                                                 trade.status === "rejected" ||
                                                 trade.status === "cancelled" ||
                                                 trade.status === "accepted"
@@ -206,7 +226,7 @@ export default function DonateCart({ trades, isUser }) {
                                                     : "bg-green-500 hover:bg-green-600"
                                             }`}
                                         >
-                                            Accept
+                                            Trade
                                         </button>
                                     </div>
                                 )}

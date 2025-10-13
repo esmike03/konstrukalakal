@@ -106,7 +106,7 @@ export default function Show({ material, user }) {
           </div>
 
           {/* Price */}
-          {(material.forbdt === "Sale" || material.forbdt === "Trade") && (
+          {(material.forbdt === "Sale" ) && (
             <p className="mt-3 text-lg font-bold text-green-600">
               ₱ {material.price}
             </p>

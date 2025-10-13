@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Cart;
 use App\Models\Trade;
 use App\Models\Donate;
+use App\Models\User;
 use App\Models\Orders;
 use App\Models\Archive;
 use App\Models\Material;
@@ -18,14 +19,38 @@ class NavigationController extends Controller
     {
         sleep(1);
         $logon = auth()->id();
-        $cartItemCount = Cart::where('user_id', auth()->id())->count();
-        $donateItemCount = Donate::where('user_id', auth()->id())
-                        ->orWhere('owner', auth()->id())->count();
-        $tradeItemCount = Trade::where('user_id', auth()->id())
-                        ->orWhere('owner', auth()->id())->count();
-        $orderItemCount = Orders::where('user_id', auth()->id())
-                        ->orWhere('owner', auth()->id())->count();
+                $cartItemCount = Cart::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+            $donateItemCount = Donate::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+
+            $tradeItemCount = Trade::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+            $orderItemCount = Orders::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
         $total = $cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount;
+
+        $donateCount = Donate::where('owner', auth()->id())->count();
+        $tradeCount = Trade::where('owner', auth()->id())->count();
+        $orderCount = Orders::where('owner', auth()->id())->count();
+        $totaling = ($donateCount + $tradeCount + $orderCount);
+
         $materials = Material::where('status', 'on')->get();
         $notifcount = Notifications::where('user_id', $logon)->count();
         $item = Notifications::where('owner', $logon)->latest()->take(5)->get();
@@ -34,6 +59,7 @@ class NavigationController extends Controller
             'cartItemCount' => $cartItemCount,
             'total' => $total,
             'item' => $item,
+            'totaling' => $totaling,
             'notifcount' => $notifcount,
         ]);
     }
@@ -43,14 +69,38 @@ class NavigationController extends Controller
         sleep(1);
         $logon = auth()->id();
         $notifcount = Notifications::where('user_id', $logon)->count();
-        $cartItemCount = Donate::where('user_id', auth()->id())->count();
-        $donateItemCount = Donate::where('user_id', auth()->id())
-                    ->orWhere('owner', auth()->id())->count();
-        $tradeItemCount = Trade::where('user_id', auth()->id())
-                    ->orWhere('owner', auth()->id())->count();
-        $orderItemCount = Orders::where('user_id', auth()->id())
-                    ->orWhere('owner', auth()->id())->count();
+                $cartItemCount = Cart::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+            $donateItemCount = Donate::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+
+            $tradeItemCount = Trade::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+            $orderItemCount = Orders::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
         $total = ($cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount);
+
+        $donateCount = Donate::where('owner', auth()->id())->count();
+        $tradeCount = Trade::where('owner', auth()->id())->count();
+        $orderCount = Orders::where('owner', auth()->id())->count();
+        $totaling = ($donateCount + $tradeCount + $orderCount);
+
         $materials = Material::where('forbdt', 'Trade')->get();
         $item = Notifications::where('owner', $logon)->latest()->take(5)->get();
         return inertia('TradeMaterials', [
@@ -58,6 +108,7 @@ class NavigationController extends Controller
             'cartItemCount' => $cartItemCount,
             'notifcount' => $notifcount,
             'item' => $item,
+            'totaling' => $totaling,
             'total' => $total
         ]);
     }
@@ -67,14 +118,38 @@ class NavigationController extends Controller
         sleep(1);
         $logon = auth()->id();
         $notifcount = Notifications::where('user_id', $logon)->count();
-        $cartItemCount = Cart::where('user_id', auth()->id())->count();
-        $donateItemCount = Donate::where('user_id', auth()->id())
-                    ->orWhere('owner', auth()->id())->count();
-        $tradeItemCount = Trade::where('user_id', auth()->id())
-                    ->orWhere('owner', auth()->id())->count();
-        $orderItemCount = Orders::where('user_id', auth()->id())
-                    ->orWhere('owner', auth()->id())->count();
+                $cartItemCount = Cart::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+            $donateItemCount = Donate::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+
+            $tradeItemCount = Trade::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+            $orderItemCount = Orders::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
         $total = ($cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount);
+
+        $donateCount = Donate::where('owner', auth()->id())->count();
+        $tradeCount = Trade::where('owner', auth()->id())->count();
+        $orderCount = Orders::where('owner', auth()->id())->count();
+        $totaling = ($donateCount + $tradeCount + $orderCount);
+
         $materials = Material::where('forbdt', 'Sale')->get();
         $item = Notifications::where('owner', $logon)->latest()->take(5)->get();
         return inertia('BuyMaterials', [
@@ -82,6 +157,7 @@ class NavigationController extends Controller
             'cartItemCount' => $cartItemCount,
             'notifcount' => $notifcount,
             'item' => $item,
+            'totaling' => $totaling,
             'total' => $total
         ]);
     }
@@ -91,23 +167,47 @@ class NavigationController extends Controller
         sleep(1);
         $logon = auth()->id();
         $notifcount = Notifications::where('user_id', $logon)->count();
-        $cartItemCount = Cart::where('user_id', auth()->id())->count();
-        $donateItemCount = Donate::where('user_id', auth()->id())
-                    ->orWhere('owner', auth()->id())->count();
-        $tradeItemCount = Trade::where('user_id', auth()->id())
-                    ->orWhere('owner', auth()->id())->count();
-        $orderItemCount = Orders::where('user_id', auth()->id())
-                    ->orWhere('owner', auth()->id())->count();
+                $cartItemCount = Cart::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+            $donateItemCount = Donate::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+
+            $tradeItemCount = Trade::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+            $orderItemCount = Orders::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
         $total = ($cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount);
         $materials = Material::where('forbdt', 'Donation')
         ->where('status', 'on')
         ->get();
         $item = Notifications::where('owner', $logon)->latest()->take(5)->get();
+
+        $donateCount = Donate::where('owner', auth()->id())->count();
+        $tradeCount = Trade::where('owner', auth()->id())->count();
+        $orderCount = Orders::where('owner', auth()->id())->count();
+        $totaling = ($donateCount + $tradeCount + $orderCount);
         return inertia('DonateMaterials', [
             'materials' => $materials,
             'cartItemCount' => $cartItemCount,
             'notifcount' => $notifcount,
             'item' => $item,
+            'totaling' => $totaling,
             'total' => $total
         ]);
     }
@@ -115,18 +215,42 @@ class NavigationController extends Controller
     public function about()
     {
         $logon = auth()->id();
-        $cartItemCount = Cart::where('user_id', auth()->id())->count();
-        $donateItemCount = Donate::where('user_id', auth()->id())
-                        ->orWhere('owner', auth()->id())->count();
-        $tradeItemCount = Trade::where('user_id', auth()->id())
-                        ->orWhere('owner', auth()->id())->count();
-        $orderItemCount = Orders::where('user_id', auth()->id())
-                        ->orWhere('owner', auth()->id())->count();
+                $cartItemCount = Cart::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+            $donateItemCount = Donate::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+
+            $tradeItemCount = Trade::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+            $orderItemCount = Orders::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
         $total = $cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount;
         $item = Notifications::where('owner', $logon)->latest()->take(5)->get();
+
+        $donateCount = Donate::where('owner', auth()->id())->count();
+        $tradeCount = Trade::where('owner', auth()->id())->count();
+        $orderCount = Orders::where('owner', auth()->id())->count();
+        $totaling = ($donateCount + $tradeCount + $orderCount);
         return inertia('About', [
             'cartItemCount' => $cartItemCount,
             'total' => $total,
+            'totaling' => $totaling,
             'item' => $item,
         ]);
     }
@@ -135,18 +259,43 @@ class NavigationController extends Controller
     {
         $logon = auth()->id();
         $item = Notifications::where('owner', $logon)->latest()->take(5)->get();
-        $cartItemCount = Cart::where('user_id', auth()->id())->count();
-        $donateItemCount = Donate::where('user_id', auth()->id())
-                    ->orWhere('owner', auth()->id())->count();
-        $tradeItemCount = Trade::where('user_id', auth()->id())
-                    ->orWhere('owner', auth()->id())->count();
-        $orderItemCount = Orders::where('user_id', auth()->id())
-                    ->orWhere('owner', auth()->id())->count();
+                $cartItemCount = Cart::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+            $donateItemCount = Donate::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+
+            $tradeItemCount = Trade::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+            $orderItemCount = Orders::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
         $total = ($cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount);
+
+        $donateCount = Donate::where('owner', auth()->id())->count();
+        $tradeCount = Trade::where('owner', auth()->id())->count();
+        $orderCount = Orders::where('owner', auth()->id())->count();
+        $totaling = ($donateCount + $tradeCount + $orderCount);
+
         return inertia('Profile', [
             'cartItemCount' => $cartItemCount,
             'total' => $total,
             'item' => $item,
+            'totaling' => $totaling
         ]);
     }
 
@@ -183,6 +332,7 @@ class NavigationController extends Controller
                 'material_id'     => $last->material_id, // related item
                 'material_name'   => optional($last->material)->material_name,
                 'material_image'   => optional($last->material)->image,
+                'status'   => optional($last->material)->status,
 
                 ];
             }else{
@@ -197,7 +347,7 @@ class NavigationController extends Controller
                 'material_id'     => $last->material_id, // related item
                 'material_name'   => optional($last->material)->material_name,
                 'material_image'   => optional($last->material)->image,
-
+                'status'   => optional($last->material)->status,
                 ];
             }
 
@@ -206,22 +356,47 @@ class NavigationController extends Controller
         })->values();
 
 
-        $cartItemCount = Cart::where('user_id', $me)->count();
-        $donateItemCount = Donate::where('user_id', auth()->id())
-                            ->orWhere('owner', auth()->id())->count();
-        $tradeItemCount = Trade::where('user_id', auth()->id())
-                            ->orWhere('owner', auth()->id())->count();
-        $orderItemCount = Orders::where('user_id', auth()->id())
-                            ->orWhere('owner', auth()->id())->count();
+                $cartItemCount = Cart::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+            $donateItemCount = Donate::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+
+            $tradeItemCount = Trade::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+            $orderItemCount = Orders::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
         $total = $cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount;
         $notifcount = Notifications::where('user_id', $logon)
                     ->orWhere('owner', $logon)->count();
         $item = Notifications::where('owner', $logon)->latest()->take(5)->get();
+
+        $donateCount = Donate::where('owner', auth()->id())->count();
+        $tradeCount = Trade::where('owner', auth()->id())->count();
+        $orderCount = Orders::where('owner', auth()->id())->count();
+        $totaling = ($donateCount + $tradeCount + $orderCount);
+
         return inertia('Message', [
             'cartItemCount' => $cartItemCount,
             'conversations' => $conversations,
             'total' => $total,
             'item' => $item,
+            'totaling' => $totaling,
             'notifcount' =>$notifcount,
 
         ]);
@@ -281,18 +456,46 @@ class NavigationController extends Controller
         sleep(1);
         $logon = auth()->id();
         $item = Notifications::where('owner', $logon)->latest()->take(5)->get();
-        $cartItemCount = Donate::where('user_id', auth()->id())->count();
-        $donateItemCount = Donate::where('user_id', auth()->id())
-                    ->orWhere('owner', auth()->id())->count();
-        $tradeItemCount = Trade::where('user_id', auth()->id())
-                    ->orWhere('owner', auth()->id())->count();
-        $orderItemCount = Orders::where('user_id', auth()->id())
-                    ->orWhere('owner', auth()->id())->count();
+                $cartItemCount = Cart::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+            $donateItemCount = Donate::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+
+            $tradeItemCount = Trade::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+            $orderItemCount = Orders::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+
+        $donateCount = Donate::where('owner', auth()->id())->count();
+        $tradeCount = Trade::where('owner', auth()->id())->count();
+        $orderCount = Orders::where('owner', auth()->id())->count();
+        $totaling = ($donateCount + $tradeCount + $orderCount);
+
         $total = ($cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount);
-        $materials = Material::where('user_id', auth()->id())->get();
+        $materials = Material::where('user_id', auth()->id())
+                    ->where('status', 'on')->get();
         return inertia('Uploads', [
             'materials' => $materials,
             'cartItemCount' => $cartItemCount,
+             'donate' => $donateCount,
+             'trade' => $tradeCount,
+             'order' => $orderCount,
             'total' => $total,
             'item' => $item,
         ]);
@@ -458,12 +661,14 @@ class NavigationController extends Controller
         Donate::where('material_id', $trade->material_id)
             ->where('id', '!=', $trade->id)
             ->update(['status' => 'rejected']);
-
-
-
         $authId = auth()->id();
         $otherUserId = $trade->user_id; // user you're trading with
         $materialId = $trade->material_id;
+        $image = Material::where('id', $trade->material_id)->first();
+        $user = User::where('id', $otherUserId)->first();
+        $user2 = User::where('id', $authId)->first();
+
+
 
         // check if conversation already exists between these users for this material
         $existingMessage = \App\Models\Message::where('material_id', $materialId)
@@ -487,15 +692,46 @@ class NavigationController extends Controller
                 'material_id' => $materialId,
                 'content' => 'Inquiry accepted successfully!',
             ]);
+
+                Notifications::create([
+                    'user_id'     => $user2->id,
+                    'material_id' => $trade->material_id,
+                    'quantity'    => 1,
+                    'message'    => $user->name . ' your inquiries has been accepted.',
+                    'username' => $user->name,
+                    'image' => $image->image,
+                    'ownername' => $user2->name,
+                    'owner' => $user->id,
+                ]);
         } else {
             // start new conversation
+            $start = \Illuminate\Support\Str::uuid();
             \App\Models\Message::create([
-                'start' => \Illuminate\Support\Str::uuid(),
+                'start' => $start,
                 'sender_id' => $authId,
                 'recipient_id' => $otherUserId,
                 'material_id' => $materialId,
                 'content' => 'Inquiry accepted successfully!',
             ]);
+
+            \App\Models\Convo::create([
+                'start' => $start,
+                'sender_id' => $authId,
+                'recipient_id' => $otherUserId,
+                'material_id' => $materialId,
+                'content' => 'Open too see conversations.',
+            ]);
+
+             Notifications::create([
+                    'user_id'     => $user2->id,
+                    'material_id' => $trade->material_id,
+                    'quantity'    => 1,
+                    'message'    => $user->name . ' your inquiries has been accepted.',
+                    'username' => $user->name,
+                    'image' => $image->image,
+                    'ownername' => $user2->name,
+                    'owner' => $user->id,
+                ]);
             Material::where('id', $trade->material_id)->update(['status' => 'off']);
             return back()->with('message', 'Inquiry accepted and message sent.');
         }
@@ -536,7 +772,7 @@ class NavigationController extends Controller
         return redirect()->back()->with('message', 'Order cancelled successfully!');
     }
 
-        public function acceptOrder($id)
+    public function acceptOrder($id)
     {
         $trade = Orders::findOrFail($id);
         // ✅ Accept this trade
@@ -547,11 +783,14 @@ class NavigationController extends Controller
             ->where('id', '!=', $trade->id)
             ->update(['status' => 'rejected']);
 
-
+        $image = Material::where('id', $trade->material_id)->first();
 
         $authId = auth()->id();
         $otherUserId = $trade->user_id; // user you're trading with
         $materialId = $trade->material_id;
+
+        $user = User::where('id', $otherUserId)->first();
+        $user2 = User::where('id', $authId)->first();
 
         // check if conversation already exists between these users for this material
         $existingMessage = \App\Models\Message::where('material_id', $materialId)
@@ -575,17 +814,138 @@ class NavigationController extends Controller
                 'material_id' => $materialId,
                 'content' => 'Order accepted successfully!',
             ]);
+
+            Notifications::create([
+                    'user_id'     => $user2->id,
+                    'material_id' => $trade->material_id,
+                    'quantity'    => 1,
+                    'message'    => $user->name . ' your order has been accepted.',
+                    'username' => $user->name,
+                    'image' => $image->image,
+                    'ownername' => $user2->name,
+                    'owner' => $user->id,
+                ]);
         } else {
             // start new conversation
+
+            $start = \Illuminate\Support\Str::uuid();
             \App\Models\Message::create([
-                'start' => \Illuminate\Support\Str::uuid(),
+                'start' => $start,
                 'sender_id' => $authId,
                 'recipient_id' => $otherUserId,
                 'material_id' => $materialId,
                 'content' => 'Order accepted successfully!',
             ]);
+
+            \App\Models\Convo::create([
+                'start' => $start,
+                'sender_id' => $authId,
+                'recipient_id' => $otherUserId,
+                'material_id' => $materialId,
+                'content' => 'Open too see conversations.',
+            ]);
+
+            Notifications::create([
+                    'user_id'     => $user2->id,
+                    'material_id' => $trade->material_id,
+                    'quantity'    => 1,
+                    'message'    => $user->name . ' your order has been accepted.',
+                    'username' => $user->name,
+                    'image' => $image->image,
+                    'ownername' => $user2->name,
+                    'owner' => $user->id,
+                ]);
             Material::where('id', $trade->material_id)->update(['status' => 'off']);
             return back()->with('message', 'Order accepted and message sent.');
+        }
+    }
+
+
+    public function completeOrder($id)
+    {
+        $trade = Orders::findOrFail($id);
+        // ✅ Accept this trade
+        $trade->update(['status' => 'accepted']);
+
+        // ✅ Reject all other trades with the same trade_for
+        Orders::where('material_id', $trade->material_id)
+            ->where('id', '!=', $trade->id)
+            ->update(['status' => 'rejected']);
+
+        $image = Material::where('id', $trade->material_id)->first();
+
+        $authId = auth()->id();
+        $otherUserId = $trade->user_id; // user you're trading with
+        $materialId = $trade->material_id;
+
+        $user = User::where('id', $otherUserId)->first();
+        $user2 = User::where('id', $authId)->first();
+
+        // check if conversation already exists between these users for this material
+        $existingMessage = \App\Models\Message::where('material_id', $materialId)
+            ->where(function ($q) use ($authId, $otherUserId) {
+                $q->where(function ($q2) use ($authId, $otherUserId) {
+                    $q2->where('sender_id', $authId)
+                        ->where('recipient_id', $otherUserId);
+                })->orWhere(function ($q2) use ($authId, $otherUserId) {
+                    $q2->where('sender_id', $otherUserId)
+                        ->where('recipient_id', $authId);
+                });
+            })
+            ->first();
+
+        if ($existingMessage) {
+            // continue conversation (insert new message with same start key)
+            \App\Models\Message::create([
+                'start' => $existingMessage->start,
+                'sender_id' => $authId,
+                'recipient_id' => $otherUserId,
+                'material_id' => $materialId,
+                'content' => 'Order completed successfully!',
+            ]);
+
+            Notifications::create([
+                    'user_id'     => $user2->id,
+                    'material_id' => $trade->material_id,
+                    'quantity'    => 1,
+                    'message'    => $user->name . ' your order has been completed. Thank you!!',
+                    'username' => $user->name,
+                    'image' => $image->image,
+                    'ownername' => $user2->name,
+                    'owner' => $user->id,
+                ]);
+        } else {
+            // start new conversation
+
+            $start = \Illuminate\Support\Str::uuid();
+            \App\Models\Message::create([
+                'start' => $start,
+                'sender_id' => $authId,
+                'recipient_id' => $otherUserId,
+                'material_id' => $materialId,
+                'content' => 'Order completed successfully!',
+            ]);
+
+            \App\Models\Convo::create([
+                'start' => $start,
+                'sender_id' => $authId,
+                'recipient_id' => $otherUserId,
+                'material_id' => $materialId,
+                'content' => 'Open too see conversations.',
+            ]);
+
+            Notifications::create([
+                    'user_id'     => $user2->id,
+                    'material_id' => $trade->material_id,
+                    'quantity'    => 1,
+                    'message'    => $user->name . ' your order has been completed. Thank you!!',
+                    'username' => $user->name,
+                    'image' => $image->image,
+                    'ownername' => $user2->name,
+                    'owner' => $user->id,
+                ]);
+            // Material::where('id', $trade->material_id)->update(['status' => 'off']);
+            return back()->with('message', 'Order completed.');
         }
     }
 }

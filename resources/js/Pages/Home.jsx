@@ -101,7 +101,9 @@ export default function Home() {
   <div className="max-w-6xl mx-auto px-4">
     {/* Section Title */}
     <h2 className="text-3xl font-bold text-gray-800 text-center mb-10">
-      Featured Materials
+      <Link href="/materials">
+        Featured Materials
+      </Link>
     </h2>
 
     {/* Responsive Grid */}
@@ -172,6 +174,7 @@ export default function Home() {
         <p className="text-center text-gray-500">No materials available.</p>
       )}
     </div>
+
   </div>
 </section>
 

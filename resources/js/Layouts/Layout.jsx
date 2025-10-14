@@ -179,7 +179,7 @@ export default function Layout({ children }) {
                             </span>
                           )}
                         </button>
-                        
+
                   </div>
 
                     <div className="absolute right-0 mt-0.5 w-40 z-50 bg-white border rounded-md shadow-lg hidden group-hover:block">
@@ -195,7 +195,7 @@ export default function Layout({ children }) {
                       >
                         <Upload size={18} />
                         <div className="relative">
-                          
+
                            <span>My Uploads</span>
                           {totaling > 0 && (
                             <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
@@ -203,7 +203,7 @@ export default function Layout({ children }) {
                             </span>
                           )}
                         </div>
-                       
+
                       </Link>
 
 
@@ -289,11 +289,7 @@ export default function Layout({ children }) {
           {/* Notifications */}
           <Link href="/notifications" onClick={closeMobileMenu} className="flex items-center gap-2 text-gray-800 text-sm hover:text-green-600 relative">
             <Bell size={18} /> Notifications
-            {notifcount > 0 && (
-              <span className="absolute -top-2 left-20 bg-red-500 text-white text-xs rounded-full px-1">
-                {notifcount}
-              </span>
-            )}
+
           </Link>
         </>
       )}

@@ -501,12 +501,63 @@ class NavigationController extends Controller
         ]);
     }
 
+    public function Bin()
+    {
+        sleep(1);
+        $logon = auth()->id();
+        $item = Notifications::where('owner', $logon)->latest()->take(5)->get();
+                $cartItemCount = Cart::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+            $donateItemCount = Donate::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+
+            $tradeItemCount = Trade::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+            $orderItemCount = Orders::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+
+        $donateCount = Donate::where('owner', auth()->id())->count();
+        $tradeCount = Trade::where('owner', auth()->id())->count();
+        $orderCount = Orders::where('owner', auth()->id())->count();
+        $totaling = ($donateCount + $tradeCount + $orderCount);
+
+        $total = ($cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount);
+        $materials = Material::where('user_id', auth()->id())
+                    ->where('status', 'off')->get();
+        return inertia('Bin', [
+            'materials' => $materials,
+            'cartItemCount' => $cartItemCount,
+             'donate' => $donateCount,
+             'trade' => $tradeCount,
+             'order' => $orderCount,
+            'total' => $total,
+            'item' => $item,
+        ]);
+    }
+
 
     //Trade function
     public function rejectTrade($id)
     {
         $trade = Trade::findOrFail($id);
-
+        $user = User::where('id', $trade->owner)->first();
+        $image = Material::where('id', $trade->material_id)->first();
         // $trade->update(['status' => 'rejected']);
         Archive::create([
                     'user_id'     => $trade->user_id,
@@ -518,6 +569,16 @@ class NavigationController extends Controller
                     'item_image' => $trade->item_image
         ]);
 
+        Notifications::create([
+                    'user_id'     => $user->id,
+                    'material_id' => $trade->material_id,
+                    'quantity'    => 1,
+                    'message'    => $user->name . ' your trade has been rejected.',
+                    'username' => $user->name,
+                    'image' => $image->image,
+                    'ownername' => $user->name,
+                    'owner' => $user->id,
+                ]);
         $trade->delete();
 
         return redirect()->back()->with('message', 'Trade rejected successfully!');
@@ -528,7 +589,8 @@ class NavigationController extends Controller
         $trade = Trade::findOrFail($id);
 
         // $trade->update(['status' => 'cancelled']);
-
+        $user = User::where('id', $trade->owner)->first();
+        $image = Material::where('id', $trade->material_id)->first();
         Archive::create([
                     'user_id'     => $trade->user_id,
                     'users' => auth()->id(),
@@ -538,6 +600,17 @@ class NavigationController extends Controller
                     'item_title' => $trade->item_title,
                     'item_image' => $trade->item_image
         ]);
+
+        Notifications::create([
+                    'user_id'     => $user->id,
+                    'material_id' => $trade->material_id,
+                    'quantity'    => 1,
+                    'message'    => $user->name . ' your trade has been cancelled.',
+                    'username' => $user->name,
+                    'image' => $image->image,
+                    'ownername' => $user->name,
+                    'owner' => $user->id,
+                ]);
         $trade->delete();
 
         return redirect()->back()->with('message', 'Trade cancelled successfully!');
@@ -636,7 +709,8 @@ class NavigationController extends Controller
         $trade = Donate::findOrFail($id);
 
         // $trade->update(['status' => 'cancelled']);
-
+        $user = User::where('id', $trade->owner)->first();
+        $image = Material::where('id', $trade->material_id)->first();
         Archive::create([
                     'user_id'     => $trade->user_id,
                     'users' => auth()->id(),
@@ -644,6 +718,17 @@ class NavigationController extends Controller
                     'owner'    => $trade->owner,
                     'status'      => 'cancelled',
         ]);
+
+        Notifications::create([
+                    'user_id'     => $user->id,
+                    'material_id' => $trade->material_id,
+                    'quantity'    => 1,
+                    'message'    => $user->name . ' your order has been cancelled.',
+                    'username' => $user->name,
+                    'image' => $image->image,
+                    'ownername' => $user->name,
+                    'owner' => $user->id,
+                ]);
 
         $trade->delete();
 
@@ -760,6 +845,8 @@ class NavigationController extends Controller
         $trade = Orders::findOrFail($id);
         // $trade->update(['status' => 'cancelled']);
 
+        $user = User::where('id', $trade->owner)->first();
+        $image = Material::where('id', $trade->material_id)->first();
         Archive::create([
                     'user_id'     => $trade->user_id,
                     'users' => auth()->id(),
@@ -767,6 +854,18 @@ class NavigationController extends Controller
                     'owner'    => $trade->owner,
                     'status'      => 'cancelled',
         ]);
+
+        Notifications::create([
+                    'user_id'     => $user->id,
+                    'material_id' => $trade->material_id,
+                    'quantity'    => 1,
+                    'message'    => $user->name . ' your order has been cancelled.',
+                    'username' => $user->name,
+                    'image' => $image->image,
+                    'ownername' => $user->name,
+                    'owner' => $user->id,
+                ]);
+
         $trade->delete();
 
         return redirect()->back()->with('message', 'Order cancelled successfully!');

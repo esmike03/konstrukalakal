@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useModal } from "@/context/ModalContext";
-import { CheckCircle, Search, Grid, List, Upload, Filter, Trash2, ShoppingCart } from "lucide-react";
+import { CheckCircle, Search, Grid, List, Upload, Filter, Trash2, ShoppingCart, SquareDashed, ArchiveRestoreIcon  } from "lucide-react";
 import { usePage, Link, useForm } from "@inertiajs/react";
 
 export default function Materials() {
@@ -82,17 +82,10 @@ export default function Materials() {
       {/* Header */}
       {auth.user && (
         <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
-          <h1 className="text-2xl font-bold text-green-700">My Uploads</h1>
+          <h1 className="text-2xl font-bold text-red-700">Materials Deleted</h1>
           <div className="flex gap-2 content-center items-center">
-            <button
-            onClick={openMaterialModal}
-            className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700 shadow-md transition"
-          >
-            <Upload size={16} /> Upload Materials
-          </button>
-          <Link href="/trash-bin" className="bg-red-500 text-white p-1.5 flex rounded-md">
-              <Trash2 className="text-center flex w-full" /> Bin
-          </Link>
+
+
           </div>
 
         </div>
@@ -292,57 +285,18 @@ export default function Materials() {
                         Edit
                       </button>
                     </Link>
-                    {material.forbdt === 'Sale' && (
 
-                       <Link href="/order-list" className="w-1/3">
-                        <button className="w-full bg-yellow-400 text-white text-sm py-1.5 px-0.5 rounded-md hover:bg-yellow-500 transition relative flex justify-center items-center">
-                          <div className="relative">
-                            <ShoppingCart className="w-full" />
-                            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
-                              {order}
-                            </span>
-                          </div>
-                        </button>
-                      </Link>
 
-                    )}
-                    {material.forbdt === 'Trade' && (
-
-                        <Link href="/trade-list" className="w-1/3">
-                        <button className="w-full bg-yellow-400 text-white text-sm py-1.5 px-0.5 rounded-md hover:bg-yellow-500 transition relative flex justify-center items-center">
-                          <div className="relative">
-                            <ShoppingCart className="w-full" />
-                            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
-                              {trade}
-                            </span>
-                          </div>
-                        </button>
-                      </Link>
-                    )}
-                    {material.forbdt === 'Donation' && (
-
-                        <Link href="/donate-list" className="w-1/3">
-                        <button className="w-full bg-yellow-400 text-white text-sm py-1.5 px-0.5 rounded-md hover:bg-yellow-500 transition relative flex justify-center items-center">
-                          <div className="relative">
-                            <ShoppingCart className="w-full" />
-                            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
-                              {donate}
-                            </span>
-                          </div>
-                        </button>
-                      </Link>
-                    )}
-
-                    <Link href={`/uploads/delete/${material.id}`} className="w-1/3">
+                    <Link href={`/uploads/restore/${material.id}`} className="w-1/3">
                       <button
-                        className="w-full bg-red-600 text-white text-sm py-1.5 px-0.5 rounded-md hover:bg-red-700 transition"
+                        className="w-full bg-green-600 text-white text-sm py-1.5 px-0.5 rounded-md hover:bg-green-700 transition"
                         onClick={(e) => {
-                          if (!window.confirm("Are you sure you want to delete this item?")) {
+                          if (!window.confirm("Are you sure you want to restore this item?")) {
                             e.preventDefault(); // stop navigation if cancelled
                           }
                         }}
                       >
-                        <Trash2 className="text-center flex w-full" />
+                        <ArchiveRestoreIcon className="text-center flex w-full" />
                       </button>
                     </Link>
 

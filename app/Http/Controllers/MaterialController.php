@@ -411,6 +411,21 @@ class MaterialController extends Controller
         return back()->with('message', 'Material Deleted.');
     }
 
+        public function uploadRestore($id)
+    {
+        // Validate the incoming data
+        $upload = Material::findOrFail($id);
+
+
+        if ($upload) {
+            $upload->status = 'on';
+            $upload->save();
+        }
+
+        // Optionally, you can return a response with the updated cart data
+        return back()->with('message', 'Material Restored.');
+    }
+
     public function createTrade(Request $request)
     {
         if (!auth()->check()) {

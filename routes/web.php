@@ -39,6 +39,8 @@ Route::get('/buy-materials', [NavigationController::class, 'buyMaterials']);
 Route::get('/donate-materials', [NavigationController::class, 'donateMaterials']);
 Route::get('/uploaded', [NavigationController::class, 'uploadedMaterials']);
 
+Route::get('/trash-bin', [NavigationController::class, 'Bin']);
+
 
 Route::get('/profile', [NavigationController::class, 'toProfile']);
 Route::get('/messages', [NavigationController::class, 'toMessages']);
@@ -65,6 +67,7 @@ Route::get('/history', [CartController::class, 'tohistory']);
 Route::get('/notifications', [CartController::class, 'tonotifications']);
 Route::post('/cart/delete/{id}', [CartController::class, 'destroy'])->name('cart.delete');
 Route::get('/uploads/delete/{id}', [MaterialController::class, 'uploadDestroy'])->name('upload.delete');
+Route::get('/uploads/restore/{id}', [MaterialController::class, 'uploadRestore'])->name('upload.restore');
 Route::get('/Orders', [CartController::class, 'toOrders']);
 Route::get('/order-list', [CartController::class, 'toOrderList']);
 Route::post('/profile/update-image', [ProfileController::class, 'updateProfileImage'])->middleware('auth');

@@ -211,7 +211,7 @@ export default function OrderList({ trades, isUser }) {
                                                     trade.status === "rejected" ||
                                                     trade.status === "cancelled"
                                                 }
-                                                onClick={() => cancelOrder(trade.id)}
+                                                onClick={() => cancelDonate(trade.id)}
                                                 className={`px-3 py-2 rounded-md text-white w-full sm:w-auto text-sm
                                                 ${
                                                     trade.status === "rejected" ||

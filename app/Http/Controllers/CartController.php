@@ -127,7 +127,7 @@ class CartController extends Controller
         $userId = auth()->id();
 
         // $donate = Donate::with('material', 'user') ->where(function ($q) use ($user) { $q->where('user_id', $user->id); }) ->get();
-       $donate = Donate::with(['material', 'user'])
+       $donate = Donate::with(['material', 'user', 'owner'])
             ->where('user_id', $user->id)
             ->whereHas('material', function ($query) {
                 $query->where('status', 'on');
@@ -378,7 +378,7 @@ class CartController extends Controller
         //     })
         //     ->get();
 
-            $orders = Orders::with(['material', 'user'])
+            $orders = Orders::with(['material', 'user', 'owner'])
             ->where('user_id', $user->id)
             ->whereHas('material', function ($query) {
                 $query->where('status', 'on');
@@ -702,6 +702,7 @@ class CartController extends Controller
                     'material_id' => $materialId,
                     'owner'    => $materialUser,
                     'status'      => 'pending',
+                    'quantity' => $ids->quantity,
                 ]);
         $ids->delete();
         return back()->with('message', 'Order placed successfully!');

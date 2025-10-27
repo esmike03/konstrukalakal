@@ -487,6 +487,7 @@ class NavigationController extends Controller
         $orderCount = Orders::where('owner', auth()->id())->count();
         $totaling = ($donateCount + $tradeCount + $orderCount);
 
+
         $total = ($cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount);
         $materials = Material::where('user_id', auth()->id())
                     ->where('status', 'on')->get();
@@ -498,6 +499,7 @@ class NavigationController extends Controller
              'order' => $orderCount,
             'total' => $total,
             'item' => $item,
+            'totaling' => $totaling
         ]);
     }
 
@@ -557,7 +559,8 @@ class NavigationController extends Controller
     {
         $trade = Trade::findOrFail($id);
         $user = User::where('id', $trade->owner)->first();
-        $image = Material::where('id', $trade->material_id)->first();
+        $image = Material::where('id', $trade->trade_for)->first();
+
         // $trade->update(['status' => 'rejected']);
         Archive::create([
                     'user_id'     => $trade->user_id,
@@ -571,7 +574,7 @@ class NavigationController extends Controller
 
         Notifications::create([
                     'user_id'     => $user->id,
-                    'material_id' => $trade->material_id,
+                    'material_id' => $trade->trade_for,
                     'quantity'    => 1,
                     'message'    => $user->name . ' your trade has been rejected.',
                     'username' => $user->name,
@@ -590,7 +593,8 @@ class NavigationController extends Controller
 
         // $trade->update(['status' => 'cancelled']);
         $user = User::where('id', $trade->owner)->first();
-        $image = Material::where('id', $trade->material_id)->first();
+        $image = Material::where('id', $trade->trade_for)->first();
+
         Archive::create([
                     'user_id'     => $trade->user_id,
                     'users' => auth()->id(),
@@ -603,7 +607,7 @@ class NavigationController extends Controller
 
         Notifications::create([
                     'user_id'     => $user->id,
-                    'material_id' => $trade->material_id,
+                    'material_id' => $trade->trade_for,
                     'quantity'    => 1,
                     'message'    => $user->name . ' your trade has been cancelled.',
                     'username' => $user->name,
@@ -639,14 +643,17 @@ class NavigationController extends Controller
         $trade->update(['status' => 'accepted']);
 
         // ✅ Reject all other trades with the same trade_for
-        Trade::where('trade_for', $trade->trade_for)
-            ->where('id', '!=', $trade->id)
-            ->update(['status' => 'rejected']);
+        // Trade::where('trade_for', $trade->trade_for)
+        //     ->where('id', '!=', $trade->id)
+        //     ->update(['status' => 'rejected']);
 
+        $image = Material::where('id', $trade->trade_for)->first();
 
         $authId = auth()->id();
         $otherUserId = $trade->user_id; // user you're trading with
         $materialId = $trade->trade_for;
+        $user = User::where('id', $otherUserId)->first();
+        $user2 = User::where('id', $authId)->first();
 
         // check if conversation already exists between these users for this material
         $existingMessage = \App\Models\Message::where('material_id', $materialId)
@@ -670,18 +677,49 @@ class NavigationController extends Controller
                 'material_id' => $materialId,
                 'content' => 'Trade accepted successfully!',
             ]);
+
+            Notifications::create([
+                    'user_id'     => $user2->id,
+                    'material_id' => $trade->trade_for,
+                    'quantity'    => 1,
+                    'message'    => $user->name . ' your order has been accepted.',
+                    'username' => $user->name,
+                    'image' => $image->image,
+                    'ownername' => $user2->name,
+                    'owner' => $user->id,
+                ]);
         } else {
+            $start = \Illuminate\Support\Str::uuid();
             // start new conversation
             \App\Models\Message::create([
-                'start' => \Illuminate\Support\Str::uuid(),
+                'start' => $start,
                 'sender_id' => $authId,
                 'recipient_id' => $otherUserId,
                 'material_id' => $materialId,
                 'content' => 'Trade accepted successfully!',
             ]);
-            Material::where('id', $trade->trade_for)->update(['status' => 'off']);
-            return back()->with('message', 'Trade accepted and message sent.');
+            \App\Models\Convo::create([
+                'start' => $start,
+                'sender_id' => $authId,
+                'recipient_id' => $otherUserId,
+                'material_id' => $materialId,
+                'content' => 'Open too see conversations.',
+            ]);
+
+             Notifications::create([
+                    'user_id'     => $user2->id,
+                    'material_id' => $trade->trade_for,
+                    'quantity'    => 1,
+                    'message'    => $user->name . ' your order has been accepted.',
+                    'username' => $user->name,
+                    'image' => $image->image,
+                    'ownername' => $user2->name,
+                    'owner' => $user->id,
+                ]);
+            // Material::where('id', $trade->trade_for)->update(['status' => 'off']);
+
         }
+        return back()->with('message', 'Trade accepted and message sent.');
     }
 
     //Donate
@@ -743,9 +781,9 @@ class NavigationController extends Controller
         $trade->update(['status' => 'accepted']);
 
         // ✅ Reject all other trades with the same trade_for
-        Donate::where('material_id', $trade->material_id)
-            ->where('id', '!=', $trade->id)
-            ->update(['status' => 'rejected']);
+        // Donate::where('material_id', $trade->material_id)
+        //     ->where('id', '!=', $trade->id)
+        //     ->update(['status' => 'rejected']);
         $authId = auth()->id();
         $otherUserId = $trade->user_id; // user you're trading with
         $materialId = $trade->material_id;
@@ -817,7 +855,7 @@ class NavigationController extends Controller
                     'ownername' => $user2->name,
                     'owner' => $user->id,
                 ]);
-            Material::where('id', $trade->material_id)->update(['status' => 'off']);
+            // Material::where('id', $trade->material_id)->update(['status' => 'off']);
             return back()->with('message', 'Inquiry accepted and message sent.');
         }
     }
@@ -878,9 +916,9 @@ class NavigationController extends Controller
         $trade->update(['status' => 'accepted']);
 
         // ✅ Reject all other trades with the same trade_for
-        Orders::where('material_id', $trade->material_id)
-            ->where('id', '!=', $trade->id)
-            ->update(['status' => 'rejected']);
+        // Orders::where('material_id', $trade->material_id)
+        //     ->where('id', '!=', $trade->id)
+        //     ->update(['status' => 'rejected']);
 
         $image = Material::where('id', $trade->material_id)->first();
 
@@ -954,7 +992,7 @@ class NavigationController extends Controller
                     'ownername' => $user2->name,
                     'owner' => $user->id,
                 ]);
-            Material::where('id', $trade->material_id)->update(['status' => 'off']);
+            // Material::where('id', $trade->material_id)->update(['status' => 'off']);
             return back()->with('message', 'Order accepted and message sent.');
         }
     }
@@ -964,12 +1002,12 @@ class NavigationController extends Controller
     {
         $trade = Orders::findOrFail($id);
         // ✅ Accept this trade
-        $trade->update(['status' => 'accepted']);
+        // $trade->update(['status' => 'completed']);
 
         // ✅ Reject all other trades with the same trade_for
-        Orders::where('material_id', $trade->material_id)
-            ->where('id', '!=', $trade->id)
-            ->update(['status' => 'rejected']);
+        // Orders::where('material_id', $trade->material_id)
+        //     ->where('id', '!=', $trade->id)
+        //     ->update(['status' => 'rejected']);
 
         $image = Material::where('id', $trade->material_id)->first();
 
@@ -1021,7 +1059,7 @@ class NavigationController extends Controller
                     'owner'    => $trade->owner,
                     'status'      => 'completed',
         ]);
-                return back()->with('message', 'Order completed.');
+
         } else {
             // start new conversation
 
@@ -1053,7 +1091,228 @@ class NavigationController extends Controller
                     'owner' => $user->id,
                 ]);
             // Material::where('id', $trade->material_id)->update(['status' => 'off']);
-            return back()->with('message', 'Order completed.');
+
         }
+        $image->quantity = $image->quantity - $trade->quantity;
+
+        $image->update();
+        if($image->quantity == 0){
+            $image->status = 'off';
+            $image->update();
+        }
+        $trade->delete();
+        return back()->with('message', 'Order completed.');
+    }
+
+    public function completeDonate($id)
+    {
+        $trade = Donate::findOrFail($id);
+        // ✅ Accept this trade
+        // $trade->update(['status' => 'completed']);
+
+        // ✅ Reject all other trades with the same trade_for
+        // Donate::where('material_id', $trade->material_id)
+        //     ->where('id', '!=', $trade->id)
+        //     ->update(['status' => 'rejected']);
+
+        $image = Material::where('id', $trade->material_id)->first();
+
+        $authId = auth()->id();
+        $otherUserId = $trade->user_id; // user you're trading with
+        $materialId = $trade->material_id;
+
+        $user = User::where('id', $otherUserId)->first();
+        $user2 = User::where('id', $authId)->first();
+
+        // check if conversation already exists between these users for this material
+        $existingMessage = \App\Models\Message::where('material_id', $materialId)
+            ->where(function ($q) use ($authId, $otherUserId) {
+                $q->where(function ($q2) use ($authId, $otherUserId) {
+                    $q2->where('sender_id', $authId)
+                        ->where('recipient_id', $otherUserId);
+                })->orWhere(function ($q2) use ($authId, $otherUserId) {
+                    $q2->where('sender_id', $otherUserId)
+                        ->where('recipient_id', $authId);
+                });
+            })
+            ->first();
+
+        if ($existingMessage) {
+            // continue conversation (insert new message with same start key)
+            \App\Models\Message::create([
+                'start' => $existingMessage->start,
+                'sender_id' => $authId,
+                'recipient_id' => $otherUserId,
+                'material_id' => $materialId,
+                'content' => 'Order completed successfully!',
+            ]);
+
+            Notifications::create([
+                    'user_id'     => $user2->id,
+                    'material_id' => $trade->material_id,
+                    'quantity'    => 1,
+                    'message'    => $user->name . ' your order has been completed. Thank you!!',
+                    'username' => $user->name,
+                    'image' => $image->image,
+                    'ownername' => $user2->name,
+                    'owner' => $user->id,
+                ]);
+
+                 Archive::create([
+                    'user_id'     => $trade->user_id,
+                    'users' => auth()->id(),
+                    'material_id' => $trade->material_id,
+                    'owner'    => $trade->owner,
+                    'status'      => 'completed',
+        ]);
+
+        } else {
+            // start new conversation
+
+            $start = \Illuminate\Support\Str::uuid();
+            \App\Models\Message::create([
+                'start' => $start,
+                'sender_id' => $authId,
+                'recipient_id' => $otherUserId,
+                'material_id' => $materialId,
+                'content' => 'Order completed successfully!',
+            ]);
+
+            \App\Models\Convo::create([
+                'start' => $start,
+                'sender_id' => $authId,
+                'recipient_id' => $otherUserId,
+                'material_id' => $materialId,
+                'content' => 'Open too see conversations.',
+            ]);
+
+            Notifications::create([
+                    'user_id'     => $user2->id,
+                    'material_id' => $trade->material_id,
+                    'quantity'    => 1,
+                    'message'    => $user->name . ' your order has been completed. Thank you!!',
+                    'username' => $user->name,
+                    'image' => $image->image,
+                    'ownername' => $user2->name,
+                    'owner' => $user->id,
+                ]);
+            // Material::where('id', $trade->material_id)->update(['status' => 'off']);
+
+        }
+        $image->quantity = $image->quantity - $trade->quantity;
+
+        $image->update();
+        if($image->quantity == 0){
+            $image->status = 'off';
+            $image->update();
+        }
+        $trade->delete();
+        return back()->with('message', 'Inquiry completed.');
+    }
+
+    public function completeTrade($id)
+    {
+        $trade = Trade::findOrFail($id);
+        // ✅ Accept this trade
+        // $trade->update(['status' => 'completed']);
+
+        // ✅ Reject all other trades with the same trade_for
+        // Trade::where('trade_for', $trade->trade_for)
+        //     ->where('id', '!=', $trade->id)
+        //     ->update(['status' => 'rejected']);
+
+        $image = Material::where('id', $trade->trade_for)->first();
+
+        $authId = auth()->id();
+        $otherUserId = $trade->user_id; // user you're trading with
+        $materialId = $trade->trade_for;
+
+        $user = User::where('id', $otherUserId)->first();
+        $user2 = User::where('id', $authId)->first();
+
+        // check if conversation already exists between these users for this material
+        $existingMessage = \App\Models\Message::where('material_id', $materialId)
+            ->where(function ($q) use ($authId, $otherUserId) {
+                $q->where(function ($q2) use ($authId, $otherUserId) {
+                    $q2->where('sender_id', $authId)
+                        ->where('recipient_id', $otherUserId);
+                })->orWhere(function ($q2) use ($authId, $otherUserId) {
+                    $q2->where('sender_id', $otherUserId)
+                        ->where('recipient_id', $authId);
+                });
+            })
+            ->first();
+
+        if ($existingMessage) {
+            // continue conversation (insert new message with same start key)
+            \App\Models\Message::create([
+                'start' => $existingMessage->start,
+                'sender_id' => $authId,
+                'recipient_id' => $otherUserId,
+                'material_id' => $materialId,
+                'content' => 'Trade completed successfully!',
+            ]);
+
+            Notifications::create([
+                    'user_id'     => $user2->id,
+                    'material_id' => $trade->trade_for,
+                    'quantity'    => 1,
+                    'message'    => $user->name . ' your trade has been completed. Thank you!!',
+                    'username' => $user->name,
+                    'image' => $image->image,
+                    'ownername' => $user2->name,
+                    'owner' => $user->id,
+                ]);
+
+                 Archive::create([
+                    'user_id'     => $trade->user_id,
+                    'users' => auth()->id(),
+                    'material_id' => $trade->trade_for,
+                    'owner'    => $trade->owner,
+                    'status'      => 'completed',
+        ]);
+
+        } else {
+            // start new conversation
+
+            $start = \Illuminate\Support\Str::uuid();
+            \App\Models\Message::create([
+                'start' => $start,
+                'sender_id' => $authId,
+                'recipient_id' => $otherUserId,
+                'material_id' => $materialId,
+                'content' => 'Trade completed successfully!',
+            ]);
+
+            \App\Models\Convo::create([
+                'start' => $start,
+                'sender_id' => $authId,
+                'recipient_id' => $otherUserId,
+                'material_id' => $materialId,
+                'content' => 'Open too see conversations.',
+            ]);
+
+            Notifications::create([
+                    'user_id'     => $user2->id,
+                    'material_id' => $trade->trade_for,
+                    'quantity'    => 1,
+                    'message'    => $user->name . ' your trade has been completed. Thank you!!',
+                    'username' => $user->name,
+                    'image' => $image->image,
+                    'ownername' => $user2->name,
+                    'owner' => $user->id,
+                ]);
+            // Material::where('id', $trade->material_id)->update(['status' => 'off']);
+
+        }
+        $image->quantity = $image->quantity - $trade->quantity;
+
+        $image->update();
+        if($image->quantity == 0){
+            $image->status = 'off';
+            $image->update();
+        }
+        $trade->delete();
+        return back()->with('message', 'Trade completed.');
     }
 }

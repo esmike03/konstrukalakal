@@ -42,7 +42,7 @@ export default function Materials() {
 
   // Filter + search
   const filteredMaterials = materials
-    .filter((m) => (auth?.user?.id ? m.user_id !== auth.user.id : true))
+    // .filter((m) => (auth?.user?.id ? m.user_id !== auth.user.id : true))
     .filter((m) => {
       const matchesSearch = m.material_name
         .toLowerCase()
@@ -112,6 +112,10 @@ export default function Materials() {
                   "Insulation",
                   "Doors & Windows",
                   "Roofing",
+                  "Flooring",
+                    "Wall Materials",
+                    "Aggregates",
+                    "Glass Materials",
                 ].map((category) => (
                   <label
                     key={category}

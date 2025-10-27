@@ -13,7 +13,7 @@ class ProfileController extends Controller
     public function updateProfileImage(Request $request)
     {
         $request->validate([
-            'profile_image' => 'required|image|mimes:jpeg,png,jpg,gif',
+            'profile_image' => 'required|image|max:15360', // 15 MB limit
         ]);
 
         $user = auth()->user();

@@ -41,7 +41,7 @@ export default function Materials() {
 
   // Filter + search logic
   const filteredMaterials = materials
-    .filter((m) => (auth?.user?.id ? m.user_id !== auth.user.id : true))
+    // .filter((m) => (auth?.user?.id ? m.user_id !== auth.user.id : true))
     .filter((m) => {
       const matchesSearch = m.material_name.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(m.category);
@@ -100,7 +100,7 @@ export default function Materials() {
               <div className="mt-2">
                 <h3 className="font-semibold">Categories</h3>
                 <div className="space-y-2 mt-2">
-                  {["Structural Materials", "Wood", "Concrete & Cement", "Metal", "Insulation", "Doors & Windows", "Roofing"].map(
+                  {["Structural Materials", "Wood", "Concrete & Cement", "Metal", "Insulation", "Doors & Windows", "Roofing","Flooring","Wall Materials","Aggregates","Glass Materials",].map(
                     (category) => (
                       <label key={category} className="flex text-sm items-center space-x-2">
                         <input

@@ -7,7 +7,7 @@ export default function Show({ material, user }) {
   const { flash } = usePage().props;
   const [showMessage, setShowMessage] = useState(false);
   const [buttonText, setButtonText] = useState("");
-  const { post, processing } = useForm({
+  const { data, setData, post, processing } = useForm({
     material_id: material.id,
     quantity: 1,
     user_idx: user.id,
@@ -29,6 +29,10 @@ export default function Show({ material, user }) {
 
   function addToCart(e) {
     e.preventDefault();
+     if (data.quantity > material.quantity) {
+    alert(`You can only order up to ${material.quantity}.`);
+    return;
+  }
     post("/cart/add");
   }
 
@@ -43,20 +47,23 @@ export default function Show({ material, user }) {
         bg-gradient-to-br from-white/20 to-green-200/30 backdrop-blur-xl border border-white/30 shadow-xl">
 
         {/* Flash Message */}
-        {flash?.message && (
-          <div
-            className={`fixed top-4 right-4 px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 text-white backdrop-blur-lg
-            ${flash.message.toLowerCase().includes("added") ? "bg-green-500/80" : "bg-red-500/80"}
-            transition-all duration-500 ${showMessage ? "opacity-100" : "opacity-0"}`}
-          >
-            {flash.message.toLowerCase().includes("added") ? (
-              <CheckCircle size={18} />
-            ) : (
-              <X size={18} />
-            )}
-            <span className="text-sm">{flash.message}</span>
-          </div>
-        )}
+       {flash?.message && (
+  <div
+    className={`fixed top-4 right-4 px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 text-white backdrop-blur-lg
+      ${/(added|success|updated|deleted)/i.test(flash.message)
+        ? "bg-green-500/80"
+        : "bg-red-500/80"}
+      transition-all duration-500 ${showMessage ? "opacity-100" : "opacity-0"}`}
+  >
+    {/(added|success|updated|deleted)/i.test(flash.message) ? (
+      <CheckCircle size={18} />
+    ) : (
+      <X size={18} />
+    )}
+    <span className="text-sm">{flash.message}</span>
+  </div>
+)}
+
 
         {/* Back Button */}
         <Link href={`/back`} className="absolute -top-10 left-0 text-gray-500 hover:text-gray-800 flex items-center gap-1">
@@ -123,11 +130,26 @@ export default function Show({ material, user }) {
           {/* Stock */}
           <p className="text-gray-500 mt-4 text-sm">
             <span className="font-semibold">Availability:</span>{" "}
-            {material.quantity > 0 ? "In Stock" : "Out of Stock"}
+            {material.quantity > 0 ? "In Stock " : "Out of Stock "}({material.quantity})
           </p>
+         <div className="flex items-center mt-2 text-gray-700">
+            <label htmlFor="quantity" className="mr-2">Quantity:</label>
+            <input
+              id="quantity"
+              className="w-20 h-8 border border-gray-300 rounded-md px-2"
+              type="number"
+              min="1"
+              defaultValue="1"
+              max={material.quantity}
+              value={data.quantity}
+              onChange={(e) => setData("quantity", e.target.value)}
+            />
+          </div>
+
+          
 
           {/* Buttons */}
-          <div className="mt-6 flex flex-wrap gap-3">
+          <div className="mt-4 flex flex-wrap gap-3">
             {auth?.user?.id === user.id ? (
               <p className="text-sm text-gray-700">You can edit this in My Uploads.</p>
             ) : (

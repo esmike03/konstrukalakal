@@ -44,26 +44,22 @@ export default function MyTrades({ trades, isUser }) {
 
             <div className="min-h-screen bg-white py-10 px-6">
                 {/* Flash message */}
-                {flash?.message && (
-                    <div
-                        className={`backdrop-blur-lg bg-black/70 text-white shadow-lg fixed bottom-6 right-6 flex items-center gap-2 px-5 py-3 rounded-xl border ${
-                            flash.message.toLowerCase().includes("added")
-                                ? "border-green-400"
-                                : "border-red-400"
-                        } transition-all duration-500 transform ${
-                            showMessage
-                                ? "opacity-100 translate-y-0"
-                                : "opacity-0 translate-y-5"
-                        }`}
-                    >
-                        {flash.message.toLowerCase().includes("added") ? (
-                            <CheckCircle size={20} className="text-green-300" />
-                        ) : (
-                            <X size={20} className="text-red-300" />
-                        )}
-                        <span className="font-medium">{flash.message}</span>
-                    </div>
-                )}
+               {flash?.message && (
+                 <div
+                   className={`fixed bottom-4 right-4 px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 text-white backdrop-blur-lg
+                     ${/(added|success|updated|deleted)/i.test(flash.message)
+                       ? "bg-green-500/80"
+                       : "bg-red-500/80"}
+                     transition-all duration-500 ${showMessage ? "opacity-100" : "opacity-0"}`}
+                 >
+                   {/(added|success|updated|deleted)/i.test(flash.message) ? (
+                     <CheckCircle size={18} />
+                   ) : (
+                     <X size={18} />
+                   )}
+                   <span className="text-sm">{flash.message}</span>
+                 </div>
+               )}
 
                 {/* Header + Filter */}
                 <div className="mb-6 w-full flex justify-between items-center">
@@ -125,7 +121,7 @@ export default function MyTrades({ trades, isUser }) {
 
                                 {/* Trader info */}
                                 <p className="text-sm text-center mb-3 text-gray-600">
-                                    by {trade.user.name}
+                                    {trade.owner.name}
                                 </p>
 
                                 {/* Items */}

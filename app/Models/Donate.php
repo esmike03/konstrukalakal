@@ -14,10 +14,15 @@ class Donate extends Model
         'quantity'
     ];
 
-    public function user()
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'owner');
+    }
+     public function user()
     {
         return $this->belongsTo(User::class);
     }
+
 
     public function material()
     {

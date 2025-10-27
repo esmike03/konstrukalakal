@@ -53,26 +53,23 @@ export default function Orders({ trades, isUser }) {
             <div className="min-h-screen bg-white">
                 <div className="max-w-6xl mx-auto py-10 px-6">
                     {/* Flash message */}
-                    {flash?.message && (
-                        <div
-                            className={`${
-                                flash.message.toLowerCase().includes("added")
-                                    ? "bg-green-400 border border-green-600"
-                                    : "bg-red-400 border border-red-600"
-                            } shadow-lg bottom-4 flex items-center gap-2 w-fit right-4 absolute text-white p-3 rounded-md z-100 mb-4 transition-all duration-500 transform ${
-                                showMessage
-                                    ? "opacity-100 translate-y-0"
-                                    : "opacity-0 -translate-y-5"
-                            }`}
-                        >
-                            {flash.message.toLowerCase().includes("added") ? (
-                                <CheckCircle size={20} className="text-white" />
-                            ) : (
-                                <X size={20} className="text-white" />
-                            )}
-                            {flash.message}
-                        </div>
-                    )}
+{flash?.message && (
+  <div
+    className={`fixed bottom-4 right-4 px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 text-white backdrop-blur-lg
+      ${/(added|success|updated|deleted)/i.test(flash.message)
+        ? "bg-green-500/80"
+        : "bg-red-500/80"}
+      transition-all duration-500 ${showMessage ? "opacity-100" : "opacity-0"}`}
+  >
+    {/(added|success|updated|deleted)/i.test(flash.message) ? (
+      <CheckCircle size={18} />
+    ) : (
+      <X size={18} />
+    )}
+    <span className="text-sm">{flash.message}</span>
+  </div>
+)}
+
 
                     {/* Header + Filter */}
                     <div className="mb-6 w-full flex justify-between items-center">
@@ -109,116 +106,111 @@ export default function Orders({ trades, isUser }) {
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                             {filteredTrades.map((trade) => (
                                 <div
-                                    key={trade.id}
-                                    className="bg-white group hover:shadow-lg hover:scale-[1.02] transition-transform shadow-md rounded-lg w-full p-6 border border-gray-200"
-                                >
-                                    {/* Status */}
-                                    <div className="mb-2">
-                                        <p
-                                            className={`text-sm rounded-md py-1 text-white text-center w-full
-                                                ${trade.status === "pending" ? "bg-amber-400" : ""}
-                                                ${trade.status === "accepted" ? "bg-green-500" : ""}
-                                                ${trade.status === "rejected" ? "bg-red-500" : ""}
-                                                ${trade.status === "cancelled" ? "bg-red-500" : ""}
-                                            `}
-                                        >
-                                            <span className="font-semibold uppercase">
-                                                {trade.status}
-                                            </span>
-                                        </p>
-                                    </div>
-
-                                    {/* User */}
-                                    <div className="w-full text-center text-xs mb-2">
-                                        {!isUser ? trade.user.name : "Owner"}
-                                    </div>
-
-                                    {/* Item */}
-                                    <div className="flex justify-center">
-                                        <Link href={`/materials/${trade.material.id}`}>
-                                            <div className="text-center">
-                                                <img
+                                                  key={trade.id}
+                                                  className="relative h-50 rounded-2xl overflow-hidden shadow-lg group transition-transform hover:scale-[1.02] cursor-pointer"
+                                                >
+                                                  {/* Background Image */}
+                                                  <img
                                                     src={`/storage/${trade.material.image}`}
                                                     alt={trade.material.material_name}
-                                                    className="w-20 h-20 object-cover rounded-md mx-auto"
-                                                />
-                                                <p className="font-bold text-sm mt-1">
-                                                    {trade.material.material_name}
-                                                </p>
-                                            </div>
-                                        </Link>
-                                    </div>
-
-                                    {/* Actions */}
-                                    {isUser ? (
-                                        <div className="w-full mt-4 gap-3 flex flex-col sm:flex-row justify-between">
-                                            <button
-                                                disabled={
-                                                    trade.status === "rejected" ||
-                                                    trade.status === "cancelled"
-                                                }
-                                                onClick={() => cancelDonate(trade.id)}
-                                                className={`px-3 py-2 rounded-md text-white w-full sm:w-auto text-sm
-                                                ${
-                                                    trade.status === "rejected" ||
-                                                    trade.status === "cancelled"
-                                                        ? "bg-gray-400 cursor-not-allowed"
-                                                        : "bg-red-500 hover:bg-red-600"
-                                                }`}
-                                            >
-                                                Cancel
-                                            </button>
-                                            <Link
-                                                href={`/message/${trade.material_id}`}
-                                                className="flex items-center justify-center gap-1 bg-blue-500 text-white px-3 py-2 rounded-md text-sm w-full sm:w-auto"
-                                            >
-                                                <MessageCircle className="w-4 h-4" />Message
-
-                                            </Link>
-
-                                        </div>
-                                    ) : (
-                                        <div className="w-full mt-4 gap-3 flex flex-col sm:flex-row justify-between">
-                                            <button
-                                                disabled={
-                                                    trade.status === "rejected" ||
-                                                    trade.status === "cancelled" ||
-                                                    trade.status === "accepted"
-                                                }
-                                                onClick={() => rejectDonate(trade.id)}
-                                                className={`px-3 py-2 rounded-md text-white w-full sm:w-auto text-sm
-                                                ${
-                                                    trade.status === "rejected" ||
-                                                    trade.status === "cancelled" ||
-                                                    trade.status === "accepted"
-                                                        ? "bg-gray-400 cursor-not-allowed"
-                                                        : "bg-red-500 hover:bg-red-600"
-                                                }`}
-                                            >
-                                                Reject
-                                            </button>
-
-                                            <button
-                                                onClick={() => acceptDonate(trade.id)}
-                                                disabled={
-                                                    trade.status === "rejected" ||
-                                                    trade.status === "cancelled" ||
-                                                    trade.status === "accepted"
-                                                }
-                                                className={`px-3 py-2 rounded-md text-white w-full sm:w-auto text-sm
-                                                ${
-                                                    trade.status === "rejected" ||
-                                                    trade.status === "cancelled" ||
-                                                    trade.status === "accepted"
-                                                        ? "bg-gray-400 cursor-not-allowed"
-                                                        : "bg-green-500 hover:bg-green-600"
-                                                }`}
-                                            >
-                                                Accept
-                                            </button>
-                                        </div>
-                                    )}
-                                </div>
+                                                    className="absolute inset-0 w-full h-full object-cover transition duration-300 group-hover:scale-105"
+                                                  />
+                                
+                                                  {/* Overlay Gradient */}
+                                                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                                
+                                                  {/* Status Badge */}
+                                                  <span
+                                                    className={`absolute top-4 left-4 text-xs font-semibold px-3 py-1 rounded-xl shadow-md ${
+                                                      trade.status === "pending"
+                                                        ? "bg-amber-500 text-white"
+                                                        : trade.status === "accepted"
+                                                        ? "bg-green-500 text-white"
+                                                        : "bg-red-500 text-white"
+                                                    }`}
+                                                  >
+                                                    {trade.status.toUpperCase()}
+                                                  </span>
+                                
+                                                  {/* Bottom Info Section */}
+                                                  <div className="absolute bottom-0 left-0 right-0 flex justify-between items-end p-4 text-white">
+                                                    <div>
+                                                        <Link href={`/materials/${trade.material.id}`}>
+                                                      <h2 className="text-lg font-bold drop-shadow-md">
+                                                        <span className="block text-xs font-light">{trade.owner.name}</span>
+                                                        {trade.material.material_name}
+                                                        
+                                                      </h2>
+                                                      </Link>
+                                                      <p className="text-xs opacity-90">
+                                                        {!isUser ? trade.user.name : ""}
+                                                        <span className="text-green-500 font-bold">P{(trade.material.price * trade.quantity)}</span>  <span className="font-bold">[ {trade.quantity} ]</span>
+                                                      </p>
+                                                    </div>
+                                
+                                                    {/* Buttons Area */}
+                                                    <div className="flex gap-2">
+                                                      {isUser ? (
+                                                        <>
+                                                          <button
+                                                            onClick={() => cancelDonate(trade.id)}
+                                                            disabled={["rejected", "cancelled"].includes(trade.status)}
+                                                            className={`p-2 rounded-full text-sm font-medium shadow-md transition ${
+                                                              ["rejected", "cancelled"].includes(trade.status)
+                                                                ? "bg-gray-500/40 cursor-not-allowed"
+                                                                : "bg-red-500 hover:bg-red-600"
+                                                            }`}
+                                                            title="Cancel"
+                                                          >
+                                                            <X size={16} />
+                                                          </button>
+                                                         
+                                                          <Link
+                                                            href={`/message/${trade.material_id}`}
+                                                            className="p-2 rounded-full bg-blue-500 hover:bg-blue-600 shadow-md transition"
+                                                            title="Chat"
+                                                          >
+                                                            <MessageCircle size={16} />
+                                                          </Link>
+                                                        </>
+                                                      ) : (
+                                                        <>
+                                                          <button
+                                                            onClick={() => rejectDonate(trade.id)}
+                                                            disabled={["rejected", "cancelled", "accepted"].includes(trade.status)}
+                                                            className={`p-2 rounded-full text-sm font-medium shadow-md transition ${
+                                                              ["rejected", "cancelled", "accepted"].includes(trade.status)
+                                                                ? "bg-gray-500/40 cursor-not-allowed"
+                                                                : "bg-red-500 hover:bg-red-600"
+                                                            }`}
+                                                            title="Reject"
+                                                          >
+                                                            <X size={16} />
+                                                          </button>
+                                                          <Link
+                                                            href={`/messagex/${trade.material_id}/${trade.user_id}`}
+                                                            className="p-2 rounded-full bg-blue-500 hover:bg-blue-600 shadow-md transition"
+                                                            title="Chat"
+                                                          >
+                                                            <MessageCircle size={16} />
+                                                          </Link>
+                                                          <button
+                                                            onClick={() => acceptDonate(trade.id)}
+                                                            disabled={["rejected", "cancelled", "accepted"].includes(trade.status)}
+                                                            className={`p-2 rounded-full text-sm font-medium shadow-md transition ${
+                                                              ["rejected", "cancelled", "accepted"].includes(trade.status)
+                                                                ? "bg-gray-500/40 cursor-not-allowed"
+                                                                : "bg-green-500 hover:bg-green-600"
+                                                            }`}
+                                                            title="Accept"
+                                                          >
+                                                            <CheckCircle size={16} />
+                                                          </button>
+                                                        </>
+                                                      )}
+                                                    </div>
+                                                  </div>
+                                                </div>
                             ))}
                         </div>
                     )}

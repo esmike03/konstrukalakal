@@ -435,7 +435,7 @@ class MaterialController extends Controller
                 'Please login to trade.'
             );
         }
-
+        
         $user = auth()->id();
         $exist = Trade::where('user_id', $user)
             ->where('trade_for', $request->material['id'])
@@ -447,6 +447,7 @@ class MaterialController extends Controller
 
         return inertia('CreateTrade', [
             'material' => $request->material,
+            'quantity' => $request->quantity
         ]);
     }
 
@@ -491,7 +492,7 @@ class MaterialController extends Controller
         //     })
         //     ->get();
 
-            $trades = Trade::with(['material', 'user'])
+            $trades = Trade::with(['material', 'user', 'owner'])
             ->where('user_id', $user->id)
             ->whereHas('material', function ($query) {
                 $query->where('status', 'on');

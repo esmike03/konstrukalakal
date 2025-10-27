@@ -21,11 +21,11 @@ class PostController extends Controller
     public function index()
     {
         $logon = auth()->id();
-        $materials = Material::latest()->paginate(3)->toArray(); // Convert to array
+        $materials = Material::where('status', 'on')->latest()->paginate(3)->toArray(); // Convert to array
 
         $notifcount = Notifications::where('user_id', $logon)
                     ->orWhere('owner', $logon)->count();
-        $item = Notifications::where('owner', $logon)->latest()->take(5)->get();
+        $item = Notifications::where('owner', $logon)->latest()->take(2)->get();
         $not = Notifications::get();
         $donateCount = Donate::where('owner', auth()->id())->count();
         $tradeCount = Trade::where('owner', auth()->id())->count();

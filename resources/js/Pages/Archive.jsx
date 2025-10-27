@@ -112,6 +112,7 @@ export default function Archive({ trades, isUser }) {
                                                 ${trade.status === "accepted" ? "bg-green-500" : ""}
                                                 ${trade.status === "rejected" ? "bg-red-500" : ""}
                                                 ${trade.status === "cancelled" ? "bg-red-500" : ""}
+                                                ${trade.status === "completed" ? "bg-green-500" : ""}
                                             `}
                                         >
                                             {trade.status.toUpperCase()}

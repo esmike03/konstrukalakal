@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { Head, Link, useForm, usePage } from "@inertiajs/react";
-import { ArrowLeft, ArrowRight, MessageCircle, CheckCircle, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, MessageCircle, CheckCircle, X, ChevronDown } from "lucide-react";
+import { router } from "@inertiajs/react";
 
 export default function MyTrades({ trades, isUser }) {
     const { post } = useForm();
     const { flash } = usePage().props;
     const [showMessage, setShowMessage] = useState(false);
     const [filter, setFilter] = useState("all");
+
+          const handleChange = (e) => {
+        const value = e.target.value;
+        if (value) router.visit(value); // Redirect to selected page
+      };
 
     useEffect(() => {
         if (flash?.message) {
@@ -34,6 +40,12 @@ export default function MyTrades({ trades, isUser }) {
         }
     };
 
+    const completeTrade = (id) => {
+        if (confirm("Are you sure you want to complete this Trade?")) {
+            post(`/trades/${id}/complete`);
+        }
+    };
+
     const filteredTrades = trades.filter(
         (trade) => filter === "all" || trade.status === filter
     );
@@ -45,25 +57,21 @@ export default function MyTrades({ trades, isUser }) {
             <div className="min-h-screen bg-white py-10 px-6">
                 {/* Flash message */}
                 {flash?.message && (
-                    <div
-                        className={`backdrop-blur-lg bg-black/70 text-white shadow-lg fixed bottom-6 right-6 flex items-center gap-2 px-5 py-3 rounded-xl border ${
-                            flash.message.toLowerCase().includes("added")
-                                ? "border-green-400"
-                                : "border-red-400"
-                        } transition-all duration-500 transform ${
-                            showMessage
-                                ? "opacity-100 translate-y-0"
-                                : "opacity-0 translate-y-5"
-                        }`}
-                    >
-                        {flash.message.toLowerCase().includes("added") ? (
-                            <CheckCircle size={20} className="text-green-300" />
+                      <div
+                        className={`fixed bottom-4 right-4 px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 text-white backdrop-blur-lg
+                          ${/(added|sent|success|updated|deleted|completed|successfully)/i.test(flash.message)
+                            ? "bg-green-500/80"
+                            : "bg-red-500/80"}
+                          transition-all duration-500 ${showMessage ? "opacity-100" : "opacity-0"}`}
+                      >
+                        {/(added|sent|success|updated|deleted|completed|successfully)/i.test(flash.message) ? (
+                          <CheckCircle size={18} />
                         ) : (
-                            <X size={20} className="text-red-300" />
+                          <X size={18} />
                         )}
-                        <span className="font-medium">{flash.message}</span>
-                    </div>
-                )}
+                        <span className="text-sm">{flash.message}</span>
+                      </div>
+                    )}
 
                 {/* Header + Filter */}
                 <div className="mb-6 w-full flex justify-between items-center">
@@ -74,9 +82,24 @@ export default function MyTrades({ trades, isUser }) {
                         >
                             <ArrowLeft />
                         </a>
-                        <h1 className="text-3xl font-extrabold text-gray-800">
-                            Trade List
-                        </h1>
+                        <div className="relative inline-block">
+                                                                           {/* Dropdown (styled like a title) */}
+                                                    <select
+                                                        onChange={handleChange}
+                                                        defaultValue="/trade-list"
+                                                        className="appearance-none bg-transparent text-3xl font-extrabold text-gray-800 pr-8 pl-2 cursor-pointer focus:outline-none"
+                                                    >
+                                                        <option value="/order-list">Orders List</option>
+                                                        <option value="/trade-list">Trade List</option>
+                                                        <option value="/donate-list">Donate List</option>
+                                                    </select>
+
+                                                    {/* Dropdown Icon */}
+                                                    <ChevronDown
+                                                        className="absolute right-0 top-1/2 -translate-y-1/2 text-green-500 pointer-events-none"
+                                                        size={20}
+                                                    />
+                                                    </div>
                     </div>
                     <div className="backdrop-blur-md bg-gray-100 rounded-xl px-4 py-2 border border-gray-200">
                         <label className="mr-2 font-semibold text-gray-700">
@@ -187,6 +210,10 @@ export default function MyTrades({ trades, isUser }) {
                                     </div>
                                 ) : (
                                     <div className="mt-5 flex flex-col sm:flex-row gap-3">
+                                        {trade.status == 'pending' &&(
+
+
+
                                         <button
                                             disabled={
                                                 trade.status === "rejected" ||
@@ -204,6 +231,26 @@ export default function MyTrades({ trades, isUser }) {
                                         >
                                             Reject
                                         </button>
+                                        )}
+
+                                        {trade.status == 'accepted' &&(
+
+                                            <button
+                                            disabled={
+                                                trade.status === "rejected" ||
+                                                trade.status === "cancelled"
+                                            }
+                                            onClick={() => cancelTrade(trade.id)}
+                                            className={`flex-1 px-3 py-2 rounded-lg font-medium text-white transition ${
+                                                trade.status === "rejected" ||
+                                                trade.status === "cancelled"
+                                                    ? "bg-gray-400 cursor-not-allowed"
+                                                    : "bg-red-500 hover:bg-red-600"
+                                            }`}
+                                        >
+                                            Cancel
+                                        </button>
+                                        )}
                                             <Link
                                                 href={`/messagext/${trade.item_title}`}
                                                 className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition"
@@ -211,6 +258,9 @@ export default function MyTrades({ trades, isUser }) {
                                                 <MessageCircle className="w-4 h-4" />
 
                                             </Link>
+                                        {trade.status == 'pending' &&(
+
+
                                         <button
                                             onClick={() => acceptTrade(trade.id)}
                                             disabled={
@@ -228,6 +278,27 @@ export default function MyTrades({ trades, isUser }) {
                                         >
                                             Trade
                                         </button>
+                                        )}
+
+                                        {trade.status == 'accepted' &&(
+
+
+                                        <button
+                                            onClick={() => completeTrade(trade.id)}
+                                            disabled={
+                                                trade.status === "rejected" ||
+                                                trade.status === "cancelled"
+                                            }
+                                            className={`flex-1 px-3 py-2 rounded-lg font-medium text-white transition ${
+                                                trade.status === "rejected" ||
+                                                trade.status === "cancelled"
+                                                    ? "bg-gray-400 cursor-not-allowed"
+                                                    : "bg-green-500 hover:bg-green-600"
+                                            }`}
+                                        >
+                                            Complete
+                                        </button>
+                                        )}
                                     </div>
                                 )}
                             </div>

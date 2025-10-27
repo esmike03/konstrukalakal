@@ -16,8 +16,13 @@ class Trade extends Model
         'item_image',
         'owner',
         'status',
+        'quantity'
     ];
 
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'owner');
+    }
     public function user()
     {
         return $this->belongsTo(User::class);

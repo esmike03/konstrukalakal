@@ -17,12 +17,17 @@ export default function SendMessage({ material, user, messages, conversationId }
 const handleSend = (e) => {
   e.preventDefault();
   if (!data.message.trim()) return;
-
+  setData("message", "");
   post("/messages/send", data, {
     preserveScroll: true,
+    
     onSuccess: (res) => {
+      
       reset("message");
-      if (res.start) setData("start", res.start); // update conversationId after first message
+      
+      if (res.start) setData("start", res.start);
+       // update conversationId after first message
+       
     },
   });
 };

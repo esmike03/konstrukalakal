@@ -3,40 +3,18 @@ import React, { useState, useEffect } from "react";
 import { CheckCircle, X, MessageCircle } from "lucide-react";
 
 export default function Cart() {
-  const { cartItems, flash, auth } = usePage().props;
+  const { cartItems, flash, auth, donateItemCount, tradeItemCount, orderItemCount } = usePage().props;
   const [showMessage, setShowMessage] = useState(false);
   const [filter, setFilter] = useState("all");
-  const { donateItemCount, tradeItemCount, orderItemCount } = usePage().props;
   const form = useForm({ material_id: null });
   const { post } = form;
 
-  const rejectDonate = (id) => {
-    if (confirm("Are you sure you want to reject this Inquiry?")) {
-      post(`/donate/${id}/reject`);
-    }
-  };
+  const rejectDonate = (id) => confirm("Reject this inquiry?") && post(`/donate/${id}/reject`);
+  const cancelDonate = (id) => confirm("Cancel this item?") && post(`/cart/delete/${id}`);
+  const handleConfirm = (id) => confirm("Confirm this item?") && post(`/order/${id}/submit`);
+  const acceptDonate = (id) => confirm("Accept this inquiry?") && post(`/donate/${id}/accept`);
 
-  const cancelDonate = (id) => {
-    if (confirm("Are you sure you want to cancel this Item?")) {
-      post(`/cart/delete/${id}`);
-    }
-  };
-
-  const handleConfirm = (id) => {
-    if (confirm("Are you sure you want to confirm this Item?")) {
-      post(`/order/${id}/submit`);
-    }
-  };
-
-  const acceptDonate = (id) => {
-    if (confirm("Are you sure you want to accept this Inquiry?")) {
-      post(`/donate/${id}/accept`);
-    }
-  };
-
-  const filteredTrades = cartItems.filter(
-    (trade) => filter === "all" || trade.status === filter
-  );
+  const filteredTrades = cartItems.filter((trade) => filter === "all" || trade.status === filter);
 
   useEffect(() => {
     if (flash?.message) {
@@ -47,28 +25,30 @@ export default function Cart() {
   }, [flash]);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center py-10 px-4">
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center py-10 px-4">
       {/* Flash Message */}
-      {flash?.message && (
-        <div
-          className={`fixed bottom-6 right-6 backdrop-blur-md bg-white/70 border border-gray-200 text-gray-800 shadow-xl rounded-xl px-4 py-3 flex items-center gap-2 transition-all duration-300 ${
-            showMessage ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
-          }`}
-        >
-          {flash.message.toLowerCase().includes("added") ? (
-            <CheckCircle className="text-green-600" size={20} />
-          ) : (
-            <X className="text-red-600" size={20} />
-          )}
-          {flash.message}
-        </div>
-      )}
+    {flash?.message && (
+      <div
+        className={`fixed bottom-4 right-4 px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 text-white backdrop-blur-lg
+          ${/(added|success|updated|deleted)/i.test(flash.message)
+            ? "bg-green-500/80"
+            : "bg-red-500/80"}
+          transition-all duration-500 ${showMessage ? "opacity-100" : "opacity-0"}`}
+      >
+        {/(added|success|updated|deleted)/i.test(flash.message) ? (
+          <CheckCircle size={18} />
+        ) : (
+          <X size={18} />
+        )}
+        <span className="text-sm">{flash.message}</span>
+      </div>
+    )}
 
       {/* Header */}
-      <h1 className="text-4xl font-extrabold text-gray-900 mb-8"> Sale Cart</h1>
+      <h1 className="text-4xl font-extrabold text-gray-900 mb-8">Sale Cart</h1>
 
       {/* Nav Badges */}
-      <div className="flex gap-4 mb-6">
+      <div className="flex gap-4 mb-10">
         {[
           { href: "/cart/donate", label: "Donation", count: donateItemCount },
           { href: "/my-trades", label: "Trades", count: tradeItemCount },
@@ -91,9 +71,7 @@ export default function Cart() {
       {/* Trades */}
       <div className="w-full max-w-6xl">
         {filteredTrades.length === 0 ? (
-          <p className="text-gray-500 text-center text-lg">
-            No items match this filter.
-          </p>
+          <p className="text-gray-500 text-center text-lg">No items found.</p>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredTrades.map((trade) => {
@@ -102,112 +80,112 @@ export default function Cart() {
               return (
                 <div
                   key={trade.id}
-                  className="backdrop-blur-md bg-white/70 border border-gray-200 p-6 rounded-2xl shadow-md hover:shadow-lg hover:scale-[1.02] transition-transform"
+                  className="relative h-50 rounded-2xl overflow-hidden shadow-lg group transition-transform hover:scale-[1.02] cursor-pointer"
                 >
-                  {/* Status */}
-                  <div className="mb-3">
-                    <p
-                      className={`text-sm font-semibold px-3 py-1 rounded-full text-center w-fit mx-auto ${
-                        trade.status === "pending"
-                          ? "bg-amber-400 text-white"
-                          : trade.status === "accepted"
-                          ? "bg-green-500 text-white"
-                          : "bg-red-500 text-white"
-                      }`}
-                    >
-                      {trade.status.toUpperCase()}
-                    </p>
-                  </div>
+                  {/* Background Image */}
+                  <img
+                    src={`/storage/${trade.material.image}`}
+                    alt={trade.material.material_name}
+                    className="absolute inset-0 w-full h-full object-cover transition duration-300 group-hover:scale-105"
+                  />
 
-                  {/* User */}
-                  <p className="text-center text-gray-700 text-xs mb-2">
-                    {!isUser ? trade.user.name : "Owner"}
-                  </p>
+                  {/* Overlay Gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
-                  {/* Material */}
-                  <div className="flex flex-col items-center mb-4">
-                    <img
-                      src={`/storage/${trade.material.image}`}
-                      alt={trade.material.material_name}
-                      className="w-20 h-20 object-cover rounded-lg shadow"
-                    />
-                    <p className="mt-2 text-gray-900 font-bold">
-                      {trade.material.material_name}
-                    </p>
-                  </div>
+                  {/* Status Badge */}
+                  <span
+                    className={`absolute top-4 left-4 text-xs font-semibold px-3 py-1 rounded-xl shadow-md ${
+                      trade.status === "pending"
+                        ? "bg-amber-500 text-white"
+                        : trade.status === "accepted"
+                        ? "bg-green-500 text-white"
+                        : "bg-red-500 text-white"
+                    }`}
+                  >
+                    {trade.status.toUpperCase()}
+                  </span>
 
-                  {/* Actions */}
-                  <div className="flex justify-between gap-2">
-                    {isUser ? (
-                      <>
-                        <button
-                          disabled={trade.status === "rejected" || trade.status === "cancelled"}
-                          onClick={() => cancelDonate(trade.id)}
-                          className={`px-3 py-1 rounded-lg font-medium shadow-md ${
-                            trade.status === "rejected" || trade.status === "cancelled"
-                              ? "bg-gray-300 cursor-not-allowed text-gray-600"
-                              : "bg-red-500 hover:bg-red-600 text-white"
-                          }`}
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          onClick={() => handleConfirm(trade.id)}
-                          className="px-3 py-1 rounded-lg bg-green-500 hover:bg-green-600 text-white font-medium shadow-md"
-                        >
-                          Confirm
-                        </button>
-                        <Link
-                          href={`/message/${trade.material_id}`}
-                          className="px-3 py-1 rounded-lg bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-1 font-medium shadow-md"
-                        >
-                          <MessageCircle className="w-4 h-4" /> Chat
-                        </Link>
-                      </>
-                    ) : (
-                      <>
-                        <button
-                          disabled={
-                            trade.status === "rejected" ||
-                            trade.status === "cancelled" ||
-                            trade.status === "accepted"
-                          }
-                          onClick={() => rejectDonate(trade.id)}
-                          className={`px-3 py-1 rounded-lg font-medium shadow-md ${
-                            trade.status === "rejected" ||
-                            trade.status === "cancelled" ||
-                            trade.status === "accepted"
-                              ? "bg-gray-300 cursor-not-allowed text-gray-600"
-                              : "bg-red-500 hover:bg-red-600 text-white"
-                          }`}
-                        >
-                          Reject
-                        </button>
-                        <Link
-                          href={`/messagex/${trade.material_id}/${trade.user_id}`}
-                          className="px-3 py-1 rounded-lg bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-1 font-medium shadow-md"
-                        >
-                          <MessageCircle className="w-4 h-4" /> Chat
-                        </Link>
-                        <button
-                          onClick={() => acceptDonate(trade.id)}
-                          disabled={
-                            trade.status === "rejected" ||
-                            trade.status === "cancelled" ||
-                            trade.status === "accepted"
-                          }
-                          className={`px-3 py-1 rounded-lg font-medium shadow-md ${
-                            trade.status === "rejected" ||
-                            trade.status === "cancelled" ||
-                            trade.status === "accepted"
-                              ? "bg-gray-300 cursor-not-allowed text-gray-600"
-                              : "bg-green-500 hover:bg-green-600 text-white"
-                          }`}
-                        >
-                          Accept
-                        </button>
-                      </>
-                    )}
+                  {/* Bottom Info Section */}
+                  <div className="absolute bottom-0 left-0 right-0 flex justify-between items-end p-4 text-white">
+                    <div>
+                      <Link href={`/materials/${trade.material.id}`}>
+                      <h2 className="text-lg font-bold drop-shadow-md">
+                        {trade.material.material_name}
+                      </h2>
+                      </Link>
+                      <p className="text-xs opacity-90">
+                        {!isUser ? trade.user.name : ""}
+                        <span className="text-green-500 font-bold">P{(trade.material.price * trade.quantity)}</span>  <span className="font-bold">[ {trade.quantity} ]</span>
+                      </p>
+                    </div>
+
+                    {/* Buttons Area */}
+                    <div className="flex gap-2">
+                      {isUser ? (
+                        <>
+                          <button
+                            onClick={() => cancelDonate(trade.id)}
+                            disabled={["rejected", "cancelled"].includes(trade.status)}
+                            className={`p-2 rounded-full text-sm font-medium shadow-md transition ${
+                              ["rejected", "cancelled"].includes(trade.status)
+                                ? "bg-gray-500/40 cursor-not-allowed"
+                                : "bg-red-500 hover:bg-red-600"
+                            }`}
+                            title="Cancel"
+                          >
+                            <X size={16} />
+                          </button>
+                          <button
+                            onClick={() => handleConfirm(trade.id)}
+                            className="p-2 rounded-full bg-green-500 hover:bg-green-600 shadow-md transition"
+                            title="Confirm"
+                          >
+                            <CheckCircle size={16} />
+                          </button>
+                          <Link
+                            href={`/message/${trade.material_id}`}
+                            className="p-2 rounded-full bg-blue-500 hover:bg-blue-600 shadow-md transition"
+                            title="Chat"
+                          >
+                            <MessageCircle size={16} />
+                          </Link>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            onClick={() => rejectDonate(trade.id)}
+                            disabled={["rejected", "cancelled", "accepted"].includes(trade.status)}
+                            className={`p-2 rounded-full text-sm font-medium shadow-md transition ${
+                              ["rejected", "cancelled", "accepted"].includes(trade.status)
+                                ? "bg-gray-500/40 cursor-not-allowed"
+                                : "bg-red-500 hover:bg-red-600"
+                            }`}
+                            title="Reject"
+                          >
+                            <X size={16} />
+                          </button>
+                          <Link
+                            href={`/messagex/${trade.material_id}/${trade.user_id}`}
+                            className="p-2 rounded-full bg-blue-500 hover:bg-blue-600 shadow-md transition"
+                            title="Chat"
+                          >
+                            <MessageCircle size={16} />
+                          </Link>
+                          <button
+                            onClick={() => acceptDonate(trade.id)}
+                            disabled={["rejected", "cancelled", "accepted"].includes(trade.status)}
+                            className={`p-2 rounded-full text-sm font-medium shadow-md transition ${
+                              ["rejected", "cancelled", "accepted"].includes(trade.status)
+                                ? "bg-gray-500/40 cursor-not-allowed"
+                                : "bg-green-500 hover:bg-green-600"
+                            }`}
+                            title="Accept"
+                          >
+                            <CheckCircle size={16} />
+                          </button>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
               );

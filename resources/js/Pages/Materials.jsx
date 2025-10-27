@@ -49,9 +49,9 @@ export default function Materials() {
     const filteredMaterials = materials
     .filter((material) => {
         // If user is logged in, filter out their own materials
-        if (auth?.user?.id) {
-            return material.user_id !== auth.user.id;
-        }
+        // if (auth?.user?.id) {
+        //     return material.user_id !== auth.user.id;
+        // }
         return true; // No filtering if not logged in
     })
     .filter((material) => {
@@ -118,6 +118,10 @@ export default function Materials() {
                     "Insulation",
                     "Doors & Windows",
                     "Roofing",
+                    "Flooring",
+                    "Wall Materials",
+                    "Aggregates",
+                    "Glass Materials",
                     ].map((category) => (
                     <label key={category} className="flex text-sm items-center space-x-2">
                         <input

@@ -117,6 +117,10 @@ export default function CreateMaterials() {
                                     <option value="Concrete & Cement">Concrete & Cement</option>
                                     <option value="Insulation">Insulation</option>
                                     <option value="Doors & Windows">Doors & Windows</option>
+                                    <option value="Flooring">Flooring</option>
+                                    <option value="Wall Materials">Wall Materials</option>
+                                    <option value="Aggregates">Aggregates</option>
+                                    <option value="Glass Materials">Glass Materials</option>
 
                                 </select>
                                 {errors.category && <p className="text-red-500 text-xs mt-1">{errors.category}</p>}

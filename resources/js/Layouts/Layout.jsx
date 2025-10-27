@@ -126,32 +126,36 @@ export default function Layout({ children }) {
   </div>
 
   {/* Dropdown */}
-  <div className="absolute right-0 mt-3 z-50 w-72 backdrop-blur-lg bg-white/70 border border-gray-200/60 rounded-2xl shadow-xl hidden group-hover:block transition-all duration-200">
-    {item && item.length > 0 ? (
-      item.slice(0, 5).map((notif, index) => (
-        <div
-          key={index}
-          className="flex items-center gap-3 p-3 border-b border-gray-100 last:border-none hover:bg-white/50 transition-colors duration-150"
-        >
-          {/* Notification Image */}
-          <img
-            src={notif.image ? `/storage/${notif.image}` : "/images/default.png"}
-            alt="Notification"
-            className="w-9 h-9 rounded-full object-cover ring-1 ring-gray-200"
-          />
+  <div
+  className="absolute right-0 top-full mt-2 z-50 w-80 
+             max-h-80 overflow-y-auto 
+             backdrop-blur-lg bg-white/90 border border-gray-200/60 
+             rounded-2xl shadow-xl hidden group-hover:block 
+             transition-all duration-200"
+>
+  {item && item.length > 0 ? (
+    item.slice(0, 5).map((notif, index) => (
+      <div
+        key={index}
+        className="flex items-center gap-3 p-3 border-b border-gray-100 last:border-none hover:bg-white/60 transition-colors duration-150"
+      >
+        <img
+          src={notif.image ? `/storage/${notif.image}` : "/images/default.png"}
+          alt="Notification"
+          className="w-9 h-9 rounded-full object-cover ring-1 ring-gray-200"
+        />
+        <p className="text-sm text-gray-700 leading-tight">
+          {notif.message}
+        </p>
+      </div>
+    ))
+  ) : (
+    <p className="text-sm text-gray-500 text-center py-4">
+      No notifications yet
+    </p>
+  )}
+</div>
 
-          {/* Notification Message */}
-          <p className="text-sm text-gray-700 leading-tight">
-            {notif.message}
-          </p>
-        </div>
-      ))
-    ) : (
-      <p className="text-sm text-gray-500 text-center py-4">
-        No notifications yet
-      </p>
-    )}
-  </div>
 </Link>
 
                 </div>

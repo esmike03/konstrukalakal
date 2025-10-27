@@ -20,10 +20,15 @@ class Cart extends Model
     /**
      * Get the user that owns this cart item.
      */
-    public function user()
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'owner');
+    }
+     public function user()
     {
         return $this->belongsTo(User::class);
     }
+
 
     /**
      * Get the material associated with this cart item.

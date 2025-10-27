@@ -88,11 +88,13 @@ Route::get('/trade-list', [MaterialController::class, 'TradeList'])->middleware(
 Route::post('/trades/{id}/reject', [NavigationController::class, 'rejectTrade'])->name('trades.rejectTrade');
 Route::post('/trades/{id}/cancel', [NavigationController::class, 'cancelTrade'])->name('trades.cancelTrade');
 Route::post('/trades/{id}/accept', [NavigationController::class, 'acceptTrade'])->name('trades.acceptTrade');
+Route::post('/trades/{id}/complete', [NavigationController::class, 'completeTrade'])->name('trades.completeTrade');
 
 //Donate
 Route::post('/donate/{id}/reject', [NavigationController::class, 'rejectDonate'])->name('trades.rejectDonate');
 Route::post('/donate/{id}/cancel', [NavigationController::class, 'cancelDonate'])->name('trades.cancelDonate');
 Route::post('/donate/{id}/accept', [NavigationController::class, 'acceptDonate'])->name('trades.acceptDonate');
+Route::post('/donate/{id}/complete', [NavigationController::class, 'completeDonate'])->name('trades.completeDonate');
 
 //ORders
 Route::post('/order/{id}/reject', [NavigationController::class, 'rejectOrder'])->name('trades.rejectOrder');

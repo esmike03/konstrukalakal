@@ -96,12 +96,12 @@ export default function DonateCart({ trades, isUser }) {
 {flash?.message && (
       <div
         className={`fixed bottom-4 right-4 px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 text-white backdrop-blur-lg
-          ${/(added|success|updated|deleted|completed|successfully)/i.test(flash.message)
+          ${/(added|sent|success|updated|deleted|completed|successfully)/i.test(flash.message)
             ? "bg-green-500/80"
             : "bg-red-500/80"}
           transition-all duration-500 ${showMessage ? "opacity-100" : "opacity-0"}`}
       >
-        {/(added|success|updated|deleted|completed|successfully)/i.test(flash.message) ? (
+        {/(added|sent|success|updated|deleted|completed|successfully)/i.test(flash.message) ? (
           <CheckCircle size={18} />
         ) : (
           <X size={18} />

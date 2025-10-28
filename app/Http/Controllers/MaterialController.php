@@ -435,7 +435,7 @@ class MaterialController extends Controller
                 'Please login to trade.'
             );
         }
-        
+
         $user = auth()->id();
         $exist = Trade::where('user_id', $user)
             ->where('trade_for', $request->material['id'])
@@ -533,6 +533,10 @@ class MaterialController extends Controller
                 'isUser' => True,
                 'total' => $total,
                 'item' => $item,
+                'cartItemCount' => $cartItemCount,
+                'donateItemCount' => $donateItemCount,
+                'tradeItemCount' => $tradeItemCount,
+                'orderItemCount' => $orderItemCount,
             ]);
 
         } else{
@@ -542,6 +546,10 @@ class MaterialController extends Controller
                 'isUser' => False,
                 'total' => $total,
                 'item' => $item,
+                'cartItemCount' => $cartItemCount,
+                'donateItemCount' => $donateItemCount,
+                'tradeItemCount' => $tradeItemCount,
+                'orderItemCount' => $orderItemCount,
             ]);
         }
     }

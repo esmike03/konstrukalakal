@@ -6,8 +6,15 @@ export default function Orders({ trades, isUser }) {
     const { post } = useForm();
     const { flash } = usePage().props;
     const [showMessage, setShowMessage] = useState(false);
-    const [filter, setFilter] = useState("all");
-
+    const [filter, setFilter] = useState("pending");
+const { cartItems, auth, donateItemCount, tradeItemCount, orderItemCount, cartItemCount } = usePage().props;
+      const { url } = usePage();
+       const tabs = [
+    { href: "/cart", label: "My Cart", count: cartItemCount },
+    { href: "/cart/donate", label: "Donation", count: donateItemCount },
+    { href: "/my-trades", label: "Trades", count: tradeItemCount },
+    { href: "/Orders", label: "Orders", count: orderItemCount },
+  ];
     useEffect(() => {
         if (flash?.message) {
             setShowMessage(true);
@@ -43,7 +50,7 @@ export default function Orders({ trades, isUser }) {
     };
 
     const filteredTrades = trades.filter(
-        (trade) => filter === "all" || trade.status === filter
+        (trade) => filter === "Pending" || trade.status === filter
     );
 
     return (
@@ -51,8 +58,36 @@ export default function Orders({ trades, isUser }) {
             <Head title="Orders" />
 
             <div className="min-h-screen bg-white">
-                <div className="max-w-6xl mx-auto py-10 px-6">
+                <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
                     {/* Flash message */}
+                    <aside className="md:w-64 w-full top-0  md:h-screen   md:left-0 ">
+                            <div className="flex md:flex-col flex-row md:space-y-4 space-x-4 md:space-x-0 p-4 justify-center md:justify-start">
+                          {tabs.map((tab, idx) => {
+                            const isActive = url === tab.href;
+                     // 👈 Check if the current URL matches the tab
+
+                            return (
+                              <div key={idx} className="relative">
+                                <span className="absolute -top-2 -right-2 z-50 bg-red-600 text-xs text-white rounded-full px-2 py-0.5 shadow-md">
+                                  {tab.count}
+                                </span>
+                                <Link
+                                  href={tab.href}
+                                  className={`block text-center text-xs font-semibold px-4 py-2 rounded-lg border shadow-md backdrop-blur-md transition
+                                    ${
+                                      isActive
+                                        ? "bg-green-600 text-white border-green-700 shadow-lg" // 🔵 Highlighted (active)
+                                        : "bg-white/70 hover:bg-white/90 text-gray-800 border-gray-200"
+                                    }`}
+                                >
+                                  {tab.label}
+                                </Link>
+                              </div>
+                            );
+                          })}
+                        </div>
+                        </aside>
+                        <main className="flex-1   w-full  p-6">
 {flash?.message && (
   <div
     className={`fixed bottom-4 right-4 px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 text-white backdrop-blur-lg
@@ -72,38 +107,30 @@ export default function Orders({ trades, isUser }) {
 
 
                     {/* Header + Filter */}
-                    <div className="mb-6 w-full flex justify-between items-center">
-                                        <div className="flex gap-4 items-center">
-                                            <a className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition" href="/cart">
-                                                <ArrowLeft />
-                                            </a>
-                                            <h1 className="text-3xl font-extrabold text-gray-800">
-                                                Orders
-                                            </h1>
-                                        </div>
-                                        <div className="backdrop-blur-md bg-gray-100 rounded-xl px-4 py-2 border border-gray-200">
-                                            <label className="mr-2 font-semibold text-gray-700">
+                    <div className="mb-6 w-full flex justify-end">
+                         <div className="flex items-center space-x-6 text-sm font-semibold text-gray-700">
+  {[ "Pending", "Accepted", "Rejected", "Completed"].map((status) => (
+    <button
+      key={status}
+      onClick={() => setFilter(status.toLowerCase())}
+      className={`transition-colors duration-200 ${
+        filter === status.toLowerCase()
+          ? "text-green-600 border-b-2 border-green-600"
+          : "text-gray-700 hover:text-green-600"
+      }`}
+    >
+      {status}
+    </button>
+  ))}
+</div>
 
-                                            </label>
-                                            <select
-                                                value={filter}
-                                                onChange={(e) => setFilter(e.target.value)}
-                                                className="bg-transparent text-gray-800 font-medium focus:outline-none"
-                                            >
-                                                <option value="all">All</option>
-                                                <option value="pending">Pending</option>
-                                                <option value="accepted">Accepted</option>
-                                                <option value="rejected">Rejected</option>
-                                                <option value="cancelled">Cancelled</option>
-                                            </select>
-                                        </div>
                                     </div>
 
                     {/* Cards */}
                     {filteredTrades.length === 0 ? (
-                        <p className="text-gray-500">No orders match this filter.</p>
+                        <p className="text-gray-500 text-center">No orders match this filter.</p>
                     ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                             {filteredTrades.map((trade) => (
                                 <div
                                                   key={trade.id}
@@ -115,10 +142,10 @@ export default function Orders({ trades, isUser }) {
                                                     alt={trade.material.material_name}
                                                     className="absolute inset-0 w-full h-full object-cover transition duration-300 group-hover:scale-105"
                                                   />
-                                
+
                                                   {/* Overlay Gradient */}
                                                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                                
+
                                                   {/* Status Badge */}
                                                   <span
                                                     className={`absolute top-4 left-4 text-xs font-semibold px-3 py-1 rounded-xl shadow-md ${
@@ -129,9 +156,9 @@ export default function Orders({ trades, isUser }) {
                                                         : "bg-red-500 text-white"
                                                     }`}
                                                   >
-                                                    {trade.status.toUpperCase()}
+
                                                   </span>
-                                
+
                                                   {/* Bottom Info Section */}
                                                   <div className="absolute bottom-0 left-0 right-0 flex justify-between items-end p-4 text-white">
                                                     <div>
@@ -139,7 +166,7 @@ export default function Orders({ trades, isUser }) {
                                                       <h2 className="text-lg font-bold drop-shadow-md">
                                                         <span className="block text-xs font-light">{trade.owner.name}</span>
                                                         {trade.material.material_name}
-                                                        
+
                                                       </h2>
                                                       </Link>
                                                       <p className="text-xs opacity-90">
@@ -147,7 +174,7 @@ export default function Orders({ trades, isUser }) {
                                                         <span className="text-green-500 font-bold">P{(trade.material.price * trade.quantity)}</span>  <span className="font-bold">[ {trade.quantity} ]</span>
                                                       </p>
                                                     </div>
-                                
+
                                                     {/* Buttons Area */}
                                                     <div className="flex gap-2">
                                                       {isUser ? (
@@ -164,7 +191,7 @@ export default function Orders({ trades, isUser }) {
                                                           >
                                                             <X size={16} />
                                                           </button>
-                                                         
+
                                                           <Link
                                                             href={`/message/${trade.material_id}`}
                                                             className="p-2 rounded-full bg-blue-500 hover:bg-blue-600 shadow-md transition"
@@ -214,6 +241,7 @@ export default function Orders({ trades, isUser }) {
                             ))}
                         </div>
                     )}
+                        </main>
                 </div>
             </div>
         </>

@@ -127,10 +127,10 @@ export default function Layout({ children }) {
 
   {/* Dropdown */}
   <div
-  className="absolute right-0 top-full mt-2 z-50 w-80 
-             max-h-80 overflow-y-auto 
-             backdrop-blur-lg bg-white/90 border border-gray-200/60 
-             rounded-2xl shadow-xl hidden group-hover:block 
+  className="absolute right-0 top-full mt-2 z-50 w-80
+             max-h-80 overflow-y-auto
+             backdrop-blur-lg bg-white/90 border border-gray-200/60
+             rounded-2xl shadow-xl hidden group-hover:block
              transition-all duration-200"
 >
   {item && item.length > 0 ? (

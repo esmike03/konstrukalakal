@@ -174,7 +174,11 @@ class CartController extends Controller
                 'isUser' => True,
                 'total' => $total,
                 'item' => $item,
-                'totaling' => $totaling
+                'totaling' => $totaling,
+                'cartItemCount' => $cartItemCount,
+                'donateItemCount' => $donateItemCount,
+                'tradeItemCount' => $tradeItemCount,
+                'orderItemCount' => $orderItemCount,
             ]);
         } else {
 
@@ -183,7 +187,11 @@ class CartController extends Controller
                 'isUser' => False,
                 'total' => $total,
                 'item' => $item,
-                'totaling' => $totaling
+                'totaling' => $totaling,
+                'cartItemCount' => $cartItemCount,
+                'donateItemCount' => $donateItemCount,
+                'tradeItemCount' => $tradeItemCount,
+                'orderItemCount' => $orderItemCount,
             ]);
         }
     }
@@ -425,7 +433,11 @@ class CartController extends Controller
                 'isUser' => True,
                 'total' => $total,
                 'item' => $item,
-                'totaling' => $totaling
+                'totaling' => $totaling,
+                'cartItemCount' => $cartItemCount,
+                'donateItemCount' => $donateItemCount,
+                'tradeItemCount' => $tradeItemCount,
+                'orderItemCount' => $orderItemCount,
             ]);
         } else {
 
@@ -434,7 +446,11 @@ class CartController extends Controller
                 'isUser' => False,
                 'total' => $total,
                 'item' => $item,
-                'totaling' => $totaling
+                'totaling' => $totaling,
+                'cartItemCount' => $cartItemCount,
+                'donateItemCount' => $donateItemCount,
+                'tradeItemCount' => $tradeItemCount,
+                'orderItemCount' => $orderItemCount,
             ]);
         }
     }

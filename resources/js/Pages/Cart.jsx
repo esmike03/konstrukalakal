@@ -3,17 +3,22 @@ import React, { useState, useEffect } from "react";
 import { CheckCircle, X, MessageCircle } from "lucide-react";
 
 export default function Cart() {
-  const { cartItems, flash, auth, donateItemCount, tradeItemCount, orderItemCount } = usePage().props;
+  const { cartItems, flash, auth, donateItemCount, tradeItemCount, orderItemCount, cartItemCount } = usePage().props;
   const [showMessage, setShowMessage] = useState(false);
   const [filter, setFilter] = useState("all");
   const form = useForm({ material_id: null });
   const { post } = form;
-
+  const { url } = usePage();
   const rejectDonate = (id) => confirm("Reject this inquiry?") && post(`/donate/${id}/reject`);
   const cancelDonate = (id) => confirm("Cancel this item?") && post(`/cart/delete/${id}`);
   const handleConfirm = (id) => confirm("Confirm this item?") && post(`/order/${id}/submit`);
   const acceptDonate = (id) => confirm("Accept this inquiry?") && post(`/donate/${id}/accept`);
-
+  const tabs = [
+    { href: "/cart", label: "My Cart", count: cartItemCount },
+    { href: "/cart/donate", label: "Donation", count: donateItemCount },
+    { href: "/my-trades", label: "Trades", count: tradeItemCount },
+    { href: "/Orders", label: "Orders", count: orderItemCount },
+  ];
   const filteredTrades = cartItems.filter((trade) => filter === "all" || trade.status === filter);
 
   useEffect(() => {
@@ -25,8 +30,36 @@ export default function Cart() {
   }, [flash]);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center py-10 px-4">
+    <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
       {/* Flash Message */}
+
+          <aside className="md:w-64 w-full top-0  md:h-screen   md:left-0 ">
+        <div className="flex md:flex-col flex-row md:space-y-4 space-x-4 md:space-x-0 p-4 justify-center md:justify-start">
+      {tabs.map((tab, idx) => {
+        const isActive = url.startsWith(tab.href); // 👈 Check if the current URL matches the tab
+
+        return (
+          <div key={idx} className="relative">
+            <span className="absolute -top-2 -right-2 z-50 bg-red-600 text-xs text-white rounded-full px-2 py-0.5 shadow-md">
+              {tab.count}
+            </span>
+            <Link
+              href={tab.href}
+              className={`block text-center text-xs font-semibold px-4 py-2 rounded-lg border shadow-md backdrop-blur-md transition
+                ${
+                  isActive
+                    ? "bg-green-600 text-white border-green-700 shadow-lg" // 🔵 Highlighted (active)
+                    : "bg-white/70 hover:bg-white/90 text-gray-800 border-gray-200"
+                }`}
+            >
+              {tab.label}
+            </Link>
+          </div>
+        );
+      })}
+    </div>
+    </aside>
+<main className="flex-1  w-full  p-6">
     {flash?.message && (
       <div
         className={`fixed bottom-4 right-4 px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 text-white backdrop-blur-lg
@@ -45,31 +78,15 @@ export default function Cart() {
     )}
 
       {/* Header */}
-      <h1 className="text-4xl font-extrabold text-gray-900 mb-8">Sale Cart</h1>
+
+
 
       {/* Nav Badges */}
-      <div className="flex gap-4 mb-10">
-        {[
-          { href: "/cart/donate", label: "Donation", count: donateItemCount },
-          { href: "/my-trades", label: "Trades", count: tradeItemCount },
-          { href: "/Orders", label: "Orders", count: orderItemCount },
-        ].map((tab, idx) => (
-          <div key={idx} className="relative">
-            <span className="absolute -top-2 -right-2 z-50 bg-red-600 text-xs text-white rounded-full px-2 py-0.5 shadow-md">
-              {tab.count}
-            </span>
-            <Link
-              href={tab.href}
-              className="backdrop-blur-md bg-white/70 hover:bg-white/90 transition px-4 py-2 rounded-lg text-gray-800 font-semibold shadow-md border border-gray-200"
-            >
-              {tab.label}
-            </Link>
-          </div>
-        ))}
-      </div>
+
+
 
       {/* Trades */}
-      <div className="w-full max-w-6xl">
+      <div className="w-full  max-w-6xl">
         {filteredTrades.length === 0 ? (
           <p className="text-gray-500 text-center text-lg">No items found.</p>
         ) : (
@@ -193,6 +210,7 @@ export default function Cart() {
           </div>
         )}
       </div>
+      </main>
     </div>
   );
 }

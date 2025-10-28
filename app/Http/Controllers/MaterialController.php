@@ -526,7 +526,10 @@ class MaterialController extends Controller
             })
             ->count();
         $total = $cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount;
-
+            $donateCount = Donate::where('owner', auth()->id())->count();
+        $tradeCount = Trade::where('owner', auth()->id())->count();
+        $orderCount = Orders::where('owner', auth()->id())->count();
+        $totaling = ($donateCount + $tradeCount + $orderCount);
         if($trades->isNotEmpty() && $trades->first()->user_id == $userId){
             return inertia('MyTrades', [
                 'trades' => $trades,
@@ -537,6 +540,7 @@ class MaterialController extends Controller
                 'donateItemCount' => $donateItemCount,
                 'tradeItemCount' => $tradeItemCount,
                 'orderItemCount' => $orderItemCount,
+                'totaling' => $totaling
             ]);
 
         } else{
@@ -550,6 +554,7 @@ class MaterialController extends Controller
                 'donateItemCount' => $donateItemCount,
                 'tradeItemCount' => $tradeItemCount,
                 'orderItemCount' => $orderItemCount,
+                'totaling' => $totaling
             ]);
         }
     }
@@ -593,13 +598,20 @@ class MaterialController extends Controller
             })
             ->count();
         $total = $cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount;
-
+            $donateCount = Donate::where('owner', auth()->id())->count();
+        $tradeCount = Trade::where('owner', auth()->id())->count();
+        $orderCount = Orders::where('owner', auth()->id())->count();
+        $totaling = ($donateCount + $tradeCount + $orderCount);
         if($trades->isNotEmpty() && $trades->first()->user_id == $userId){
             return inertia('TradeList', [
                 'trades' => $trades,
                 'isUser' => True,
                 'total' => $total,
                 'item' => $item,
+                'donate' => $donateCount,
+             'trader' => $tradeCount,
+             'order' => $orderCount,
+             'totaling' => $totaling
             ]);
 
         } else{
@@ -609,6 +621,10 @@ class MaterialController extends Controller
                 'isUser' => False,
                 'total' => $total,
                 'item' => $item,
+                'donate' => $donateCount,
+             'trader' => $tradeCount,
+             'order' => $orderCount,
+             'totaling' => $totaling
             ]);
         }
     }

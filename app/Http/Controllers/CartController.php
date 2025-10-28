@@ -235,13 +235,20 @@ class CartController extends Controller
         $total = $cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount;
         $logon = auth()->id();
         $item = Notifications::where('owner', $logon)->latest()->take(5)->get();
-
+            $donateCount = Donate::where('owner', auth()->id())->count();
+        $tradeCount = Trade::where('owner', auth()->id())->count();
+        $orderCount = Orders::where('owner', auth()->id())->count();
+        $totaling = ($donateCount + $tradeCount + $orderCount);
         if ($donate->isNotEmpty() && $donate->first()->user_id == $userId) {
             return inertia('DonateList', [
                 'trades' => $donate,
                 'isUser' => True,
                 'total' => $total,
                 'item' => $item,
+                'donate' => $donateCount,
+             'trader' => $tradeCount,
+             'order' => $orderCount,
+             'totaling' => $totaling
             ]);
         } else {
 
@@ -250,6 +257,10 @@ class CartController extends Controller
                 'isUser' => False,
                 'total' => $total,
                 'item' => $item,
+                'donate' => $donateCount,
+             'trader' => $tradeCount,
+             'order' => $orderCount,
+             'totaling' => $totaling
             ]);
         }
     }
@@ -495,6 +506,10 @@ class CartController extends Controller
             })
             ->count();
         $total = $cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount;
+            $donateCount = Donate::where('owner', auth()->id())->count();
+        $tradeCount = Trade::where('owner', auth()->id())->count();
+        $orderCount = Orders::where('owner', auth()->id())->count();
+        $totaling = ($donateCount + $tradeCount + $orderCount);
 
         if ($orders->isNotEmpty() && $orders->first()->user_id == $userId) {
             return inertia('OrderList', [
@@ -502,6 +517,10 @@ class CartController extends Controller
                 'isUser' => True,
                 'total' => $total,
                 'item' => $item,
+                'donate' => $donateCount,
+             'trader' => $tradeCount,
+             'order' => $orderCount,
+             'totaling' => $totaling
             ]);
         } else {
 
@@ -510,6 +529,10 @@ class CartController extends Controller
                 'isUser' => False,
                 'total' => $total,
                 'item' => $item,
+                'donate' => $donateCount,
+             'trader' => $tradeCount,
+             'order' => $orderCount,
+             'totaling' => $totaling
             ]);
         }
     }

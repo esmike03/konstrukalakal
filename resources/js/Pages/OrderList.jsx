@@ -7,12 +7,20 @@ export default function OrderList({ trades, isUser }) {
     const { post } = useForm();
     const { flash } = usePage().props;
     const [showMessage, setShowMessage] = useState(false);
-    const [filter, setFilter] = useState("all");
+    const [filter, setFilter] = useState("pending");
 
       const handleChange = (e) => {
     const value = e.target.value;
     if (value) router.visit(value); // Redirect to selected page
   };
+  const { cartItems, auth, donateItemCount, tradeItemCount, orderItemCount, cartItemCount, order, donate, trader } = usePage().props;
+        const { url } = usePage();
+         const tabs = [
+      { href: "/order-list", label: "Order List", count: order },
+      { href: "/donate-list", label: "Donation List", count: donate },
+      { href: "/trade-list", label: "Trades List", count: trader },
+
+    ];
 
     useEffect(() => {
         if (flash?.message) {
@@ -55,7 +63,7 @@ export default function OrderList({ trades, isUser }) {
     };
 
     const filteredTrades = trades.filter(
-        (trade) => filter === "all" || trade.status === filter
+        (trade) => filter === "Pending" || trade.status === filter
     );
 
     return (
@@ -63,8 +71,36 @@ export default function OrderList({ trades, isUser }) {
             <Head title="Orders" />
 
             <div className="min-h-screen bg-white">
-                <div className="max-w-6xl mx-auto py-10 px-6">
+                <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
                     {/* Flash message */}
+                    <aside className="md:w-64 w-full top-0  md:h-screen   md:left-0 ">
+                                                <div className="flex md:flex-col flex-row md:space-y-4 space-x-4 md:space-x-0 p-4 justify-center md:justify-start">
+                                              {tabs.map((tab, idx) => {
+                                                const isActive = url === tab.href;
+                                         // 👈 Check if the current URL matches the tab
+
+                                                return (
+                                                  <div key={idx} className="relative">
+                                                    <span className="absolute -top-2 -right-2 z-50 bg-red-600 text-xs text-white rounded-full px-2 py-0.5 shadow-md">
+                                                      {tab.count}
+                                                    </span>
+                                                    <Link
+                                                      href={tab.href}
+                                                      className={`block text-center text-xs font-semibold px-4 py-2 rounded-lg border shadow-md backdrop-blur-md transition
+                                                        ${
+                                                          isActive
+                                                            ? "bg-green-600 text-white border-green-700 shadow-lg" // 🔵 Highlighted (active)
+                                                            : "bg-white/70 hover:bg-white/90 text-gray-800 border-gray-200"
+                                                        }`}
+                                                    >
+                                                      {tab.label}
+                                                    </Link>
+                                                  </div>
+                                                );
+                                              })}
+                                            </div>
+                                            </aside>
+                                            <main className="flex-1   w-full  p-6">
                     {flash?.message && (
                           <div
                             className={`fixed bottom-4 right-4 px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 text-white backdrop-blur-lg
@@ -83,54 +119,32 @@ export default function OrderList({ trades, isUser }) {
                         )}
 
                     {/* Header + Filter */}
-                    <div className="mb-6 w-full flex justify-between items-center">
-                                        <div className="flex gap-4 items-center">
-                                            <a className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition" href="/uploaded">
-                                                <ArrowLeft />
-                                            </a>
-                                                <div className="relative inline-block">
-                                                    {/* Dropdown (styled like a title) */}
-                                                    <select
-                                                        onChange={handleChange}
-                                                        defaultValue="/order-list"
-                                                        className="appearance-none bg-transparent text-3xl font-extrabold text-gray-800 pr-8 pl-2 cursor-pointer focus:outline-none"
-                                                    >
-                                                        <option value="/order-list">Orders List</option>
-                                                        <option value="/trade-list">Trade List</option>
-                                                        <option value="/donate-list">Donate List</option>
-                                                    </select>
+                    <div className="mb-2 w-full flex justify-end">
 
-                                                    {/* Dropdown Icon */}
-                                                    <ChevronDown
-                                                        className="absolute right-0 top-1/2 -translate-y-1/2 text-green-500 pointer-events-none"
-                                                        size={20}
-                                                    />
-                                                    </div>
 
+                                            <div className="flex items-center space-x-6 text-sm font-semibold text-gray-700">
+  {[ "Pending", "Accepted", "Rejected", "Completed"].map((status) => (
+    <button
+      key={status}
+      onClick={() => setFilter(status.toLowerCase())}
+      className={`transition-colors duration-200 ${
+        filter === status.toLowerCase()
+          ? "text-green-600 border-b-2 border-green-600"
+          : "text-gray-700 hover:text-green-600"
+      }`}
+    >
+      {status}
+    </button>
+  ))}
+</div>
                                         </div>
-                                        <div className="backdrop-blur-md bg-gray-100 rounded-xl px-4 py-2 border border-gray-200">
-                                            <label className="mr-2 font-semibold text-gray-700">
 
-                                            </label>
-                                            <select
-                                                value={filter}
-                                                onChange={(e) => setFilter(e.target.value)}
-                                                className="bg-transparent text-gray-800 font-medium focus:outline-none"
-                                            >
-                                                <option value="all">All</option>
-                                                <option value="pending">Pending</option>
-                                                <option value="accepted">Accepted</option>
-                                                <option value="rejected">Rejected</option>
-                                                <option value="cancelled">Cancelled</option>
-                                            </select>
-                                        </div>
-                                    </div>
 
                     {/* Cards */}
                     {filteredTrades.length === 0 ? (
                         <p className="text-gray-500">No orders match this filter.</p>
                     ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                             {filteredTrades.map((trade) => (
                                 <div
                                     key={trade.id}
@@ -147,7 +161,7 @@ export default function OrderList({ trades, isUser }) {
                                             `}
                                         >
                                             <span className="font-semibold uppercase">
-                                                {trade.status}
+
                                             </span>
                                         </p>
                                     </div>
@@ -297,6 +311,7 @@ export default function OrderList({ trades, isUser }) {
                             ))}
                         </div>
                     )}
+                    </main>
                 </div>
             </div>
         </>

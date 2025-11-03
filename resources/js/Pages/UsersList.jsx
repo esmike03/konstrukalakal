@@ -25,7 +25,7 @@ export default function UserList() {
         <table className="min-w-full border-collapse">
           <thead className="bg-gray-100 text-left">
             <tr>
-              <th className="px-4 py-2 text-sm font-medium text-gray-600">#</th>
+              <th className="px-4 py-2 text-sm font-medium text-gray-600">Profile</th>
               <th className="px-4 py-2 text-sm font-medium text-gray-600">Name</th>
               <th className="px-4 py-2 text-sm font-medium text-gray-600">Email</th>
               <th className="px-4 py-2 text-sm font-medium text-gray-600">Phone</th>
@@ -36,24 +36,25 @@ export default function UserList() {
           </thead>
           <tbody>
             {users.data.length > 0 ? (
-              users.data.map((user, index) => (
-                <tr
-                  key={user.id}
-                  className="border-b hover:bg-gray-50 transition"
-                >
-                  <td className="px-4 py-2 text-sm text-gray-700">{user.id}</td>
+              users.data.map((user) => (
+                <tr key={user.id} className="border-b hover:bg-gray-50 transition">
+                  {/* Profile Image */}
+                  <td className="px-4 py-2">
+                                        <img
+                    src={`/storage/${user.profile_image}`}
+                    alt={user.name}
+                    className="w-10 h-10 rounded-full object-cover border"
+                    />
+
+                  </td>
+
+                  {/* User Info */}
                   <td className="px-4 py-2 text-sm font-semibold text-gray-800">
                     {user.name}
                   </td>
-                  <td className="px-4 py-2 text-sm text-gray-600">
-                    {user.email}
-                  </td>
-                  <td className="px-4 py-2 text-sm text-gray-600">
-                    {user.contact}
-                  </td>
-                  <td className="px-4 py-2 text-sm text-gray-600">
-                    {user.address}
-                  </td>
+                  <td className="px-4 py-2 text-sm text-gray-600">{user.email}</td>
+                  <td className="px-4 py-2 text-sm text-gray-600">{user.contact}</td>
+                  <td className="px-4 py-2 text-sm text-gray-600">{user.address}</td>
                   <td className="px-4 py-2 text-sm text-gray-500">
                     {new Date(user.created_at).toLocaleDateString()}
                   </td>
@@ -69,7 +70,7 @@ export default function UserList() {
               ))
             ) : (
               <tr>
-                <td colSpan="5" className="text-center text-gray-500 py-6">
+                <td colSpan="7" className="text-center text-gray-500 py-6">
                   No users found.
                 </td>
               </tr>

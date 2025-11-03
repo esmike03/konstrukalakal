@@ -82,7 +82,7 @@ export default function Materials() {
                     Browse Materials{" "}
                     <span className="text-xs text-gray-400 font-normal">{">"} All</span>
                 </h1>
-                {auth.user.name !== 'Admin' && (
+                {auth?.user?.name !== 'Admin' && (
                 <button
                     onClick={openMaterialModal}
                     className="cursor-pointer bg-green-500 text-white text-sm px-3 py-1 rounded-full flex items-center gap-1"
@@ -277,7 +277,7 @@ export default function Materials() {
                                         </button>
                                     </Link>
 
-                                    {auth.user.name === 'Admin' && (
+                                    {auth?.user?.name === 'Admin' && (
                                     <Link href={`/uploads/delete/${material.id}`}>
                                         <button
                                         className="bg-red-600 text-white p-2 rounded-full hover:bg-red-700 transition flex items-center justify-center"

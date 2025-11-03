@@ -44,6 +44,10 @@ export default function Show({ material, user }) {
   }
 
   function addToDonate(e) {
+    if (data.quantity > material.quantity) {
+      alert(`You can only inquire up to ${material.quantity}.`);
+      return;
+    }
     e.preventDefault();
     post("/donate/submit");
   }
@@ -76,7 +80,7 @@ export default function Show({ material, user }) {
         <Link href={`/back`} className="absolute -top-10 left-0 text-gray-500 hover:text-gray-800 flex items-center gap-1">
           <ArrowLeft size={18} /> <span className="text-sm">Back</span>
         </Link>
-        {auth.user.name === 'Admin' && (
+        {auth?.user?.name === 'Admin' && (
                                     <Link href={`/uploads/delete/${material.id}`}>
                                         <button
                                         className="bg-red-600 absolute right-0 text-white p-2 rounded-full hover:bg-red-700 transition flex items-center justify-center"
@@ -156,7 +160,7 @@ export default function Show({ material, user }) {
             <span className="font-semibold">Availability:</span>{" "}
             {material.quantity > 0 ? "In Stock " : "Out of Stock "}({material.quantity})
           </p>
-          {auth.user.name !== 'Admin' && (
+          {auth?.user?.name !== 'Admin' && (
           <div className="flex items-center mt-2 text-gray-700">
             <label htmlFor="quantity" className="mr-2">Quantity:</label>
             <input
@@ -174,7 +178,7 @@ export default function Show({ material, user }) {
 
 
           {/* Buttons */}
-          {auth.user.name !== 'Admin' && (
+          {auth?.user?.name !== 'Admin' && (
           <div className="mt-4 flex flex-wrap gap-3">
             {auth?.user?.id === user.id ? (
               <p className="text-sm text-gray-700">You can edit this in My Uploads.</p>
@@ -228,7 +232,7 @@ export default function Show({ material, user }) {
             )}
         </div>
             )}
-            {auth.user && auth.user.name === 'Admin' && (
+            {auth?.user && auth?.user?.name === 'Admin' && (
             <Link
                 href={`/message/${material.id}`}
                 className="flex items-center w-1/2 mt-4 justify-center gap-2 px-5 py-2 rounded-full

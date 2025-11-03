@@ -1,42 +1,90 @@
 import { useForm, Link, usePage } from "@inertiajs/react";
-import { ArrowLeft } from "lucide-react";
-
-export default function SendMessage({ material, user, messages, conversationId }) {
+import { ArrowLeft, MessageCircle, X } from "lucide-react";
+import Fab from "@/Components/Fab";
+import { useEffect, useState, useRef } from "react";
+import axios from "axios"; // or fetch
+export default function SendMessage({ material, user, messages: initialMessages, conversationId }) {
   const { data, setData, post, reset, processing } = useForm({
     message: "",
     recipient_id: user.id,
     material_id: material.id,
     start: conversationId || "",
   });
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+  const [messages, setMessages] = useState(initialMessages);
+
+  // Scroll to bottom whenever messages change
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  // Poll messages every 5 seconds
+useEffect(() => {
+  
+  if (!data.start) return;
+
+  const fetchMessages = () => {
+    axios
+    
+      .get(`/message2x/${data.start}`)
+      .then((res) => {
+        console.log("data.start =", data.start);
+        if (Array.isArray(res.data)) {
+          setMessages(prev => {
+            // Merge new messages without duplicating
+            const existingIds = new Set(prev.map(m => m.id));
+            const newMsgs = res.data.filter(m => !existingIds.has(m.id));
+            return [...prev, ...newMsgs];
+          });
+        }
+      })
+      .catch((err) => console.error(err));
+  };
+
+  fetchMessages(); // fetch immediately
+  const interval = setInterval(fetchMessages, 3000); // continue polling every 3s
+
+  return () => clearInterval(interval);
+}, [data.start]);
+
+
+
 
   // get the currently authenticated user
   const {
     auth: { user: authUser },
   } = usePage().props;
 
-const handleSend = (e) => {
-  e.preventDefault();
-  if (!data.message.trim()) return;
-  setData("message", "");
-  post("/messages/send", data, {
-    preserveScroll: true,
-    
-    onSuccess: (res) => {
-      
-      reset("message");
-      
-      if (res.start) setData("start", res.start);
-       // update conversationId after first message
-       
-    },
-  });
-};
+  const handleSend = (e) => {
+    e.preventDefault();
+    if (!data.message.trim()) return;
+
+    axios.post("/messages/send", data)
+      .then(res => {
+        // Append new message
+        setMessages(prev => [...prev, res.data.message]);
+        // Update conversation start if first message
+        if (!data.start && res.data.conversationId) {
+          setData("start", res.data.conversationId);
+        }
+        // Clear input
+        setData("message", "");
+      })
+      .catch(err => console.error(err));
+  };
+
+
 
 
   return (
     <>
       <div className="max-w-5xl mx-auto p-6 rounded-lg gap-8 mt-10 mb-24">
         {/* Back Button */}
+
         <Link href="/messages">
           <button className="absolute top-20 text-gray-500 font-semibold flex items-center">
             <ArrowLeft size={20} className="mr-1" /> Back
@@ -54,19 +102,19 @@ const handleSend = (e) => {
                 alt={material.material_name}
                 className="w-full h-full object-cover rounded-md"
               />
-               {material.status === 'off' &&(
+              {material.status === 'off' && (
                 <p className="absolute top-1 left-1 bg-red-500 text-[10px] text-white px-1 py-0.5 rounded">
 
-                   Deleted
+                  Deleted
                 </p>
-                )}
+              )}
 
-                {material.status === 'on' &&(
+              {material.status === 'on' && (
                 <p className="absolute top-1 left-1 bg-green-500 text-[10px] text-white px-1 py-0.5 rounded">
 
-                   For {material.forbdt}
+                  For {material.forbdt}
                 </p>
-                )}
+              )}
 
 
             </div>
@@ -89,11 +137,11 @@ const handleSend = (e) => {
 
                 {(!material.forbdt === "Donation" || !material.forbdt === "Trade" || material.forbdt === "Sale") && (
 
-                <span className="text-green-600 text-xs">
-                  Price:{" "}
-                  ₱{material.price}
+                  <span className="text-green-600 text-xs">
+                    Price:{" "}
+                    ₱{material.price}
 
-                </span>
+                  </span>
 
                 )}
 
@@ -102,54 +150,39 @@ const handleSend = (e) => {
           </div>
         </div>
         <div className="max-w-5xl mx-auto px-4 mt-4 w-full  items-center justify-center text-center">
-            <p className="text-xs text-gray-500">
-                {conversationId || "New conversation"}
-            </p>
+          <p className="text-xs text-gray-500">
+            {conversationId || "New conversation"}
+          </p>
         </div>
 
         {/* Conversation Messages */}
         <div className="h-[60vh] overflow-y-auto mt-6 px-4 space-y-2">
           {messages.length === 0 ? (
-            <p className="text-center text-gray-400 text-sm">
-              No messages yet.
-            </p>
+            <p className="text-center text-gray-400 text-sm">No messages yet.</p>
           ) : (
             messages.map((msg) => (
-              <div
-                key={msg.id}
-                className={`flex ${
-                  msg.sender_id === authUser.id
-                    ? "justify-end"
-                    : "justify-start"
-                }`}
-              >
-                <div
-                  className={`px-4 py-2 rounded-lg text-sm max-w-xs ${
-                    msg.sender_id === authUser.id
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-200 text-gray-800"
-                  }`}
-                >
-                          {msg.sender_id !== authUser.id && (
-                                <div className="flex items-center gap-1 mb-1">
-                                {msg.sender_avatar && (
-                                    <img src={`/storage/${msg.sender_avatar}`} alt={msg.sender_name} className="h-4 w-4 rounded-full object-cover" />
-                                )}
-                                <p className="text-[10px] font-semibold text-gray-600">{msg.sender_name}</p>
-                                </div>
-                            )}
+              <div key={msg.id} className={`flex ${msg.sender_id === authUser.id ? "justify-end" : "justify-start"}`}>
+                <div className={`px-4 py-2 rounded-lg text-sm max-w-xs ${msg.sender_id === authUser.id ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-800"}`}>
+                  {msg.sender_id !== authUser.id && (
+                    <div className="flex items-center gap-1 mb-1">
+                      {msg.sender_avatar && (
+                        <img src={`/storage/${msg.sender_avatar}`} alt={msg.sender_name} className="h-4 w-4 rounded-full object-cover" />
+                      )}
+                      <p className="text-[10px] font-semibold text-gray-600">{msg.sender_name}</p>
+                    </div>
+                  )}
                   {msg.content}
                   <div className="text-[10px] text-gray-700 mt-1 text-right">
-                    {new Date(msg.created_at).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                    {new Date(msg.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                   </div>
                 </div>
               </div>
             ))
           )}
+          <div ref={messagesEndRef} />
         </div>
+
+
       </div>
 
       {/* Message Input Fixed Bottom */}
@@ -183,6 +216,7 @@ const handleSend = (e) => {
           </div>
         </div>
       </form>
+
     </>
   );
 }

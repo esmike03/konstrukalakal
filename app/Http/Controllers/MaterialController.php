@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Cart;
 use App\Models\User;
 use App\Models\Convo;
@@ -22,26 +23,26 @@ class MaterialController extends Controller
     {
 
         $cartItemCount = Cart::where('user_id', auth()->id())->count();
-                $cartItemCount = Cart::with(['material', 'user'])
+        $cartItemCount = Cart::with(['material', 'user'])
             ->where('user_id', auth()->id())
             ->whereHas('material', function ($query) {
                 $query->where('status', 'on');
             })
             ->count();
-            $donateItemCount = Donate::with(['material', 'user'])
+        $donateItemCount = Donate::with(['material', 'user'])
             ->where('user_id', auth()->id())
             ->whereHas('material', function ($query) {
                 $query->where('status', 'on');
             })
             ->count();
 
-            $tradeItemCount = Trade::with(['material', 'user'])
+        $tradeItemCount = Trade::with(['material', 'user'])
             ->where('user_id', auth()->id())
             ->whereHas('material', function ($query) {
                 $query->where('status', 'on');
             })
             ->count();
-            $orderItemCount = Orders::with(['material', 'user'])
+        $orderItemCount = Orders::with(['material', 'user'])
             ->where('user_id', auth()->id())
             ->whereHas('material', function ($query) {
                 $query->where('status', 'on');
@@ -107,6 +108,7 @@ class MaterialController extends Controller
 
     public function send(Request $request)
     {
+
         $request->validate([
             'message'      => 'required|string|max:1000',
             'recipient_id' => 'required|exists:users,id',
@@ -115,12 +117,14 @@ class MaterialController extends Controller
         ]);
 
         $authId = auth()->id();
+        $user_name = auth()->user()->name;
+        $recipient_name = User::where('id', $request->recipient_id)->first();
+
+        $image = Material::where('id', $request->material_id)->first();
 
         // Use start from request if provided, otherwise check existing conversation
         if (!empty($request->start)) {
             $start = $request->start;
-
-
         } else {
             $existingMessage = Message::where('material_id', $request->material_id)
                 ->where(function ($q) use ($authId, $request) {
@@ -137,20 +141,41 @@ class MaterialController extends Controller
             $start = !empty($existingMessage->start)
                 ? $existingMessage->start
                 : Str::uuid()->toString();
-            if (empty($existingMessage)){
+            if (empty($existingMessage)) {
                 Convo::create([
-                'sender_id'    => $authId,
-                'recipient_id' => $request->recipient_id,
-                'material_id'  => $request->material_id,
-                'start'        => $start,
-                'content'      => 'Open to see conversations.',
+                    'sender_id'    => $authId,
+                    'recipient_id' => $request->recipient_id,
+                    'material_id'  => $request->material_id,
+                    'start'        => $start,
+                    'content'      => 'Open to see conversations.',
                 ]);
-        }
+
+                $message = Message::create([
+                    'sender_id'    => $request->recipient_id,
+                    'recipient_id' => $request->recipient_id,
+                    'material_id'  => $request->material_id,
+                    'start'        => $start,
+                    'content'      => 'Hi, ' . $user_name . '. Your message has been received. ' . $recipient_name->name . ' will reply as soon as they read your message!',
+                    'created_at'   => Carbon::now()->addMinute(),
+                    'updated_at'   => Carbon::now()->addMinute(),
+                ]);
+
+                Notifications::create([
+                    'user_id'     => $authId,
+                    'material_id' => $request->material_id,
+                    'quantity'    => 1,
+                    'message'    => $user_name . ' message you. Please check your inbox.',
+                    'username' => $user_name,
+                    'image' => $image->image,
+                    'ownername' => $user_name,
+                    'owner' => $recipient_name->id,
+                ]);
+            }
         }
 
 
         // Save the new message
-        Message::create([
+        $message = Message::create([
             'sender_id'    => $authId,
             'recipient_id' => $request->recipient_id,
             'material_id'  => $request->material_id,
@@ -158,7 +183,10 @@ class MaterialController extends Controller
             'content'      => $request->message,
         ]);
 
-        return back()->with('success', 'Message sent!');
+        return response()->json([
+            'message' => $message,
+            'conversationId' => $start,
+        ]);
     }
 
 
@@ -209,7 +237,7 @@ class MaterialController extends Controller
     public function sendMessagex($id)
     {
         $tradeUser = Trade::where('item_title', $id)
-        ->first();
+            ->first();
 
         $cartItemCount = Cart::where('user_id', auth()->id())->count();
         $material = Material::findOrFail($tradeUser->trade_for);
@@ -253,8 +281,8 @@ class MaterialController extends Controller
     public function sendMessagexx($id, $userId)
     {
         $DonateUser = Donate::where('material_id', $id)
-        ->where('user_id', $userId)
-        ->first();
+            ->where('user_id', $userId)
+            ->first();
 
         $cartItemCount = Cart::where('user_id', auth()->id())->count();
         $material = Material::findOrFail($DonateUser->material_id);
@@ -297,8 +325,8 @@ class MaterialController extends Controller
     public function sendMessagexxx($id, $userId)
     {
         $DonateUser = Orders::where('material_id', $id)
-        ->where('user_id', $userId)
-        ->first();
+            ->where('user_id', $userId)
+            ->first();
 
         $cartItemCount = Cart::where('user_id', auth()->id())->count();
         $material = Material::findOrFail($DonateUser->material_id);
@@ -335,6 +363,28 @@ class MaterialController extends Controller
             'messages'       => $messages,
             'conversationId' => $start, // pass conversation id if you need it
         ]);
+    }
+
+    public function fetchMessages($start)
+    {
+        $authId = auth()->id();
+
+        $messages = Message::where('start', $start)
+
+            ->orderBy('created_at', 'asc')
+            ->get()
+            ->map(function ($msg) {
+                return [
+                    'id' => $msg->id,
+                    'sender_id' => $msg->sender_id,
+                    'sender_name' => optional(User::find($msg->sender_id))->name ?? 'Unknown',
+                    'sender_avatar' => optional(User::find($msg->sender_id))->profile_image,
+                    'content' => $msg->content,
+                    'created_at' => $msg->created_at,
+                ];
+            });
+
+        return response()->json($messages);
     }
 
 
@@ -411,7 +461,7 @@ class MaterialController extends Controller
         return back()->with('message', 'Material Deleted.');
     }
 
-        public function uploadRestore($id)
+    public function uploadRestore($id)
     {
         // Validate the incoming data
         $upload = Material::findOrFail($id);
@@ -459,7 +509,11 @@ class MaterialController extends Controller
             'item_title' => 'required|string|max:255',
             'item_image' => 'required|image',
             'trade_for' => 'required|integer',
+            'quantity' => 'required',
+            'trade_quantity' => 'required',
+            'description' => 'required'
         ]);
+
         $material_user = Material::where('id', $request->trade_for)->firstorFail();
         // dd($material_user);
 
@@ -471,8 +525,12 @@ class MaterialController extends Controller
             'item_title' => $request->item_title,
             'item_image' => $imagePath,
             'trade_for' => $request->trade_for,
+            'quantity' => $request->quantity,
             'owner' => $material_user->user_id,
             'status' => 'pending',
+            'description' => $request->description,
+            'trade_quantity' => $request->trade_quantity
+
         ]);
 
         return redirect()
@@ -492,7 +550,7 @@ class MaterialController extends Controller
         //     })
         //     ->get();
 
-            $trades = Trade::with(['material', 'user', 'owner'])
+        $trades = Trade::with(['material', 'user', 'owner'])
             ->where('user_id', $user->id)
             ->whereHas('material', function ($query) {
                 $query->where('status', 'on');
@@ -500,37 +558,37 @@ class MaterialController extends Controller
             ->get();
 
         // dd($trades->first()->user_id);
-                $cartItemCount = Cart::with(['material', 'user'])
+        $cartItemCount = Cart::with(['material', 'user'])
             ->where('user_id', auth()->id())
             ->whereHas('material', function ($query) {
                 $query->where('status', 'on');
             })
             ->count();
-            $donateItemCount = Donate::with(['material', 'user'])
+        $donateItemCount = Donate::with(['material', 'user'])
             ->where('user_id', auth()->id())
             ->whereHas('material', function ($query) {
                 $query->where('status', 'on');
             })
             ->count();
 
-            $tradeItemCount = Trade::with(['material', 'user'])
+        $tradeItemCount = Trade::with(['material', 'user'])
             ->where('user_id', auth()->id())
             ->whereHas('material', function ($query) {
                 $query->where('status', 'on');
             })
             ->count();
-            $orderItemCount = Orders::with(['material', 'user'])
+        $orderItemCount = Orders::with(['material', 'user'])
             ->where('user_id', auth()->id())
             ->whereHas('material', function ($query) {
                 $query->where('status', 'on');
             })
             ->count();
         $total = $cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount;
-            $donateCount = Donate::where('owner', auth()->id())->count();
+        $donateCount = Donate::where('owner', auth()->id())->count();
         $tradeCount = Trade::where('owner', auth()->id())->count();
         $orderCount = Orders::where('owner', auth()->id())->count();
         $totaling = ($donateCount + $tradeCount + $orderCount);
-        if($trades->isNotEmpty() && $trades->first()->user_id == $userId){
+        if ($trades->isNotEmpty() && $trades->first()->user_id == $userId) {
             return inertia('MyTrades', [
                 'trades' => $trades,
                 'isUser' => True,
@@ -542,8 +600,7 @@ class MaterialController extends Controller
                 'orderItemCount' => $orderItemCount,
                 'totaling' => $totaling
             ]);
-
-        } else{
+        } else {
 
             return inertia('MyTrades', [
                 'trades' => $trades,
@@ -572,49 +629,48 @@ class MaterialController extends Controller
             ->get();
 
         // dd($trades->first()->user_id);
-               $cartItemCount = Cart::with(['material', 'user'])
+        $cartItemCount = Cart::with(['material', 'user'])
             ->where('user_id', auth()->id())
             ->whereHas('material', function ($query) {
                 $query->where('status', 'on');
             })
             ->count();
-            $donateItemCount = Donate::with(['material', 'user'])
+        $donateItemCount = Donate::with(['material', 'user'])
             ->where('user_id', auth()->id())
             ->whereHas('material', function ($query) {
                 $query->where('status', 'on');
             })
             ->count();
 
-            $tradeItemCount = Trade::with(['material', 'user'])
+        $tradeItemCount = Trade::with(['material', 'user'])
             ->where('user_id', auth()->id())
             ->whereHas('material', function ($query) {
                 $query->where('status', 'on');
             })
             ->count();
-            $orderItemCount = Orders::with(['material', 'user'])
+        $orderItemCount = Orders::with(['material', 'user'])
             ->where('user_id', auth()->id())
             ->whereHas('material', function ($query) {
                 $query->where('status', 'on');
             })
             ->count();
         $total = $cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount;
-            $donateCount = Donate::where('owner', auth()->id())->count();
+        $donateCount = Donate::where('owner', auth()->id())->count();
         $tradeCount = Trade::where('owner', auth()->id())->count();
         $orderCount = Orders::where('owner', auth()->id())->count();
         $totaling = ($donateCount + $tradeCount + $orderCount);
-        if($trades->isNotEmpty() && $trades->first()->user_id == $userId){
+        if ($trades->isNotEmpty() && $trades->first()->user_id == $userId) {
             return inertia('TradeList', [
                 'trades' => $trades,
                 'isUser' => True,
                 'total' => $total,
                 'item' => $item,
                 'donate' => $donateCount,
-             'trader' => $tradeCount,
-             'order' => $orderCount,
-             'totaling' => $totaling
+                'trader' => $tradeCount,
+                'order' => $orderCount,
+                'totaling' => $totaling
             ]);
-
-        } else{
+        } else {
 
             return inertia('TradeList', [
                 'trades' => $trades,
@@ -622,9 +678,9 @@ class MaterialController extends Controller
                 'total' => $total,
                 'item' => $item,
                 'donate' => $donateCount,
-             'trader' => $tradeCount,
-             'order' => $orderCount,
-             'totaling' => $totaling
+                'trader' => $tradeCount,
+                'order' => $orderCount,
+                'totaling' => $totaling
             ]);
         }
     }

@@ -133,7 +133,7 @@ export default function CreateMaterials() {
                                     <option value="Fair">Fair</option>
                                     <option value="Like New">Like New</option>
                                     <option value="New">New</option>
-                                    <option value="Salvageable">Salvageable</option>
+                                    <option value="Restorable">Restorable</option>
                                 </select>
                                 {errors.condition && <p className="text-red-500 text-xs mt-1">{errors.condition}</p>}
                             </div>

@@ -45,28 +45,49 @@ export default function TermnServicesModal() {
 
 
                 {/* Title */}
-                <h2 className="text-xl font-bold text-center text-gray-900">Term of Services and Privacy Policy</h2>
+                <h2 className="text-xl font-bold text-center text-gray-900">
+                    Terms of Service and Privacy Policy
+                </h2>
+
                 <div className="mb-6">
-                    <h3 className="font-semibold text-gray-700 text-sm mb-2 mt-5">Terms of Service</h3>
+                    <h3 className="font-semibold text-gray-700 text-sm mb-2 mt-5">
+                        Terms of Service
+                    </h3>
                     <p className="text-xs text-gray-700">
-                        By using our platform, you agree to abide by the following terms. You are responsible for maintaining the confidentiality of your account and password. You agree not to misuse the service, and you acknowledge that we reserve the right to suspend or terminate your access if any abuse is detected. We may update these terms occasionally, and continued use of the platform implies acceptance of the changes.
+                        By using our platform, you agree to abide by the following terms. You are responsible
+                        for maintaining the confidentiality of your account and password. You agree not to
+                        misuse the service, and you acknowledge that we reserve the right to suspend or
+                        terminate your access if any abuse is detected. We may update these terms occasionally,
+                        and continued use of the platform implies acceptance of the changes.
+                    </p>
+
+                    <p className="text-xs text-gray-700 mt-3">
+                        <span className="font-semibold">Mode of Payment:</span> Our platform currently supports
+                        <span className="font-bold"> Cash on Delivery (COD)</span> as the primary payment method.
+                        This means you can pay for your order directly to the delivery personnel upon receiving
+                        your item. Please ensure that the exact payment amount is prepared at the time of
+                        delivery.
                     </p>
                 </div>
 
                 {/* Privacy Policy */}
                 <div className="mb-6">
-                    <h3 className="font-semibold text-gray-700 text-sm  mb-2">Privacy Policy</h3>
+                    <h3 className="font-semibold text-gray-700 text-sm mb-2">Privacy Policy</h3>
                     <p className="text-xs text-gray-700">
-                        We collect your personal data solely for providing and improving our services. This includes your name, email, address, and other required information. We will not sell, rent, or share your information with third parties without your consent, except where required by law. You have the right to access, modify, or delete your data at any time.
+                        We collect your personal data solely for providing and improving our services. This
+                        includes your name, email, address, and other required information. We will not sell,
+                        rent, or share your information with third parties without your consent, except where
+                        required by law. You have the right to access, modify, or delete your data at any time.
                     </p>
                 </div>
 
+
                 <p className="text-center text-xs text-gray-600 mt-4">
-                    <Link  onClick={(e) => {
+                    <Link onClick={(e) => {
                         e.preventDefault();
                         closeTermnServicesModal(); // Close Register modal
                         openLoginModal(); // Open Login modal
-                    }}  className="text-green-600 text-xl hover:underline"> I Understand</Link>
+                    }} className="text-green-600 text-xl hover:underline"> I Understand</Link>
                 </p>
             </div>
         </div>

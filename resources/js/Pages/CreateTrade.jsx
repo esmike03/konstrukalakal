@@ -4,11 +4,15 @@ import { useState } from "react";
 export default function CreateTrade() {
   const { props } = usePage();
   const material = props.material;
+ const quantity = props.quantity;
 
   const { data, setData, post, processing, errors } = useForm({
     item_title: "",
+    description: "",
     item_image: null,
+    trade_quantity: 1,
     trade_for: material?.id,
+    quantity: quantity,
   });
 
   const handleSubmit = (e) => {
@@ -18,7 +22,7 @@ export default function CreateTrade() {
 
   return (
     <div className="max-w-xl mx-auto bg-white rounded-2xl shadow-lg p-6 mt-10 border border-gray-200">
-      <h2 className="text-2xl font-bold text-gray-800 mb-4">Propose a Trade</h2>
+      <h2 className="text-2xl font-bold text-gray-800 mb-4">Propose a Trade  </h2>
 
       {/* Material Preview */}
       <div className="mb-6 border rounded-lg p-3 bg-gray-50">
@@ -29,7 +33,7 @@ export default function CreateTrade() {
             alt={material.material_name}
             className="w-20 h-20 object-cover rounded-md shadow"
           />
-          <p className="font-semibold text-gray-800">{material.material_name}</p>
+          <p className="font-semibold text-gray-800">{material.material_name} x {quantity}</p>
         </div>
       </div>
 
@@ -51,12 +55,35 @@ export default function CreateTrade() {
             <p className="text-red-500 text-xs mt-1">{errors.item_title}</p>
           )}
         </div>
+<div>
+          <label className="block text-sm font-medium text-gray-700">
+            Your Description
+          </label>
+          <div className="flex gap-2">
 
+            <input
+            type="text"
+            value={data.description}
+            onChange={(e) => setData("description", e.target.value)}
+            className="mt-2 w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-700"
+            placeholder="Enter your item's description"
+          />
+          {errors.item_title && (
+            <p className="text-red-500 text-xs mt-1">{errors.description}</p>
+          )}
+          <input
+          value={data.trade_quantity}
+          onChange={(e) => setData("trade_quantity", e.target.value)}
+          type="number" placeholder="1" className="mt-2 w-1/8 px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-700"/>
+          </div>
+          
+        </div>
         {/* Upload Image */}
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Upload Image of Your Item
           </label>
+          <input hidden value={quantity}/>
           <input
             type="file"
             onChange={(e) => setData("item_image", e.target.files[0])}

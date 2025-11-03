@@ -127,7 +127,7 @@ export default function Materials() {
           <div className="mt-4">
             <h3 className="font-semibold text-sm text-gray-600">Condition</h3>
             <div className="space-y-2 mt-2 text-sm">
-              {["New", "Like New", "Good", "Fair", "Salvageable"].map(
+              {["New", "Like New", "Good", "Fair", "Restorable"].map(
                 (condition) => (
                   <label key={condition} className="flex items-center space-x-2">
                     <input

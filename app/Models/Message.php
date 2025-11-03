@@ -15,6 +15,8 @@ class Message extends Model
         'material_id',
         'start',
         'content',
+        'created_at',
+        'updated_at'
     ];
 
     public function sender()

@@ -49,7 +49,9 @@ Route::get('/materials/{id}', [MaterialController::class, 'show'])->name('materi
 Route::get('/materials-edit/{id}', [MaterialController::class, 'editMaterial'])->name('materials.edit');
 
 Route::get('/message/{id}', [MaterialController::class, 'sendMessage'])->name('message.show');
-Route::get('/message2/{start}', [MaterialController::class, 'sendMessage2'])->name('message2.show');
+Route::get('/message2/{start}', [MaterialController::class, 'sendMessage2'])->name('sendMessage2');
+Route::get('/message2x/{start}', [MaterialController::class, 'fetchMessages']);
+
 Route::post('/messages/send', [MaterialController::class, 'send']);
 Route::get('/messagext/{id}', [MaterialController::class, 'sendMessagex'])->name('messagex.showx');
 Route::get('/messagex/{id}/{userId}', [MaterialController::class, 'sendMessagexx'])->name('messagexx.showxx');

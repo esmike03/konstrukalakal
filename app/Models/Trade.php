@@ -16,7 +16,9 @@ class Trade extends Model
         'item_image',
         'owner',
         'status',
-        'quantity'
+        'quantity',
+        'description',
+        'trade_quantity'
     ];
 
     public function owner()

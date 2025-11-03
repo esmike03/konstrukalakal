@@ -120,7 +120,7 @@ class MaterialController extends Controller
         $user_name = auth()->user()->name;
         $recipient_name = User::where('id', $request->recipient_id)->first();
 
-        $image = Material::where('id', $request->material_id)->first();
+        $image = User::where('name', $user_name)->first();
 
         // Use start from request if provided, otherwise check existing conversation
         if (!empty($request->start)) {
@@ -166,7 +166,7 @@ class MaterialController extends Controller
                     'quantity'    => 1,
                     'message'    => $user_name . ' message you. Please check your inbox.',
                     'username' => $user_name,
-                    'image' => $image->image,
+                    'image' => $image->profile_image,
                     'ownername' => $user_name,
                     'owner' => $recipient_name->id,
                 ]);

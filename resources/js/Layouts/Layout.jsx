@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, Head, usePage } from "@inertiajs/react";
 import { useModal } from "@/context/ModalContext";
-import { ShoppingCart, Clock, LogOut, User, Menu, X, Bell, MessageCircle, Upload } from "lucide-react";
+import { ShoppingCart, Clock, LogOut, User, Menu, X, Bell, MessageCircle, Upload, Users } from "lucide-react";
 
 export default function Layout({ children }) {
 
@@ -84,21 +84,22 @@ export default function Layout({ children }) {
                   <Link href="/about" className="hover:text-green-600">
                     About
                   </Link>
-                {auth.user && (
-                    <Link href={`/cart`}>
-                        <button className="relative">
-                        <ShoppingCart
+
+
+                {auth.user && auth.user.name !== 'Admin' && (
+                <Link href={`/cart`}>
+                    <button className="relative">
+                    <ShoppingCart
                         className="text-gray-700 hover:text-green-600 cursor-pointer"
                         size={18}
-                        />
-                        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
+                    />
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
                         {total}
-                        </span>
+                    </span>
                     </button>
-
-                    </Link>
-
+                </Link>
                 )}
+
               </div>
 
               {/* Desktop: Profile & Auth Buttons */}
@@ -115,6 +116,7 @@ export default function Layout({ children }) {
   onMouseEnter={() => setShowNotif(false)}
 >
   {/* Bell Icon */}
+  {auth.user.name !== 'Admin' && (
   <div className="relative">
     <Bell
       size={22}
@@ -124,7 +126,7 @@ export default function Layout({ children }) {
       <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse" />
     )}
   </div>
-
+)}
   {/* Dropdown */}
   <div
   className="absolute right-0 top-full mt-2 z-50 w-80
@@ -193,6 +195,25 @@ export default function Layout({ children }) {
                       >
                         <User size={18} /> Profile
                       </Link>
+                      {auth.user.name === 'Admin' && (
+                      <Link
+                        href="/admin/users"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 w-full text-left relative"
+                      >
+                        <Users size={18} />
+                        <div className="relative">
+
+                           <span>User List</span>
+                          {totaling > 0 && (
+                            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                              {totaling}
+                            </span>
+                          )}
+                        </div>
+
+                      </Link>
+                        )}
+                      {auth.user.name !== 'Admin' && (
                       <Link
                         href="/uploaded"
                         className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 w-full text-left relative"
@@ -209,8 +230,9 @@ export default function Layout({ children }) {
                         </div>
 
                       </Link>
+                        )}
 
-
+                        {auth.user.name !== 'Admin' && (
                       <Link
                         href="/history"
 
@@ -218,6 +240,7 @@ export default function Layout({ children }) {
                       >
                         <Clock size={18} /> History
                       </Link>
+                        )}
                       <Link
                         href="/logout"
                         method="post"

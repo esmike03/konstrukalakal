@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useModal } from "@/context/ModalContext";
-import { CheckCircle, Search, Grid, List, Upload, SlidersHorizontal, ChevronDown, ChevronUp } from "lucide-react";
+import { CheckCircle, Search, Grid, List, Upload, SlidersHorizontal, ChevronDown, ChevronUp, Trash2 } from "lucide-react";
 import { usePage, Link } from "@inertiajs/react";
 
 export default function Materials() {
@@ -69,12 +69,14 @@ export default function Materials() {
             Browse Materials{" "}
             <span className="text-xs text-gray-400 font-normal">{">"} Donate Materials</span>
           </h1>
+          {auth.user.name !== 'Admin' && (
           <button
             onClick={openMaterialModal}
             className="cursor-pointer bg-green-500 text-white text-sm px-3 py-1 rounded-full flex items-center gap-1"
           >
             <Upload size={14} /> Upload Materials
           </button>
+          )}
         </div>
       )}
 
@@ -231,11 +233,28 @@ export default function Materials() {
                                 <p className="text-xs text-gray-500">Qty: {material.quantity}</p>
                             </div>
 
-                            <Link href={`/materials/${material.id}`} className="cursor-pointer">
-                                <button className="w-full mt-3 text-sm bg-gradient-to-r from-green-500 to-green-600 text-white py-2 rounded-full shadow hover:from-green-600 hover:to-green-700 transition">
-                                View Details
-                                </button>
-                            </Link>
+                            <div className="flex items-center justify-between gap-3 mt-3">
+                                <Link href={`/materials/${material.id}`} className="flex-1">
+                                    <button className="w-full text-sm bg-gradient-to-r from-green-500 to-green-600 text-white py-2 rounded-full shadow hover:from-green-600 hover:to-green-700 transition">
+                                    View Details
+                                    </button>
+                                </Link>
+                                {auth.user.name === 'Admin' && (
+                                <Link href={`/uploads/delete/${material.id}`}>
+                                    <button
+                                    className="bg-red-600 text-white p-2 rounded-full hover:bg-red-700 transition flex items-center justify-center"
+                                    onClick={(e) => {
+                                        if (!window.confirm("Are you sure you want to delete this item?")) {
+                                        e.preventDefault();
+                                        }
+                                    }}
+                                    >
+                                    <Trash2 className="w-4 h-4" />
+                                    </button>
+                                </Link>
+                                )}
+                                </div>
+
                             </div>
                         </div>
                         ))

@@ -1,6 +1,6 @@
 import { useForm, Link, usePage } from "@inertiajs/react";
 import { useState, useEffect } from "react";
-import { ArrowLeft, ShoppingCart, CheckCircle, X } from "lucide-react";
+import { ArrowLeft, ShoppingCart, CheckCircle, X, Trash2 } from "lucide-react";
 
 export default function Show({ material, user }) {
   const { auth } = usePage().props;
@@ -76,7 +76,20 @@ export default function Show({ material, user }) {
         <Link href={`/back`} className="absolute -top-10 left-0 text-gray-500 hover:text-gray-800 flex items-center gap-1">
           <ArrowLeft size={18} /> <span className="text-sm">Back</span>
         </Link>
-
+        {auth.user.name === 'Admin' && (
+                                    <Link href={`/uploads/delete/${material.id}`}>
+                                        <button
+                                        className="bg-red-600 absolute right-0 text-white p-2 rounded-full hover:bg-red-700 transition flex items-center justify-center"
+                                        onClick={(e) => {
+                                            if (!window.confirm("Are you sure you want to delete this item?")) {
+                                            e.preventDefault();
+                                            }
+                                        }}
+                                        >
+                                        <Trash2 className="w-4 h-4" />
+                                        </button>
+                                    </Link>
+                                    )}
         {/* Product Image Section */}
         <div className="w-full md:w-1/2">
           <img
@@ -84,6 +97,7 @@ export default function Show({ material, user }) {
             alt={material.material_name}
             className="w-full h-auto object-cover rounded-2xl shadow-lg"
           />
+
         </div>
 
         {/* Product Details */}
@@ -142,6 +156,7 @@ export default function Show({ material, user }) {
             <span className="font-semibold">Availability:</span>{" "}
             {material.quantity > 0 ? "In Stock " : "Out of Stock "}({material.quantity})
           </p>
+          {auth.user.name !== 'Admin' && (
           <div className="flex items-center mt-2 text-gray-700">
             <label htmlFor="quantity" className="mr-2">Quantity:</label>
             <input
@@ -155,16 +170,19 @@ export default function Show({ material, user }) {
               onChange={(e) => setData("quantity", e.target.value)}
             />
           </div>
-
+          )}
 
 
           {/* Buttons */}
+          {auth.user.name !== 'Admin' && (
           <div className="mt-4 flex flex-wrap gap-3">
             {auth?.user?.id === user.id ? (
               <p className="text-sm text-gray-700">You can edit this in My Uploads.</p>
             ) : (
               <>
+
                 {material.forbdt === "Sale" ? (
+
                   <button
                     onClick={addToCart}
                     className="flex items-center justify-center gap-2 px-5 py-2 rounded-full
@@ -209,6 +227,17 @@ export default function Show({ material, user }) {
           </>
             )}
         </div>
+            )}
+            {auth.user && auth.user.name === 'Admin' && (
+            <Link
+                href={`/message/${material.id}`}
+                className="flex items-center w-1/2 mt-4 justify-center gap-2 px-5 py-2 rounded-full
+                bg-white/40 text-gray-800 font-medium shadow hover:bg-white/60 transition backdrop-blur-md"
+            >
+                ✉️ Message
+            </Link>
+            )}
+
       </div>
     </div >
     </>

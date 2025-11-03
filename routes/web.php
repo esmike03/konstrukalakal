@@ -9,6 +9,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MaterialController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\NavigationController;
 
 // Route::get('/', function () {
@@ -109,3 +110,9 @@ Route::post('/order/{id}/cancelbyowner', [NavigationController::class, 'cancelby
 
 //update the quantity
 Route::post('/cart/updateQuantity/{id}/{newQty}', [CartController::class, 'updateQuantity']);
+
+
+
+Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users');
+Route::delete('/admin/users/{id}', [UserController::class, 'destroyuser'])->name('admin.users.destroy');
+

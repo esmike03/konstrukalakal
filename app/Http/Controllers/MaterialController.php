@@ -626,6 +626,9 @@ class MaterialController extends Controller
             ->where(function ($q) use ($user) {
                 $q->where('owner', $user->id);
             })
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
             ->get();
 
         // dd($trades->first()->user_id);
@@ -655,9 +658,15 @@ class MaterialController extends Controller
             })
             ->count();
         $total = $cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount;
-        $donateCount = Donate::where('owner', auth()->id())->count();
-        $tradeCount = Trade::where('owner', auth()->id())->count();
-        $orderCount = Orders::where('owner', auth()->id())->count();
+        $donateCount = Donate::where('owner', auth()->id())->whereHas('material', function ($query) {
+            $query->where('status', 'on');
+        })->count();
+        $tradeCount = Trade::where('owner', auth()->id())->whereHas('material', function ($query) {
+            $query->where('status', 'on');
+        })->count();
+        $orderCount = Orders::where('owner', auth()->id())->whereHas('material', function ($query) {
+            $query->where('status', 'on');
+        })->count();
         $totaling = ($donateCount + $tradeCount + $orderCount);
         if ($trades->isNotEmpty() && $trades->first()->user_id == $userId) {
             return inertia('TradeList', [

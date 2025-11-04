@@ -30,7 +30,7 @@ export default function LoginModal() {
 
     return (
         <div className="fixed inset-0 bg-gray-800/60 backdrop-blur-xs flex justify-center items-center z-50">
-            <div className="bg-white rounded-lg shadow-lg p-6 w-full md:w-1/4 max-w-md relative">
+            <div className="bg-white mx-4 rounded-lg shadow-lg p-6 w-full md:w-1/4 max-w-md relative">
                 {/* Close Button */}
                 <button onClick={closeLoginModal} className="absolute top-3 right-3 text-gray-600 hover:text-gray-900">
                     <X size={20} />

@@ -40,7 +40,7 @@ export default function TermnServicesModal() {
 
     return (
         <div className="fixed inset-0 bg-gray-800/60 backdrop-blur-xs flex justify-center items-center z-50">
-            <div className="bg-white rounded-lg shadow-lg p-6 w-full md:w-1/3 max-w-md relative">
+            <div className="bg-white mx-4 rounded-lg shadow-lg p-6 w-full md:w-1/3 max-w-md relative">
                 {/* Close Button */}
 
 

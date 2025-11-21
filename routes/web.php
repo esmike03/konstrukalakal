@@ -114,8 +114,14 @@ Route::post('/cart/updateQuantity/{id}/{newQty}', [CartController::class, 'updat
 
 
 Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users');
+Route::get('/admin/reported', [UserController::class, 'reported'])->name('admin.reported');
+Route::get('/admin/reported-item', [UserController::class, 'reportedItem'])->name('admin.reported-item');
 Route::delete('/admin/users/{id}', [UserController::class, 'destroyuser'])->name('admin.users.destroy');
 
 Route::get('/direct/{id}/{user}', [MaterialController::class, 'sendDirect'])->name('direct.show');
 Route::get('/profile-view/{user}', [NavigationController::class, 'ProfileView']);
 Route::get('/conversation/delete/{id}', [MaterialController::class, 'convoDestroy'])->name('conversation.delete');
+Route::get('/disable/{id}', [MaterialController::class, 'userDisable'])->name('disable.user');
+Route::get('/enable/{id}', [MaterialController::class, 'userEnable'])->name('enable.user');
+Route::post('/report-user', [PostController::class, 'Reported'])->name('report.store');
+Route::post('/report-item', [PostController::class, 'ReportedItem'])->name('report.item');

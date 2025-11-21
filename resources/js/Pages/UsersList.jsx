@@ -50,7 +50,9 @@ export default function UserList() {
 
                   {/* User Info */}
                   <td className="px-4 py-2 text-sm font-semibold text-gray-800">
+                  <Link href={`/profile-view/${user.id}`}>
                     {user.name}
+                    </Link>
                   </td>
                   <td className="px-4 py-2 text-sm text-gray-600">{user.email}</td>
                   <td className="px-4 py-2 text-sm text-gray-600">{user.contact}</td>

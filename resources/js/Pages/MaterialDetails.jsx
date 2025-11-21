@@ -1,8 +1,21 @@
-import { useForm, Link, usePage } from "@inertiajs/react";
+import { useForm, Link, usePage, router } from "@inertiajs/react";
 import { useState, useEffect } from "react";
-import { ArrowLeft, ShoppingCart, CheckCircle, X } from "lucide-react";
+import { ArrowLeft, ShoppingCart, CheckCircle, X, AlertCircle, Trash2 } from "lucide-react";
 
 export default function Show({ material, user }) {
+
+      const [open, setOpen] = useState(false);
+
+        const reasons = [
+        "Incorrect Item Listed",
+        "Incorrect Product Name",
+        "Incorrect or Misleading Image",
+        "Scam or Fraudulent Activity",
+        "Poor Quality or Damaged",
+        "Counterfeit or Fake Product",
+        ];
+
+
   const { auth } = usePage().props;
   const { flash } = usePage().props;
   const [showMessage, setShowMessage] = useState(false);
@@ -79,6 +92,37 @@ export default function Show({ material, user }) {
 
         {/* Product Image Section */}
         <div className="w-full md:w-1/2">
+          <button
+                  onClick={() => setOpen(!open)}
+                  className="w-fit absolute text-left px-2 text-yellow-500 py-2 hover:bg-red-100"
+                >
+                 <AlertCircle/>
+                </button>
+
+                {/* Dropdown */}
+                {open && (
+                  <div className="absolute left-0 mt-8 w-48 bg-white border rounded-md shadow-md z-50">
+                    {reasons.map((reason, index) => (
+                      <button
+                        key={index}
+                        onClick={() => {
+                          setOpen(false);
+
+                          // You may send this to backend later.
+                           router.post("/report-item", {
+                              user_id: user.id, // pass the ID of the user being reported
+                              reason: reason,
+                              itemer: material.id,
+                              });
+                        }}
+                        className="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm"
+                      >
+                        {reason}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
           <img
             src={`/storage/${material.image}`}
             alt={material.material_name}
@@ -88,6 +132,20 @@ export default function Show({ material, user }) {
 
         {/* Product Details */}
         <div className="w-full md:w-1/2 flex flex-col">
+        {auth?.user?.name === 'Admin' && (
+                                    <Link href={`/uploads/delete/${material.id}`}>
+                                        <button
+                                        className="bg-red-600 right-0 absolute mr-10 text-white p-2 rounded-full hover:bg-red-700 transition flex items-center justify-center"
+                                        onClick={(e) => {
+                                            if (!window.confirm("Are you sure you want to delete this item?")) {
+                                            e.preventDefault();
+                                            }
+                                        }}
+                                        >
+                                        <Trash2 className="w-4 h-4" />
+                                        </button>
+                                    </Link>
+                                    )}
           {/* Seller */}
           <Link href={`/profile-view/${user.id}`}>
 
@@ -99,7 +157,7 @@ export default function Show({ material, user }) {
                 className="h-12 w-12 object-cover shadow-md rounded-full border border-white/40"
               />
               <div>
-                <p className="text-sm font-semibold text-gray-800">{user.name}</p>
+                <p className="text-sm font-semibold text-gray-800">{user.name} {'>'}</p>
                 <p className="text-xs text-gray-600">{user.contact}</p>
               </div>
             </div>

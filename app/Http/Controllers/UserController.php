@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
 use Inertia\Inertia;
+use App\Models\Reported;
+use App\Models\Reporteditem;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class UserController extends Controller
 {
@@ -15,6 +17,28 @@ class UserController extends Controller
 
         return Inertia::render('UsersList', [
             'users' => $users
+        ]);
+    }
+
+        public function reported()
+    {
+         $reports = Reported::with(['reportedBy', 'reportedUser'])
+            ->latest()
+            ->get();
+
+        return Inertia::render('Reported', [
+            'reports' => $reports,
+        ]);
+    }
+
+    public function reportedItem()
+    {
+         $reports = Reporteditem::with(['reportedBy', 'reportedUser', 'reportedItem'])
+            ->latest()
+            ->get();
+
+        return Inertia::render('ReportedItem', [
+            'reports' => $reports,
         ]);
     }
 

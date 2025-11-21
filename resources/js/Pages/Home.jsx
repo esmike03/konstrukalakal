@@ -1,7 +1,7 @@
 import { Link, usePage, Head } from "@inertiajs/react";
 import { useState, useEffect } from "react";
 import { useModal } from "@/context/ModalContext";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, XCircle } from "lucide-react";
 export default function Home() {
 
     const { component } = usePage();
@@ -30,16 +30,24 @@ export default function Home() {
             <section>
 
                     {flash?.message && (
-                        <div
-                            className={`bg-green-400 border border-green-600 shadow-lg bottom-4 flex items-center gap-2 w-fit right-4 absolute text-white p-3 rounded-md z-100 mb-4 transition-all duration-500 transform ${
-                                showMessage
-                                    ? "opacity-100 translate-y-0"
-                                    : "opacity-0 -translate-y-5"
-                            }`}
-                        >
-                        <CheckCircle size={20} className="text-white" /> {flash.message}
-                        </div>
-                    )}
+  <div
+    className={`${
+      flash.message.toLowerCase().includes("disabled")
+        ? "bg-red-500 border-red-600"
+        : "bg-green-400 border-green-600"
+    } shadow-lg bottom-4 flex items-center gap-2 w-fit right-4 absolute text-white p-3 rounded-md z-100 mb-4 transition-all duration-500 transform ${
+      showMessage ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-5"
+    }`}
+  >
+    {flash.message.toLowerCase().includes("disabled") ? (
+      <XCircle size={20} className="text-white" />
+    ) : (
+      <CheckCircle size={20} className="text-white" />
+    )}
+
+    <span>{flash.message}</span>
+  </div>
+)}
 
                 <div className="p-10 sm:p-10 m-5 rounded-3xl text-black flex items-center justify-center overflow-hidden">
                 <div className="w-full max-w-6xl px-4 sm:px-6">

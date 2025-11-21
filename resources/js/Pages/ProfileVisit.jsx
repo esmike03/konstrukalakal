@@ -1,4 +1,4 @@
-import { usePage, Link } from "@inertiajs/react";
+import { usePage, Link, router } from "@inertiajs/react";
 import { useState, useEffect } from "react";
 import { useModal } from "@/context/ModalContext";
 import { Search, Grid, List, Upload, Filter, CheckCircle } from "lucide-react";
@@ -6,6 +6,7 @@ import { Search, Grid, List, Upload, Filter, CheckCircle } from "lucide-react";
 
 export default function ProfileVisit() {
   const { auth } = usePage().props;
+
   const [openMenu, setOpenMenu] = useState(false);
   const [view, setView] = useState("grid");
   const { openMaterialModal } = useModal();
@@ -13,7 +14,16 @@ export default function ProfileVisit() {
   const { user } = usePage().props;
   const { flash } = usePage().props;
   const [showMessage, setShowMessage] = useState(false);
+  const [open, setOpen] = useState(false);
 
+  const reasons = [
+    "Spam or misleading",
+    "Harassment or bullying",
+    "Hate speech",
+    "Scam or fraud",
+    "Inappropriate content",
+    "Fake account",
+  ];
   // State for search and filters
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -64,29 +74,73 @@ export default function ProfileVisit() {
     });
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10">
-
+     {flash?.message && (
+                        <div
+                            className={`bg-green-400 border border-green-600 shadow-lg bottom-4 flex items-center gap-2 w-fit right-4 absolute text-white p-3 rounded-md z-100 mb-4 transition-all duration-500 transform ${
+                                showMessage
+                                    ? "opacity-100 translate-y-0"
+                                    : "opacity-0 -translate-y-5"
+                            }`}
+                        >
+                        <CheckCircle size={20} className="text-white" /> {flash.message}
+                        </div>
+                    )}
       {/* Header */}
       <div className="bg-gradient-to-r from-green-500 to-blue-600 h-36 sm:h-44 md:h-22 rounded-xl relative shadow-lg">
-        <div className="relative">
+
+      <div className="relative">
           {/* Trigger */}
+          {user.status == 'disabled' &&(
+          <p className="bg-red-500 text-white p-1 text-center text-2xl rounded-md mx-10   ">---User Disabled----</p>
+            )}
           <div
             className="w-full text-white flex justify-end cursor-pointer"
             onClick={() => setOpenMenu(!openMenu)}
           >
+
             <p className="mr-4 font-bold text-2xl">...</p>
           </div>
 
           {/* Dropdown menu */}
           {openMenu && (
             <div className="absolute right-4 mt-2 w-40 bg-white shadow-lg rounded-lg border text-gray-700">
+                <Link href="/materials">
+                    <button className="w-full text-left px-4 py-1 hover:bg-gray-100">
+                        Back
+                    </button>
+                </Link>
 
-              <button className="w-full text-left px-4 py-1 hover:bg-gray-100">
-                Back
-              </button>
 
-              <button className="w-full text-left px-4 py-1 hover:bg-gray-100">
-                Report User
-              </button>
+              {/* Button */}
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full text-left px-4 py-1 hover:bg-gray-100"
+      >
+        Report User
+      </button>
+
+      {/* Dropdown */}
+      {open && (
+        <div className="absolute left-0 mt-1 w-48 bg-white border rounded-md shadow-md z-50">
+          {reasons.map((reason, index) => (
+            <button
+              key={index}
+              onClick={() => {
+                setOpen(false);
+
+                // You may send this to backend later.
+                 router.post("/report-user", {
+                    user_id: user.id, // pass the ID of the user being reported
+                    reason: reason,
+                    });
+              }}
+              className="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm"
+            >
+              {reason}
+            </button>
+          ))}
+        </div>
+      )}
 
               <button className="w-full text-left px-4 py-1 hover:bg-gray-100">
                 Block this User
@@ -115,11 +169,25 @@ export default function ProfileVisit() {
         <h1 className="text-xl font-bold text-center text-gray-800 ">
           {user.name}
         </h1>
-        <div className="w-full flex justify-center align-center px-2 py-1 mb-6 ">
+        <div className="w-full flex justify-center gap-2 align-center px-2 py-1 mb-6 ">
           <Link href={`/direct/${15}/${user.id}`}>
             <p className="bg-blue-500 text-white rounded-md py-1 px-2 cursor-pointer">Message</p>
           </Link>
 
+          {auth.user.name === 'Admin' &&  user.status == 'enabled' && (
+
+            <Link href={`/disable/${user.id}`}>
+                <p className="bg-red-500 text-white rounded-md py-1 px-2 cursor-pointer">Disable User</p>
+            </Link>
+
+          )}
+
+          {auth.user.name === 'Admin' && user.status == 'disabled' && (
+            <Link href={`/enable/${user.id}`}>
+                <p className="bg-green-500 text-white rounded-md py-1 px-2 cursor-pointer">Enable User</p>
+            </Link>
+
+          )}
         </div>
 
         {/* Details Box */}

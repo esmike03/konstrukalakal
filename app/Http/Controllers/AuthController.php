@@ -19,11 +19,21 @@ class AuthController extends Controller
             'password' => 'required|min:6'
         ]);
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            return redirect('/')->with(
-                'message', 'Login successfully!'
-            );
+        // Find the user by email first
+        $user = \App\Models\User::where('email', $credentials['email'])->first();
+
+        if ($user) {
+            if ($user->status === 'disabled') {
+                return back()->with([
+                    'message' => 'Your account has been disabled.'
+                ]);
+            }
+
+            // Attempt login
+            if (Auth::attempt($credentials)) {
+                $request->session()->regenerate();
+                return redirect('/')->with('message', 'Login successfully!');
+            }
         }
 
         return back()->withErrors(['email' => 'Invalid login credentials.']);

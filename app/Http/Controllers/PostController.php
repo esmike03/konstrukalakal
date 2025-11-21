@@ -135,4 +135,37 @@ class PostController extends Controller
             'message', 'Post Deleted!'
         );
     }
+
+    public function Reported(Request $request){
+        $request->validate([
+        'user_id' => 'required|exists:users,id',
+        'reason' => 'required|string|max:255',
+        ]);
+
+        \App\Models\Reported::create([
+            'rep_user' => $request->user_id,
+            'reason' => $request->reason,
+            'user_req' => auth()->id(),
+        ]);
+
+        return back()->with('message', 'Report submitted successfully.');
+    }
+
+     public function ReportedItem(Request $request){
+        $request->validate([
+        'user_id' => 'required|exists:users,id',
+        'reason' => 'required|string|max:255',
+        'itemer' => 'required|exists:materials,id',
+        ]);
+
+
+        \App\Models\Reporteditem::create([
+            'rep_user' => $request->user_id,
+            'reason' => $request->reason,
+            'rep_item' => $request->itemer,
+            'user_req' => auth()->id(),
+        ]);
+
+        return back()->with('message', 'Report submitted successfully.');
+    }
 }

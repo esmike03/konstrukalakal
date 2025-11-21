@@ -753,4 +753,38 @@ class MaterialController extends Controller
         // Optionally, you can return a response with the updated cart data
         return back()->with('message', 'Conversation Deleted.');
     }
+    public function userDisable($id)
+    {
+        // Validate the incoming data
+
+        $user = User::where('id', $id)->first();
+
+        $authId = auth()->id();
+
+        Material::where('user_id', $id)->update(['status' => 'off']);
+
+        $user->status = 'disabled';
+        $user->save();
+
+
+        // Optionally, you can return a response with the updated cart data
+        return back()->with('message', 'User Disabled.');
+    }
+
+    public function userEnable($id)
+    {
+        // Validate the incoming data
+
+        $user = User::where('id', $id)->first();
+
+        $authId = auth()->id();
+
+        Material::where('user_id', $id)->update(['status' => 'on']);
+            $user->status = 'enabled';
+            $user->save();
+
+
+        // Optionally, you can return a response with the updated cart data
+        return back()->with('message', 'User Enabled.');
+    }
 }

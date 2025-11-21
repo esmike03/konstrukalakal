@@ -30,7 +30,7 @@ export default function Layout({ children }) {
       </Head>
       <header>
         <nav className="w-full bg-white p-3  shadow-md px-4 md:px-10">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between w-full  items-center">
             {/* Left: Logo */}
             <div className="flex items-center gap-2">
               <img src="/images/logo.png" alt="Logo" className="h-8" />
@@ -169,7 +169,7 @@ export default function Layout({ children }) {
 
                 {auth.user ? (
                   <div className="relative group">
-                  <div className="flex bg-green-600 p-1 rounded-full">
+                  <div className="flex   bg-green-600 p-1 rounded-full">
                     <img
                         src={
                             auth.user.profile_image
@@ -215,6 +215,41 @@ export default function Layout({ children }) {
                         </div>
 
                       </Link>
+
+
+                        )}
+                        {auth.user.name === 'Admin' && (
+                      <Link
+                        href="/admin/reported"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 w-full text-left relative"
+                      >
+                        <Users size={18} />
+                        <div className="relative">
+
+                           <span>Reported</span>
+
+                        </div>
+
+                      </Link>
+
+
+                        )}
+
+                        {auth.user.name === 'Admin' && (
+                      <Link
+                        href="/admin/reported-item"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 w-full text-left relative"
+                      >
+                        <ShoppingCart size={18} />
+                        <div className="relative">
+
+                           <span>Reported Item</span>
+
+                        </div>
+
+                      </Link>
+
+
                         )}
                       {auth.user.name !== 'Admin' && (
                       <Link

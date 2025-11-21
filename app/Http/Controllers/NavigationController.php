@@ -1326,8 +1326,8 @@ class NavigationController extends Controller
         sleep(1);
 
         $profile_id = Material::where('user_id', $user)->first();
-        $user_id = $profile_id->user_id;
-        $user_details = User::where('id', $user_id)->first();
+
+        $user_details = User::where('id', $user)->first();
 
         $logon = auth()->id();
                 $cartItemCount = Cart::with(['material', 'user'])

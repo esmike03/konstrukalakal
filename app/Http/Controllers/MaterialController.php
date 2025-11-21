@@ -733,4 +733,24 @@ class MaterialController extends Controller
             'conversationId' => $start, // pass conversation id if you need it
         ]);
     }
+
+    public function convoDestroy($id)
+    {
+        // Validate the incoming data
+
+        $convo = Convo::where('start', $id)->first();
+
+        $authId = auth()->id();
+
+        if($authId == $convo->sender_id){
+            $convo->user1 = 'off';
+            $convo->save();
+        } else if($authId == $convo->recipient_id){
+            $convo->user2 = 'off';
+            $convo->save();
+        }
+
+        // Optionally, you can return a response with the updated cart data
+        return back()->with('message', 'Conversation Deleted.');
+    }
 }

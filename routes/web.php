@@ -118,3 +118,4 @@ Route::delete('/admin/users/{id}', [UserController::class, 'destroyuser'])->name
 
 Route::get('/direct/{id}/{user}', [MaterialController::class, 'sendDirect'])->name('direct.show');
 Route::get('/profile-view/{user}', [NavigationController::class, 'ProfileView']);
+Route::get('/conversation/delete/{id}', [MaterialController::class, 'convoDestroy'])->name('conversation.delete');

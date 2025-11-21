@@ -305,12 +305,18 @@ class NavigationController extends Controller
         $logon = auth()->id();
 
         // Get all messages where user is sender or recipient
-        $msgs = \App\Models\Convo::where(function ($q) use ($me) {
-            $q->where('sender_id', $me)
-                ->orWhere('recipient_id', $me);
-        })
-            ->orderBy('created_at', 'desc')
-            ->get();
+          $msgs = \App\Models\Convo::where(function ($q) use ($me) {
+                    $q->where(function ($q2) use ($me) {
+                        $q2->where('sender_id', $me)
+                            ->where('user1', 'on');
+                    })
+                    ->orWhere(function ($q2) use ($me) {
+                        $q2->where('recipient_id', $me)
+                            ->where('user2', 'on');
+                    });
+                })
+                ->orderBy('created_at', 'desc')
+                ->get();
 
         // Group by conversation (start)
         $groups = $msgs->groupBy('start');

@@ -12,6 +12,8 @@ class Convo extends Model
         'material_id',
         'start',
         'content',
+        'user1',
+        'user2'
     ];
 
     public function sender()

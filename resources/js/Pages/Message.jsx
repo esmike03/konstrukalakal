@@ -1,5 +1,6 @@
 import { Link, usePage } from "@inertiajs/react";
-import { Clock } from "lucide-react";
+import { Clock, Trash2 } from "lucide-react";
+
 
 export default function Messages() {
   const {
@@ -56,6 +57,18 @@ export default function Messages() {
                     hour: "2-digit",
                     minute: "2-digit",
                   })}
+                  <Link href={`/conversation/delete/${chat.conversation_id}`} className="">
+                                        <button
+                                          className=""
+                                          onClick={(e) => {
+                                            if (!window.confirm("Are you sure you want to delete this conversation?")) {
+                                              e.preventDefault(); // stop navigation if cancelled
+                                            }
+                                          }}
+                                        >
+                                          <Trash2 className="w-4 text-red-500 mx-2" />
+                                        </button>
+                                      </Link>
                 </div>
               </div>
             </Link>

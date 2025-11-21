@@ -35,12 +35,7 @@ export default function Messages() {
                   <div className="flex">
                     <p className="text-md flex font-bold items-center content-center gap-2 text-gray-900">
                             {chat.user.name}
-                            {chat.status == 'off' &&(
-                                <p className="bg-red-500 items-center content-center h-fit w-fit text-[10px] text-white px-1 py-0.5 rounded">
 
-                                Deleted
-                                </p>
-                            )}
 
 
                     </p>

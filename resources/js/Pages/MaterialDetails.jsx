@@ -1,6 +1,6 @@
 import { useForm, Link, usePage } from "@inertiajs/react";
 import { useState, useEffect } from "react";
-import { ArrowLeft, ShoppingCart, CheckCircle, X, Trash2 } from "lucide-react";
+import { ArrowLeft, ShoppingCart, CheckCircle, X } from "lucide-react";
 
 export default function Show({ material, user }) {
   const { auth } = usePage().props;
@@ -13,7 +13,7 @@ export default function Show({ material, user }) {
     user_idx: user.id,
   });
 
-   const handleClick = (e) => {
+  const handleClick = (e) => {
     if (data.quantity > material.quantity) {
       e.preventDefault(); // stop Inertia navigation
       alert(`You can only order up to ${material.quantity}.`);
@@ -44,10 +44,6 @@ export default function Show({ material, user }) {
   }
 
   function addToDonate(e) {
-    if (data.quantity > material.quantity) {
-      alert(`You can only inquire up to ${material.quantity}.`);
-      return;
-    }
     e.preventDefault();
     post("/donate/submit");
   }
@@ -80,20 +76,7 @@ export default function Show({ material, user }) {
         <Link href={`/back`} className="absolute -top-10 left-0 text-gray-500 hover:text-gray-800 flex items-center gap-1">
           <ArrowLeft size={18} /> <span className="text-sm">Back</span>
         </Link>
-        {auth?.user?.name === 'Admin' && (
-                                    <Link href={`/uploads/delete/${material.id}`}>
-                                        <button
-                                        className="bg-red-600 absolute right-0 text-white p-2 rounded-full hover:bg-red-700 transition flex items-center justify-center"
-                                        onClick={(e) => {
-                                            if (!window.confirm("Are you sure you want to delete this item?")) {
-                                            e.preventDefault();
-                                            }
-                                        }}
-                                        >
-                                        <Trash2 className="w-4 h-4" />
-                                        </button>
-                                    </Link>
-                                    )}
+
         {/* Product Image Section */}
         <div className="w-full md:w-1/2">
           <img
@@ -101,24 +84,26 @@ export default function Show({ material, user }) {
             alt={material.material_name}
             className="w-full h-auto object-cover rounded-2xl shadow-lg"
           />
-
         </div>
 
         {/* Product Details */}
         <div className="w-full md:w-1/2 flex flex-col">
           {/* Seller */}
-          <div className="flex items-center gap-3 border-b border-white/40 pb-4 mb-4">
-            <img
-              src={`/storage/${user.profile_image}`}
-              alt={user.name}
-              className="h-12 w-12 object-cover shadow-md rounded-full border border-white/40"
-            />
-            <div>
-              <p className="text-sm font-semibold text-gray-800">{user.name}</p>
-              <p className="text-xs text-gray-600">{user.contact}</p>
-            </div>
-          </div>
+          <Link href={`/profile-view/${user.id}`}>
 
+            <div className="flex items-center gap-3 border-b border-white/40 pb-4 mb-4">
+
+              <img
+                src={`/storage/${user.profile_image}`}
+                alt={user.name}
+                className="h-12 w-12 object-cover shadow-md rounded-full border border-white/40"
+              />
+              <div>
+                <p className="text-sm font-semibold text-gray-800">{user.name}</p>
+                <p className="text-xs text-gray-600">{user.contact}</p>
+              </div>
+            </div>
+          </Link>
           {/* For Sale / Donation / Trade */}
           <p className="bg-gradient-to-r from-green-500 to-green-700 text-white px-3 py-1 rounded-full text-xs w-fit mb-2 shadow">
             For {material.forbdt}
@@ -136,7 +121,7 @@ export default function Show({ material, user }) {
               {material.condition}
             </span>
             <span className="px-3 py-1 text-xs rounded-full bg-white/30 text-gray-800 backdrop-blur-md shadow">
-              Pick-up/ Delivery
+              Cash on Delivery
             </span>
           </div>
 
@@ -160,7 +145,6 @@ export default function Show({ material, user }) {
             <span className="font-semibold">Availability:</span>{" "}
             {material.quantity > 0 ? "In Stock " : "Out of Stock "}({material.quantity})
           </p>
-          {auth?.user?.name !== 'Admin' && (
           <div className="flex items-center mt-2 text-gray-700">
             <label htmlFor="quantity" className="mr-2">Quantity:</label>
             <input
@@ -174,19 +158,16 @@ export default function Show({ material, user }) {
               onChange={(e) => setData("quantity", e.target.value)}
             />
           </div>
-          )}
+
 
 
           {/* Buttons */}
-          {auth?.user?.name !== 'Admin' && (
           <div className="mt-4 flex flex-wrap gap-3">
             {auth?.user?.id === user.id ? (
               <p className="text-sm text-gray-700">You can edit this in My Uploads.</p>
             ) : (
               <>
-
                 {material.forbdt === "Sale" ? (
-
                   <button
                     onClick={addToCart}
                     className="flex items-center justify-center gap-2 px-5 py-2 rounded-full
@@ -201,49 +182,38 @@ export default function Show({ material, user }) {
                       material,
                       quantity: data.quantity,
                     }}
-                     onClick={handleClick}
-                method="get"
-                as="button"
-                className="flex items-center justify-center gap-2 px-5 py-2 rounded-full
+                    onClick={handleClick}
+                    method="get"
+                    as="button"
+                    className="flex items-center justify-center gap-2 px-5 py-2 rounded-full
                 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-medium shadow-md hover:scale-105 transition"
                   >
-                <ShoppingCart size={18} /> Trade
-              </Link>
-            ) : (
-            <button
-              onClick={addToDonate}
-              className="flex items-center justify-center gap-2 px-5 py-2 rounded-full
+                    <ShoppingCart size={18} /> Trade
+                  </Link>
+                ) : (
+                  <button
+                    onClick={addToDonate}
+                    className="flex items-center justify-center gap-2 px-5 py-2 rounded-full
                     bg-gradient-to-r from-purple-500 to-purple-700 text-white font-medium shadow-md hover:scale-105 transition"
-            >
-              <ShoppingCart size={18} /> {buttonText}
-            </button>
+                  >
+                    <ShoppingCart size={18} /> {buttonText}
+                  </button>
                 )}
 
-            {auth?.user && (
-              <Link
-                href={`/message/${material.id}`}
-                className="flex items-center justify-center gap-2 px-5 py-2 rounded-full
+                {auth?.user && (
+                  <Link
+                    href={`/message/${material.id}`}
+                    className="flex items-center justify-center gap-2 px-5 py-2 rounded-full
                     bg-white/40 text-gray-800 font-medium shadow hover:bg-white/60 transition backdrop-blur-md"
-              >
-                ✉️ Message
-              </Link>
+                  >
+                    ✉️ Message
+                  </Link>
+                )}
+              </>
             )}
-          </>
-            )}
+          </div>
         </div>
-            )}
-            {auth?.user && auth?.user?.name === 'Admin' && (
-            <Link
-                href={`/message/${material.id}`}
-                className="flex items-center w-1/2 mt-4 justify-center gap-2 px-5 py-2 rounded-full
-                bg-white/40 text-gray-800 font-medium shadow hover:bg-white/60 transition backdrop-blur-md"
-            >
-                ✉️ Message
-            </Link>
-            )}
-
-      </div>
-    </div >
+      </div >
     </>
   );
 }

@@ -693,4 +693,44 @@ class MaterialController extends Controller
             ]);
         }
     }
+
+    public function sendDirect($id, $user)
+    {
+
+        $cartItemCount = Cart::where('user_id', auth()->id())->count();
+        $material = Material::findOrFail($id);
+        $user = User::findOrFail($user);
+
+        $authId = auth()->id();
+        $ownerId = $user;
+
+        // Find the conversation identifier (start)
+        $conversation = Message::where('material_id', $material->id)
+            ->where(function ($query) use ($authId, $ownerId) {
+                $query->where(function ($q) use ($authId, $ownerId) {
+                    $q->where('sender_id', $authId)
+                        ->where('recipient_id', $ownerId);
+                })
+                    ->orWhere(function ($q) use ($authId, $ownerId) {
+                        $q->where('sender_id', $ownerId)
+                            ->where('recipient_id', $authId);
+                    });
+            })
+            ->first();
+
+        $start = $conversation ? $conversation->start : null;
+
+        // Now fetch all messages using start if it exists
+        $messages = $start
+            ? Message::where('start', $start)->orderBy('created_at', 'asc')->get()
+            : collect(); // empty if no conversation yet
+
+        return inertia('SendMessage', [
+            'material'       => $material,
+            'cartItemCount'  => $cartItemCount,
+            'user'           => $user,
+            'messages'       => $messages,
+            'conversationId' => $start, // pass conversation id if you need it
+        ]);
+    }
 }

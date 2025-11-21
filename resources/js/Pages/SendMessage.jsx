@@ -24,12 +24,12 @@ export default function SendMessage({ material, user, messages: initialMessages,
 
   // Poll messages every 5 seconds
 useEffect(() => {
-  
+
   if (!data.start) return;
 
   const fetchMessages = () => {
     axios
-    
+
       .get(`/message2x/${data.start}`)
       .then((res) => {
         console.log("data.start =", data.start);
@@ -105,7 +105,7 @@ useEffect(() => {
               {material.status === 'off' && (
                 <p className="absolute top-1 left-1 bg-red-500 text-[10px] text-white px-1 py-0.5 rounded">
 
-                  Deleted
+
                 </p>
               )}
 

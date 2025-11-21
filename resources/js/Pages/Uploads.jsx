@@ -4,15 +4,15 @@ import { CheckCircle, Search, Grid, List, Upload, Filter, Trash2, ShoppingCart }
 import { usePage, Link, useForm } from "@inertiajs/react";
 
 export default function Materials() {
-    const { post } = useForm();
+  const { post } = useForm();
 
   const updateQuantity = (id, newQty) => {
     console.log("Updating:", id, newQty);
     if (newQty < 1) return;
     post(`/cart/updateQuantity/${id}/${newQty}`, {
-     quantity: newQty,
-  }, {
-    preserveScroll: true,
+      quantity: newQty,
+    }, {
+      preserveScroll: true,
     });
 
   };
@@ -70,11 +70,10 @@ export default function Materials() {
       {/* Flash Message */}
       {flash?.message && (
         <div
-          className={`fixed bottom-6 right-6 flex items-center gap-2 bg-green-600 text-white px-4 py-3 rounded-lg shadow-lg transition-all duration-500 ${
-            showMessage
+          className={`fixed bottom-6 right-6 flex items-center gap-2 bg-green-600 text-white px-4 py-3 rounded-lg shadow-lg transition-all duration-500 ${showMessage
               ? "opacity-100 translate-y-0"
               : "opacity-0 translate-y-5"
-          }`}
+            }`}
         >
           <CheckCircle size={20} /> {flash.message}
         </div>
@@ -86,24 +85,24 @@ export default function Materials() {
           <h1 className="text-2xl font-bold text-green-700">My Uploads</h1>
           <div className="flex gap-2 content-center items-center">
             <button
-            onClick={openMaterialModal}
-            className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700 shadow-md transition"
-          >
-            <Upload size={16} /> Upload Materials
-          </button>
-          <Link href="/order-list" className="bg-yellow-500 text-white p-1.5 flex items-center gap-1 rounded-md relative">
-          <div className="relative">
-            <ShoppingCart className="w-5 h-5" />
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
-              {totaling}
-            </span>
-          </div>
-          Orders
-        </Link>
+              onClick={openMaterialModal}
+              className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700 shadow-md transition"
+            >
+              <Upload size={16} /> Upload Materials
+            </button>
+            <Link href="/order-list" className="bg-yellow-500 text-white p-1.5 flex items-center gap-1 rounded-md relative">
+              <div className="relative">
+                <ShoppingCart className="w-5 h-5" />
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                  {totaling}
+                </span>
+              </div>
+              Orders
+            </Link>
 
-          <Link href="/trash-bin" className="bg-red-500 text-white p-1.5 flex rounded-md">
+            <Link href="/trash-bin" className="bg-red-500 text-white p-1.5 flex rounded-md">
               <Trash2 className="text-center flex w-full" /> Bin
-          </Link>
+            </Link>
           </div>
 
         </div>
@@ -112,9 +111,8 @@ export default function Materials() {
       <div className="flex flex-col lg:flex-row gap-6 mt-6">
         {/* Filters Sidebar (collapsible on mobile) */}
         <div
-          className={`${
-            showFilters ? "block" : "hidden"
-          } lg:block w-full lg:w-1/4 bg-gray-50 p-4 rounded-xl shadow-md`}
+          className={`${showFilters ? "block" : "hidden"
+            } lg:block w-full lg:w-1/4 bg-gray-50 p-4 rounded-xl shadow-md`}
         >
           <h2 className="text-lg font-bold text-gray-700">Filters</h2>
           <div className="mt-4">
@@ -129,9 +127,9 @@ export default function Materials() {
                 "Doors & Windows",
                 "Roofing",
                 "Flooring",
-                    "Wall Materials",
-                    "Aggregates",
-                    "Glass Materials",
+                "Wall Materials",
+                "Aggregates",
+                "Glass Materials",
               ].map((category) => (
                 <label key={category} className="flex items-center space-x-2">
                   <input
@@ -220,11 +218,10 @@ export default function Materials() {
 
           {/* Material Cards */}
           <div
-            className={`mt-6 ${
-              view === "grid"
+            className={`mt-6 ${view === "grid"
                 ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
                 : "space-y-4"
-            }`}
+              }`}
           >
             {filteredMaterials.length > 0 ? (
               filteredMaterials.map((material) => (
@@ -242,15 +239,14 @@ export default function Materials() {
 
                   <div className="flex justify-between items-center mt-3">
                     <span
-                      className={`text-xs text-white px-3 py-1 rounded-full ${
-                        material.forbdt === "Trade"
+                      className={`text-xs text-white px-3 py-1 rounded-full ${material.forbdt === "Trade"
                           ? "bg-blue-500"
                           : material.forbdt === "Sale"
-                          ? "bg-red-500"
-                          : material.forbdt === "Donation"
-                          ? "bg-green-500"
-                          : "bg-gray-500"
-                      }`}
+                            ? "bg-red-500"
+                            : material.forbdt === "Donation"
+                              ? "bg-green-500"
+                              : "bg-gray-500"
+                        }`}
                     >
                       For {material.forbdt}
                     </span>
@@ -274,22 +270,22 @@ export default function Materials() {
                     )}
 
                     <div className="flex items-center bg-gray-50 border border-gray-200 rounded-full px-1.5 py-1">
-                  <button
-                    onClick={() => updateQuantity(material.id, (material.quantity - 1))}
-                    className="text-gray-500 hover:text-red-500 text-sm px-1 transition"
-                  >
-                    −
-                  </button>
-                  <span className="mx-2 text-xs font-semibold text-gray-800 w-6 text-center">
-                    {material.quantity}
-                  </span>
-                  <button
-                    onClick={() => updateQuantity(material.id, (material.quantity + 1))}
-                    className="text-gray-500 hover:text-green-500 text-sm px-1 transition"
-                  >
-                    +
-                  </button>
-                </div>
+                      <button
+                        onClick={() => updateQuantity(material.id, (material.quantity - 1))}
+                        className="text-gray-500 hover:text-red-500 text-sm px-1 transition"
+                      >
+                        −
+                      </button>
+                      <span className="mx-2 text-xs font-semibold text-gray-800 w-6 text-center">
+                        {material.quantity}
+                      </span>
+                      <button
+                        onClick={() => updateQuantity(material.id, (material.quantity + 1))}
+                        className="text-gray-500 hover:text-green-500 text-sm px-1 transition"
+                      >
+                        +
+                      </button>
+                    </div>
 
                   </div>
 
@@ -309,7 +305,7 @@ export default function Materials() {
                     </Link>
                     {material.forbdt === 'Sale' && (
 
-                       <Link href="/order-list" className="w-1/3">
+                      <Link href="/order-list" className="w-1/3">
                         {/* <button className="w-full bg-yellow-400 text-white text-sm py-1.5 px-0.5 rounded-md hover:bg-yellow-500 transition relative flex justify-center items-center">
                           <div className="relative">
                             <ShoppingCart className="w-full" />
@@ -323,7 +319,7 @@ export default function Materials() {
                     )}
                     {material.forbdt === 'Trade' && (
 
-                        <Link href="/trade-list" className="w-1/3">
+                      <Link href="/trade-list" className="w-1/3">
                         {/* <button className="w-full bg-yellow-400 text-white text-sm py-1.5 px-0.5 rounded-md hover:bg-yellow-500 transition relative flex justify-center items-center">
                           <div className="relative">
                             <ShoppingCart className="w-full" />
@@ -336,7 +332,7 @@ export default function Materials() {
                     )}
                     {material.forbdt === 'Donation' && (
 
-                        <Link href="/donate-list" className="w-1/3">
+                      <Link href="/donate-list" className="w-1/3">
                         {/* <button className="w-full bg-yellow-400 text-white text-sm py-1.5 px-0.5 rounded-md hover:bg-yellow-500 transition relative flex justify-center items-center">
                           <div className="relative">
                             <ShoppingCart className="w-full" />

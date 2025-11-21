@@ -58,7 +58,7 @@ class PostController extends Controller
             })
             ->count();
         $total = $cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount;
-        return Inertia::render('Home', [
+        return Inertia::render('Home', [ //Home
             'materials' => $materials,
             'cartItemCount' => $cartItemCount, // Send the full paginated data
             'notifcount' => $notifcount,

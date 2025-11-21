@@ -116,3 +116,5 @@ Route::post('/cart/updateQuantity/{id}/{newQty}', [CartController::class, 'updat
 Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users');
 Route::delete('/admin/users/{id}', [UserController::class, 'destroyuser'])->name('admin.users.destroy');
 
+Route::get('/direct/{id}/{user}', [MaterialController::class, 'sendDirect'])->name('direct.show');
+Route::get('/profile-view/{user}', [NavigationController::class, 'ProfileView']);

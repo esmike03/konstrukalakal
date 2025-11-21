@@ -1315,4 +1315,59 @@ class NavigationController extends Controller
         $trade->delete();
         return back()->with('message', 'Trade completed.');
     }
+
+    public function ProfileView($user){
+        sleep(1);
+
+        $profile_id = Material::where('user_id', $user)->first();
+        $user_id = $profile_id->user_id;
+        $user_details = User::where('id', $user_id)->first();
+
+        $logon = auth()->id();
+                $cartItemCount = Cart::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+            $donateItemCount = Donate::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+
+            $tradeItemCount = Trade::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+            $orderItemCount = Orders::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+        $total = $cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount;
+
+        $donateCount = Donate::where('owner', auth()->id())->count();
+        $tradeCount = Trade::where('owner', auth()->id())->count();
+        $orderCount = Orders::where('owner', auth()->id())->count();
+        $totaling = ($donateCount + $tradeCount + $orderCount);
+
+        $materials = Material::where('status', 'on')
+                    ->where('user_id', $user)->get();
+        $notifcount = Notifications::where('user_id', $logon)->count();
+        $item = Notifications::where('owner', $logon)->latest()->take(5)->get();
+        return inertia('ProfileVisit', [
+            'materials' => $materials,
+            'cartItemCount' => $cartItemCount,
+            'total' => $total,
+            'item' => $item,
+            'totaling' => $totaling,
+            'notifcount' => $notifcount,
+            'user' => $user_details
+        ]);
+    }
 }

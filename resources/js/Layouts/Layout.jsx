@@ -5,6 +5,8 @@ import { ShoppingCart, Clock, LogOut, User, Menu, X, Bell, MessageCircle, Upload
 
 export default function Layout({ children }) {
 
+  const { url } = usePage();
+  const hideText = url === "/uploaded";
   const { openLoginModal, openRegisterModal } = useModal();
   const { auth } = usePage().props;
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -46,6 +48,7 @@ export default function Layout({ children }) {
 
             {/* Desktop Navigation */}
             <div className="hidden ml-72 md:flex items-center justify-between w-full">
+            {!hideText &&
               <div className="flex space-x-6 text-black text-sm">
                 <Link href="/" className="hover:text-green-600">
                   Home
@@ -101,7 +104,7 @@ export default function Layout({ children }) {
                 )}
 
               </div>
-
+            }
               {/* Desktop: Profile & Auth Buttons */}
               <div className="flex items-center gap-3">
               {auth.user && (

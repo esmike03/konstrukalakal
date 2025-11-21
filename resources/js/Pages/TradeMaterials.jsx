@@ -72,7 +72,7 @@ export default function Materials() {
       )}
 
       {/* Header */}
-      {auth.user && (
+      {auth?.user && (
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
           <h1 className="text-xl sm:text-2xl font-bold text-green-700">
             Browse Materials{" "}
@@ -80,7 +80,7 @@ export default function Materials() {
               {">"} Trade Materials
             </span>
           </h1>
-          {auth.user.name !== 'Admin' && (
+          {auth?.user?.name !== 'Admin' && (
           <button
             onClick={openMaterialModal}
             className="cursor-pointer bg-green-500 text-white text-sm px-3 py-1 rounded-full flex items-center gap-1 self-start sm:self-auto hover:bg-green-600 transition"
@@ -276,7 +276,7 @@ export default function Materials() {
                                         </button>
                                     </Link>
 
-                                    {auth.user.name === 'Admin' && (
+                                    {auth?.user?.name === 'Admin' && (
                                     <Link href={`/uploads/delete/${material.id}`}>
                                         <button
                                         className="bg-red-600 text-white p-2 rounded-full hover:bg-red-700 transition flex items-center justify-center"

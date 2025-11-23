@@ -11,6 +11,7 @@ use App\Models\Orders;
 use App\Models\Material;
 use Illuminate\Http\Request;
 use App\Models\Notifications;
+use App\Models\User;
 use Illuminate\Notifications\Notification;
 
 class PostController extends Controller
@@ -168,4 +169,74 @@ class PostController extends Controller
 
         return back()->with('message', 'Report submitted successfully.');
     }
+
+   public function BlockUser(Request $request)
+{
+    $blockedUser = User::findOrFail($request->user_id); // person being blocked
+    $currentUser = auth()->user(); // signed-in user
+    
+    // --- 1. Update blockedUser.blocked (add current user ID) ---
+    $blockedBy = $blockedUser->blocked ?? [];
+    if (!is_array($blockedBy)) {
+        $blockedBy = json_decode($blockedBy, true) ?? [];
+    }
+
+    if (!in_array($currentUser->id, $blockedBy)) {
+        $blockedBy[] = $currentUser->id;
+    }
+    $blockedUser->blocked = $blockedBy;
+    $blockedUser->save();
+
+    // --- 2. Update currentUser.blocked (add blocked user's ID) ---
+    $myBlockedList = $currentUser->blocked ?? [];
+    if (!is_array($myBlockedList)) {
+        $myBlockedList = json_decode($myBlockedList, true) ?? [];
+    }
+    
+    if (!in_array($blockedUser->id, $myBlockedList)) {
+        $myBlockedList[] = $blockedUser->id;
+    }
+    $currentUser->blocked = $myBlockedList;
+    $currentUser->save();
+
+    return back()->with([
+        'message' => 'User has been blocked successfully.',
+        'blocked_by' => $blockedBy
+    ]);
+}
+
+
+public function UnblockUser(Request $request)
+{
+    $blockedUser = User::findOrFail($request->user_id); // person being unblocked
+    $currentUser = auth()->user(); // signed-in user
+
+    // --- 1. Remove current user from blockedUser.blocked ---
+    $blockedBy = $blockedUser->blocked ?? [];
+    if (!is_array($blockedBy)) {
+        $blockedBy = json_decode($blockedBy, true) ?? [];
+    }
+
+    $blockedBy = array_values(array_diff($blockedBy, [$currentUser->id]));
+    $blockedUser->blocked = $blockedBy;
+    $blockedUser->save();
+
+    // --- 2. Remove blockedUser ID from currentUser.blocked ---
+    $myBlockedList = $currentUser->blocked ?? [];
+    if (!is_array($myBlockedList)) {
+        $myBlockedList = json_decode($myBlockedList, true) ?? [];
+    }
+
+    $myBlockedList = array_values(array_diff($myBlockedList, [$blockedUser->id]));
+    $currentUser->blocked = $myBlockedList;
+    $currentUser->save();
+
+    return back()->with([
+        'message' => 'User has been unblocked successfully.',
+        'blocked_by' => $blockedBy
+    ]);
+}
+
+
+
 }

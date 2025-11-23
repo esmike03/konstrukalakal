@@ -4,19 +4,21 @@ import { ArrowLeft, ShoppingCart, CheckCircle, X, AlertCircle, Trash2 } from "lu
 
 export default function Show({ material, user }) {
 
-      const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
-        const reasons = [
-        "Incorrect Item Listed",
-        "Incorrect Product Name",
-        "Incorrect or Misleading Image",
-        "Scam or Fraudulent Activity",
-        "Poor Quality or Damaged",
-        "Counterfeit or Fake Product",
-        ];
+  const reasons = [
+    "Incorrect Item Listed",
+    "Incorrect Product Name",
+    "Incorrect or Misleading Image",
+    "Scam or Fraudulent Activity",
+    "Poor Quality or Damaged",
+    "Counterfeit or Fake Product",
+  ];
 
 
   const { auth } = usePage().props;
+  const authUserId = auth?.user?.id ?? null;
+  const isBlocked = authUserId ? user.blocked?.includes(authUserId) : false;
   const { flash } = usePage().props;
   const [showMessage, setShowMessage] = useState(false);
   const [buttonText, setButtonText] = useState("");
@@ -93,35 +95,35 @@ export default function Show({ material, user }) {
         {/* Product Image Section */}
         <div className="w-full md:w-1/2">
           <button
-                  onClick={() => setOpen(!open)}
-                  className="w-fit absolute text-left px-2 text-yellow-500 py-2 hover:bg-red-100"
+            onClick={() => setOpen(!open)}
+            className="w-fit absolute text-left px-2 text-yellow-500 py-2 hover:bg-red-100"
+          >
+            <AlertCircle />
+          </button>
+
+          {/* Dropdown */}
+          {open && (
+            <div className="absolute left-0 mt-8 w-48 bg-white border rounded-md shadow-md z-50">
+              {reasons.map((reason, index) => (
+                <button
+                  key={index}
+                  onClick={() => {
+                    setOpen(false);
+
+                    // You may send this to backend later.
+                    router.post("/report-item", {
+                      user_id: user.id, // pass the ID of the user being reported
+                      reason: reason,
+                      itemer: material.id,
+                    });
+                  }}
+                  className="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm"
                 >
-                 <AlertCircle/>
+                  {reason}
                 </button>
-
-                {/* Dropdown */}
-                {open && (
-                  <div className="absolute left-0 mt-8 w-48 bg-white border rounded-md shadow-md z-50">
-                    {reasons.map((reason, index) => (
-                      <button
-                        key={index}
-                        onClick={() => {
-                          setOpen(false);
-
-                          // You may send this to backend later.
-                           router.post("/report-item", {
-                              user_id: user.id, // pass the ID of the user being reported
-                              reason: reason,
-                              itemer: material.id,
-                              });
-                        }}
-                        className="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm"
-                      >
-                        {reason}
-                      </button>
-                    ))}
-                  </div>
-                )}
+              ))}
+            </div>
+          )}
 
           <img
             src={`/storage/${material.image}`}
@@ -132,20 +134,20 @@ export default function Show({ material, user }) {
 
         {/* Product Details */}
         <div className="w-full md:w-1/2 flex flex-col">
-        {auth?.user?.name === 'Admin' && (
-                                    <Link href={`/uploads/delete/${material.id}`}>
-                                        <button
-                                        className="bg-red-600 right-0 absolute mr-10 text-white p-2 rounded-full hover:bg-red-700 transition flex items-center justify-center"
-                                        onClick={(e) => {
-                                            if (!window.confirm("Are you sure you want to delete this item?")) {
-                                            e.preventDefault();
-                                            }
-                                        }}
-                                        >
-                                        <Trash2 className="w-4 h-4" />
-                                        </button>
-                                    </Link>
-                                    )}
+          {auth?.user?.name === 'Admin' && (
+            <Link href={`/uploads/delete/${material.id}`}>
+              <button
+                className="bg-red-600 right-0 absolute mr-10 text-white p-2 rounded-full hover:bg-red-700 transition flex items-center justify-center"
+                onClick={(e) => {
+                  if (!window.confirm("Are you sure you want to delete this item?")) {
+                    e.preventDefault();
+                  }
+                }}
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </Link>
+          )}
           {/* Seller */}
           <Link href={`/profile-view/${user.id}`}>
 
@@ -221,55 +223,63 @@ export default function Show({ material, user }) {
 
           {/* Buttons */}
           <div className="mt-4 flex flex-wrap gap-3">
-            {auth?.user?.id === user.id ? (
-              <p className="text-sm text-gray-700">You can edit this in My Uploads.</p>
-            ) : (
-              <>
-                {material.forbdt === "Sale" ? (
-                  <button
-                    onClick={addToCart}
-                    className="flex items-center justify-center gap-2 px-5 py-2 rounded-full
-                    bg-gradient-to-r from-green-500 to-green-700 text-white font-medium shadow-md hover:scale-105 transition"
-                  >
-                    <ShoppingCart size={18} /> {buttonText}
-                  </button>
-                ) : material.forbdt === "Trade" ? (
-                  <Link
-                    href="/trade/create"
-                    data={{
-                      material,
-                      quantity: data.quantity,
-                    }}
-                    onClick={handleClick}
-                    method="get"
-                    as="button"
-                    className="flex items-center justify-center gap-2 px-5 py-2 rounded-full
-                bg-gradient-to-r from-blue-500 to-blue-700 text-white font-medium shadow-md hover:scale-105 transition"
-                  >
-                    <ShoppingCart size={18} /> Trade
-                  </Link>
-                ) : (
-                  <button
-                    onClick={addToDonate}
-                    className="flex items-center justify-center gap-2 px-5 py-2 rounded-full
-                    bg-gradient-to-r from-purple-500 to-purple-700 text-white font-medium shadow-md hover:scale-105 transition"
-                  >
-                    <ShoppingCart size={18} /> {buttonText}
-                  </button>
-                )}
+  {auth?.user?.id === user.id ? (
+    <p className="text-sm text-gray-700">You can edit this in My Uploads.</p>
+  ) : (
+    <>
+      {!isBlocked ? (
+        <>
+          {material.forbdt === "Sale" ? (
+            <button
+              onClick={addToCart}
+              className="flex items-center justify-center gap-2 px-5 py-2 rounded-full
+              bg-gradient-to-r from-green-500 to-green-700 text-white font-medium shadow-md hover:scale-105 transition"
+            >
+              <ShoppingCart size={18} /> {buttonText}
+            </button>
+          ) : material.forbdt === "Trade" ? (
+            <Link
+              href="/trade/create"
+              data={{
+                material,
+                quantity: data.quantity,
+              }}
+              onClick={handleClick}
+              method="get"
+              as="button"
+              className="flex items-center justify-center gap-2 px-5 py-2 rounded-full
+              bg-gradient-to-r from-blue-500 to-blue-700 text-white font-medium shadow-md hover:scale-105 transition"
+            >
+              <ShoppingCart size={18} /> Trade
+            </Link>
+          ) : (
+            <button
+              onClick={addToDonate}
+              className="flex items-center justify-center gap-2 px-5 py-2 rounded-full
+              bg-gradient-to-r from-purple-500 to-purple-700 text-white font-medium shadow-md hover:scale-105 transition"
+            >
+              <ShoppingCart size={18} /> {buttonText}
+            </button>
+          )}
 
-                {auth?.user && (
-                  <Link
-                    href={`/message/${material.id}`}
-                    className="flex items-center justify-center gap-2 px-5 py-2 rounded-full
-                    bg-white/40 text-gray-800 font-medium shadow hover:bg-white/60 transition backdrop-blur-md"
-                  >
-                    ✉️ Message
-                  </Link>
-                )}
-              </>
-            )}
-          </div>
+          {/* Message button */}
+          {auth?.user && (
+            <Link
+              href={`/message/${material.id}`}
+              className="flex items-center justify-center gap-2 px-5 py-2 rounded-full
+              bg-white/40 text-gray-800 font-medium shadow hover:bg-white/60 transition backdrop-blur-md"
+            >
+              ✉️ Message
+            </Link>
+          )}
+        </>
+      ) : (
+        <p className="text-red-500 font-semibold">Unavailable</p>
+      )}
+    </>
+  )}
+</div>
+
         </div>
       </div >
     </>

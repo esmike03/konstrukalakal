@@ -66,14 +66,14 @@ class CartController extends Controller
         // dd($user);
         $userId = auth()->id();
 
-        $donate = Cart::with('material', 'user')
+        $donate = Cart::with('material', 'user', 'owner')
             ->where(function ($q) use ($user) {
                 $q->where('user_id', $user->id)
                     ->orWhere('owner', $user->id);
             })
             ->get();
 
-        $cartItems = Cart::with(['material', 'user'])
+        $cartItems = Cart::with(['material', 'user', 'owner'])
             ->where('user_id', $user->id)
             ->whereHas('material', function ($query) {
                 $query->where('status', 'on');
@@ -278,6 +278,31 @@ class CartController extends Controller
 
 
         $material = Material::findOrFail($id);
+
+        $material->quantity = $newQty;
+        $material->save();
+
+        return back()->with('message', 'Quantity updated successfully!');
+    }
+
+
+     public function updateQuan($id, $newQty)
+    {
+
+
+        $material = Cart::findOrFail($id);
+
+        $material->quantity = $newQty;
+        $material->save();
+
+        return back()->with('message', 'Quantity updated successfully!');
+    }
+
+    public function updateQuanDonate($id, $newQty)
+    {
+
+
+        $material = Donate::findOrFail($id);
 
         $material->quantity = $newQty;
         $material->save();
@@ -568,6 +593,7 @@ class CartController extends Controller
             'material_id' => 'required|exists:materials,id',
             'quantity'    => 'required|integer|min:1',
         ]);
+        $owner = Material::where('id', $request->material_id)->first();
 
         // Check if the material is already in the cart
         $cart = Cart::where('user_id', auth()->id())
@@ -598,6 +624,7 @@ class CartController extends Controller
                     'user_id'     => auth()->id(),
                     'material_id' => $validated['material_id'],
                     'quantity'    => $validated['quantity'],
+                    'owner' => $owner->user_id,
                 ]);
 
                 $user = User::where('id', auth()->id())->first();

@@ -10,10 +10,10 @@ export default function MyTrades({ trades, isUser }) {
     const { cartItems, auth, donateItemCount, tradeItemCount, orderItemCount, cartItemCount } = usePage().props;
     const { url } = usePage();
     const tabs = [
-        { href: "/cart", label: "My Cart", count: cartItemCount },
-        { href: "/cart/donate", label: "Donation", count: donateItemCount },
-        { href: "/my-trades", label: "Trades", count: tradeItemCount },
-        { href: "/Orders", label: "Orders", count: orderItemCount },
+        { href: "/cart", label: "Buy Cart", count: cartItemCount },
+        { href: "/cart/donate", label: "Donation Cart", count: donateItemCount },
+        { href: "/my-trades", label: "Trades Cart", count: tradeItemCount },
+        { href: "/Orders", label: "My Orders", count: orderItemCount },
     ];
 
     const [showFromDetails, setShowFromDetails] = useState(false);
@@ -105,7 +105,7 @@ export default function MyTrades({ trades, isUser }) {
                     <div className="mb-6 w-full flex justify-end">
 
                         <div className="flex items-center space-x-6 text-sm font-semibold text-gray-700">
-                            {["Pending", "Accepted", "Rejected", "Completed"].map((status) => (
+                            {["Pending", "Accepted"].map((status) => (
                                 <button
                                     key={status}
                                     onClick={() => setFilter(status.toLowerCase())}
@@ -147,9 +147,13 @@ export default function MyTrades({ trades, isUser }) {
                                     </div>
 
                                     {/* Trader info */}
-                                    <p className="text-sm text-center mb-3 text-gray-600">
+                                    <p className="text-sm text-center mb-3 text-gray-600 text-gray-800 text-xs font-semibold px-3 py-1 rounded-xl">
+                                            <Link href={`/profile-view/${trade.owner.id}`}>
                                         {trade.owner.name}
+                                        </Link>
                                     </p>
+
+
 
                                     {/* Items */}
                                     <div className="flex items-center  justify-between gap-6">
@@ -168,8 +172,8 @@ export default function MyTrades({ trades, isUser }) {
                                             {/* Hover details */}
                                             {showFromDetails && (
                                                 <div
-                                                    className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-48 
-                 bg-white text-gray-700 text-sm rounded-lg shadow-lg 
+                                                    className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-48
+                 bg-white text-gray-700 text-sm rounded-lg shadow-lg
                  opacity-0 group-hover:opacity-100 transition-opacity duration-200
                  p-3 z-10"
                                                 >
@@ -196,25 +200,25 @@ export default function MyTrades({ trades, isUser }) {
 
 
                                                 {/* Hover details */}
-                                            {showForDetails && (
-                                                <div
-                                                    className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-48 
-                 bg-white text-gray-700 text-sm rounded-lg shadow-lg 
+                                                {showForDetails && (
+                                                    <div
+                                                        className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-48
+                 bg-white text-gray-700 text-sm rounded-lg shadow-lg
                  opacity-0 group-hover:opacity-100 transition-opacity duration-200
                  p-3 z-10"
-                                                >
-                                                    <p className="font-semibold mb-1">More Details</p>
-                                                    <p>Description: <span className="font-bold">{trade.material.description}</span></p>
-                                                    <p>Quantity: <span className="font-bold">{trade.quantity}</span></p>
+                                                    >
+                                                        <p className="font-semibold mb-1">More Details</p>
+                                                        <p>Description: <span className="font-bold">{trade.material.description}</span></p>
+                                                        <p>Quantity: <span className="font-bold">{trade.quantity}</span></p>
 
-                                                </div>
-                                            )}
+                                                    </div>
+                                                )}
                                             </Link>
                                             <div
                                                 className="cursor-pointer w-full flex justify-center"
                                                 onClick={() => setShowForDetails(!showForDetails)}
                                             ><p className="text-blue-500 font-bold">...</p></div>
-                                            
+
                                         </div>
 
 

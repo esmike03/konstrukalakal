@@ -111,7 +111,8 @@ Route::post('/order/{id}/cancelbyowner', [NavigationController::class, 'cancelby
 //update the quantity
 Route::post('/cart/updateQuantity/{id}/{newQty}', [CartController::class, 'updateQuantity']);
 
-
+Route::post('/cart/update/{id}/{newQty}', [CartController::class, 'updateQuan']);
+Route::post('/cart/update-donate/{id}/{newQty}', [CartController::class, 'updateQuanDonate']);
 
 Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users');
 Route::get('/admin/reported', [UserController::class, 'reported'])->name('admin.reported');
@@ -125,3 +126,5 @@ Route::get('/disable/{id}', [MaterialController::class, 'userDisable'])->name('d
 Route::get('/enable/{id}', [MaterialController::class, 'userEnable'])->name('enable.user');
 Route::post('/report-user', [PostController::class, 'Reported'])->name('report.store');
 Route::post('/report-item', [PostController::class, 'ReportedItem'])->name('report.item');
+Route::post('/block-user', [PostController::class, 'BlockUser'])->name('block.user');
+Route::post('/unblock-user', [PostController::class, 'UnblockUser'])->name('unblock.user');

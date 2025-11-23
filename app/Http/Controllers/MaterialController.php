@@ -699,6 +699,7 @@ class MaterialController extends Controller
 
         $cartItemCount = Cart::where('user_id', auth()->id())->count();
         $material = Material::findOrFail($id);
+    
         $user = User::findOrFail($user);
 
         $authId = auth()->id();

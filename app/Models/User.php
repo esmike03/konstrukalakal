@@ -24,7 +24,8 @@ class User extends Authenticatable
         'address',
         'password',
         'profile_image',
-        'status'
+        'status',
+        'blocked'
     ];
 
     /**

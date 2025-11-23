@@ -93,7 +93,7 @@ export default function Cart() {
             <span className="text-sm">{flash.message}</span>
           </div>
         )}
-
+        <h1 className="text-center border-2 border-green-600 text-xl rounded-md mx-100 text-green-600">Checkout Cart</h1>
         {/* Trades grouped by seller */}
         {Object.values(groupedBySeller).length === 0 ? (
           <p className="text-gray-500 text-center text-lg">No items found.</p>
@@ -103,7 +103,7 @@ export default function Cart() {
               <div key={owner.id} className="space-y-4">
                 {/* Seller Header */}
                     <Link href={`/profile-view/${owner.id}`}>
-                <h2 className="text-xl font-bold text-gray-800 mb-2 border-b pb-2 border-gray-300">{owner.name}</h2>
+                <h2 className="text-xl font-bold text-gray-800 mb-2 border-b pb-2 border-gray-300">{owner.name} - <span className="text-sm font-normal">{owner.address}</span></h2>
 </Link>
                 {/* Seller's Items */}
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -136,10 +136,10 @@ export default function Cart() {
                             </p>
                           </div>
 
-                          <div className="flex absolute right-7 top-0 bg-green-400 mb-4   items-center  rounded-full px-1.5 ">
+                          <div className="flex absolute right-7 top-0  mb-4   items-center  rounded-full px-1.5 ">
                             <button
                               onClick={() => updateQuantity(trade.id, (trade.quantity - 1))}
-                              className=" font-extrabold hover:text-red-500 text-white-400 text-sm px-1 transition"
+                              className=" font-extrabold bg-green-400 rounded-sm  hover:text-red-500 text-white-400 text-sm px-1 transition"
                             >
                               −
                             </button>
@@ -148,7 +148,7 @@ export default function Cart() {
                             </span>
                             <button
                               onClick={() => updateQuantity(trade.id, (trade.quantity + 1))}
-                              className=" hover:text-green-500 font-extrabold text-white-400 text-sm px-1 transition"
+                              className=" hover:text-green-500 bg-green-400 rounded-sm font-extrabold text-white-400 text-sm px-1 transition"
                             >
                               +
                             </button>

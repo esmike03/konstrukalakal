@@ -72,6 +72,7 @@ Route::post('/cart/delete/{id}', [CartController::class, 'destroy'])->name('cart
 Route::get('/uploads/delete/{id}', [MaterialController::class, 'uploadDestroy'])->name('upload.delete');
 Route::get('/uploads/restore/{id}', [MaterialController::class, 'uploadRestore'])->name('upload.restore');
 Route::get('/Orders', [CartController::class, 'toOrders']);
+Route::get('/OrdersCompleted', [CartController::class, 'toOrdersCompleted']);
 Route::get('/order-list', [CartController::class, 'toOrderList']);
 Route::post('/profile/update-image', [ProfileController::class, 'updateProfileImage'])->middleware('auth');
 

@@ -122,7 +122,7 @@ export default function DonateCart({ trades, isUser }) {
                 <div key={owner.id} className="space-y-4">
                   {/* Seller Header */}
                   <Link href={`/profile-view/${owner.id}`}>
-                  <h2 className="text-xl font-bold mb-2 text-gray-800 border-b pb-2 border-gray-300">{owner.name}</h2>
+                  <h2 className="text-xl font-bold text-gray-800 mb-2 border-b pb-2 border-gray-300">{owner.name} - <span className="text-sm font-normal">{owner.address}</span></h2>
                 </Link>
 
                   {/* Seller Items */}
@@ -152,10 +152,10 @@ export default function DonateCart({ trades, isUser }) {
                               <p className="text-xs opacity-90">
                                 {!isOwnerUser ? trade.user.name : ""} x {trade.quantity}
                               </p>
-                              <div className="flex absolute right-7 top-0 bg-green-400 mb-4   items-center  rounded-full px-1.5 ">
+                              <div className="flex absolute right-2 top-0  mb-4   items-center  rounded-full px-1.5 ">
                             <button
                               onClick={() => updateQuantity(trade.id, (trade.quantity - 1))}
-                              className=" font-extrabold hover:text-red-500 text-white-400 text-sm px-1 transition"
+                              className=" font-extrabold bg-green-400 rounded-sm  hover:text-red-500 text-white-400 text-sm px-1 transition"
                             >
                               −
                             </button>
@@ -164,7 +164,7 @@ export default function DonateCart({ trades, isUser }) {
                             </span>
                             <button
                               onClick={() => updateQuantity(trade.id, (trade.quantity + 1))}
-                              className=" hover:text-green-500 font-extrabold text-white-400 text-sm px-1 transition"
+                              className=" hover:text-green-500 bg-green-400 rounded-sm font-extrabold text-white-400 text-sm px-1 transition"
                             >
                               +
                             </button>

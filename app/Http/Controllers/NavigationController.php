@@ -1064,6 +1064,7 @@ class NavigationController extends Controller
                     'material_id' => $trade->material_id,
                     'owner'    => $trade->owner,
                     'status'      => 'completed',
+                    'quantity'    => $trade->quantity,
         ]);
 
         } else {

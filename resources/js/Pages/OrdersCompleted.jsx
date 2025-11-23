@@ -164,7 +164,8 @@ export default function OrdersCompleted({ trades, isUser }) {
                                 <h3 className="text-sm font-bold drop-shadow-md">{trade.material.material_name}</h3>
                               </Link>
                               <p className="text-xs opacity-90">
-
+<span className="text-green-400 text-lg font-bold"> ₱{trade.material.price * trade.quantity} </span>
+                                <span className="font-bold">x {trade.quantity}</span>
                               </p>
                             </div>
 

@@ -218,28 +218,29 @@ export default function ProfileVisit() {
         </div>
 
         {/* Details Box */}
-        <div className="flex justify-between mx-15 sm:flex-row sm:space-x-10 space-y-5 sm:space-y-0">
+        <div className="flex flex-col sm:flex-row justify-between gap-6 sm:gap-10">
 
-          <div>
-            <p className="text-sm font-semibold text-gray-500">Email</p>
-            <p className="text-lg text-gray-800">{user.email}</p>
-          </div>
+  <div>
+    <p className="text-sm font-semibold text-gray-500">Email</p>
+    <p className="text-lg text-gray-800">{user.email}</p>
+  </div>
 
-          <div>
-            <p className="text-sm font-semibold text-gray-500">Address</p>
-            <p className="text-lg text-gray-800">
-              {user.address || "No address provided"}
-            </p>
-          </div>
+  <div>
+    <p className="text-sm font-semibold text-gray-500">Address</p>
+    <p className="text-lg text-gray-800">
+      {user.address || "No address provided"}
+    </p>
+  </div>
 
-          <div>
-            <p className="text-sm font-semibold text-gray-500">Contact</p>
-            <p className="text-lg text-gray-800">
-              {user.contact || "No contact number provided"}
-            </p>
-          </div>
+  <div>
+    <p className="text-sm font-semibold text-gray-500">Contact</p>
+    <p className="text-lg text-gray-800">
+      {user.contact || "No contact number provided"}
+    </p>
+  </div>
 
-        </div>
+</div>
+
 
       </div>
       <div className="min-h-screen p-6 text-black">

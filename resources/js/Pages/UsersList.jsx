@@ -7,7 +7,7 @@ export default function UserList() {
 
   const handleDelete = (id) => {
     if (confirm("Are you sure you want to delete this user?")) {
-      router.delete(`/admin/users/${id}`);
+      router.delete(`/admin/usersx/${id}`);
     }
   };
 

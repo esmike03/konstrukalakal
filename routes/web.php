@@ -119,7 +119,7 @@ Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users'
 Route::get('/admin/reported', [UserController::class, 'reported'])->name('admin.reported');
 Route::get('/admin/reported-item', [UserController::class, 'reportedItem'])->name('admin.reported-item');
 Route::delete('/admin/users/{id}', [UserController::class, 'destroyuser'])->name('admin.users.destroy');
-
+Route::delete('/admin/usersx/{id}', [UserController::class, 'destroyuserx'])->name('admin.users.destroyx');
 Route::get('/direct/{id}/{user}', [MaterialController::class, 'sendDirect'])->name('direct.show');
 Route::get('/profile-view/{user}', [NavigationController::class, 'ProfileView']);
 Route::get('/conversation/delete/{id}', [MaterialController::class, 'convoDestroy'])->name('conversation.delete');

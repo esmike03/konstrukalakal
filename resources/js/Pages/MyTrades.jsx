@@ -117,6 +117,27 @@ export default function MyTrades({ trades, isUser }) {
                                     {status}
                                 </button>
                             ))}
+                            <Link
+                                                            href="/tradeCompleted"
+                                                            className={`transition-colors duration-200 ${
+                                                              url === "/OrdersCompleted"
+                                                                ? "text-green-600 border-b-2 border-green-600"
+                                                                : "text-gray-700 hover:text-green-600"
+                                                            }`}
+                                                          >
+                                                           Completed
+                                                          </Link>
+
+                                                          <Link
+                                                            href="/tradeRejected"
+                                                            className={`transition-colors duration-200 ${
+                                                              url === "/OrdersRejected"
+                                                                ? "text-green-600 border-b-2 border-green-600"
+                                                                : "text-gray-700 hover:text-green-600"
+                                                            }`}
+                                                          >
+                                                            Rejected
+                                                          </Link>
                         </div>
                     </div>
 

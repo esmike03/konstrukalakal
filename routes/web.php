@@ -65,6 +65,10 @@ Route::post('/order/{id}/submit', [CartController::class, 'storeOrder'])->name('
 
 Route::get('/cart', [CartController::class, 'toCart']);
 Route::get('/cart/donate', [CartController::class, 'todonate']);
+Route::get('/tradeCompleted', [CartController::class, 'totradeCompleted']);
+Route::get('/tradeRejected', [CartController::class, 'totradeRejected']);
+Route::get('/DonateCompleted', [CartController::class, 'todonateCompleted']);
+Route::get('/DonateRejected', [CartController::class, 'todonateRejected']);
 Route::get('/donate-list', [CartController::class, 'donateList']);
 Route::get('/history', [CartController::class, 'tohistory']);
 Route::get('/notifications', [CartController::class, 'tonotifications']);
@@ -73,11 +77,15 @@ Route::get('/uploads/delete/{id}', [MaterialController::class, 'uploadDestroy'])
 Route::get('/uploads/restore/{id}', [MaterialController::class, 'uploadRestore'])->name('upload.restore');
 Route::get('/Orders', [CartController::class, 'toOrders']);
 Route::get('/OrdersCompleted', [CartController::class, 'toOrdersCompleted']);
+Route::get('/OrdersRejected', [CartController::class, 'toOrdersRejected']);
 Route::get('/order-list', [CartController::class, 'toOrderList']);
 Route::post('/profile/update-image', [ProfileController::class, 'updateProfileImage'])->middleware('auth');
 
 Route::put('/materials-update/{material}', [MaterialController::class, 'updateMaterial'])
      ->name('materials.update');
+
+     Route::post('/cart/bulk-checkout', [CartController::class, 'bulkCheckout']);
+
 
 Route::post('/profile/update', [ProfileController::class, 'update'])
      ->name('profile.update');

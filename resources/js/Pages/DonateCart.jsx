@@ -110,6 +110,27 @@ export default function DonateCart({ trades, isUser }) {
                   {status}
                 </button>
               ))}
+               <Link
+                                href="/DonateCompleted"
+                                className={`transition-colors duration-200 ${
+                                  url === "/OrdersCompleted"
+                                    ? "text-green-600 border-b-2 border-green-600"
+                                    : "text-gray-700 hover:text-green-600"
+                                }`}
+                              >
+                                Completed
+                              </Link>
+
+                              <Link
+                                href="/DonateRejected"
+                                className={`transition-colors duration-200 ${
+                                  url === "/OrdersRejected"
+                                    ? "text-green-600 border-b-2 border-green-600"
+                                    : "text-gray-700 hover:text-green-600"
+                                }`}
+                              >
+                                Rejected
+                              </Link>
             </div>
           </div>
 

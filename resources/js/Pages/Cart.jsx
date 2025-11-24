@@ -6,11 +6,33 @@ export default function Cart() {
   const { cartItems, flash, auth, donateItemCount, tradeItemCount, orderItemCount, cartItemCount } = usePage().props;
   const [showMessage, setShowMessage] = useState(false);
   const [filter, setFilter] = useState("all");
-  const form = useForm({ material_id: null });
-  const { post } = form;
+  const form = useForm({ material_id: null, ids:[] });
+  const { post, setData } = form;
   const { url } = usePage();
 
 
+  const [selectedItems, setSelectedItems] = useState([]);
+    const toggleSelectItem = (id) => {
+    setSelectedItems((prev) =>
+        prev.includes(id) ? prev.filter((itemId) => itemId !== id) : [...prev, id]
+    );
+    };
+
+const selectAllItems = () => {
+  const allIds = cartItems.map(item => item.id);
+  setSelectedItems(allIds);
+  setData("ids", allIds); // sync with form
+};
+
+const deselectAllItems = () => {
+  setSelectedItems([]);
+  setData("ids", []); // sync with form
+};
+
+
+    const totalPrice = cartItems
+  .filter((item) => selectedItems.includes(item.id))
+  .reduce((sum, item) => sum + item.material.price * item.quantity, 0);
 
   const rejectDonate = (id) => confirm("Reject this inquiry?") && post(`/donate/${id}/reject`);
   const cancelDonate = (id) => confirm("Cancel this item?") && post(`/cart/delete/${id}`);
@@ -93,7 +115,52 @@ export default function Cart() {
             <span className="text-sm">{flash.message}</span>
           </div>
         )}
-        <h1 className="text-center border-2 border-green-600 text-xl rounded-md mx-100 text-green-600">Checkout Cart</h1>
+        <h1 className="text-center border-2 border-green-600 text-xl rounded-md mx-70 text-green-600">Checkout Cart</h1>
+        <div className="flex justify-between items-center mb-4">
+  <div>
+    <button
+      onClick={selectAllItems}
+      className="px-3 py-1 rounded bg-green-500 text-white hover:bg-green-600 mr-2"
+    >
+      Select All
+    </button>
+    <button
+      onClick={deselectAllItems}
+      className="px-3 py-1 rounded bg-gray-500 text-white hover:bg-gray-600"
+    >
+      Deselect All
+    </button>
+  </div>
+  <div className="text-lg font-bold">
+    Total: ₱{totalPrice}
+  </div>
+</div>
+{selectedItems.length > 1 && (
+<button
+  onClick={() => {
+    if (selectedItems.length === 0) {
+      alert("No item selected!");
+      return;
+    }
+
+    // Sync selectedItems to form data
+    setData("ids", selectedItems);
+
+    if (confirm(`Confirm checkout for ${selectedItems.length} selected item(s)?`)) {
+      post("/cart/bulk-checkout");
+    }
+  }}
+  disabled={selectedItems.length === 0}
+  className={`px-4 py-2 rounded mb-4 text-white ${selectedItems.length === 0 ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"}`}
+>
+  Checkout Selected ({selectedItems.length})
+</button>
+
+
+
+
+)}
+
         {/* Trades grouped by seller */}
         {Object.values(groupedBySeller).length === 0 ? (
           <p className="text-gray-500 text-center text-lg">No items found.</p>
@@ -105,6 +172,8 @@ export default function Cart() {
                     <Link href={`/profile-view/${owner.id}`}>
                 <h2 className="text-xl font-bold text-gray-800 mb-2 border-b pb-2 border-gray-300">{owner.name} - <span className="text-sm font-normal">{owner.address}</span></h2>
 </Link>
+
+
                 {/* Seller's Items */}
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {items.map((trade) => {
@@ -122,7 +191,14 @@ export default function Cart() {
                         />
 
                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-
+                        <div className="absolute top-2 left-2">
+                        <input
+                            type="checkbox"
+                            checked={selectedItems.includes(trade.id)}
+                            onChange={() => toggleSelectItem(trade.id)}
+                            className="w-5 h-5 accent-green-500"
+                        />
+                        </div>
                         {/* Material Info */}
                         <div className="absolute bottom-0 left-0 right-0 p-4 text-white flex justify-between items-end">
                           <div>

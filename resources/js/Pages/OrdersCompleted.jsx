@@ -126,6 +126,17 @@ export default function OrdersCompleted({ trades, isUser }) {
     Completed
   </button>
 
+   <Link
+    href="/OrdersRejected"
+    className={`transition-colors duration-200 ${
+      url === "/OrdersRejected"
+        ? "text-green-600 border-b-2 border-green-600"
+        : "text-gray-700 hover:text-green-600"
+    }`}
+  >
+    Rejected
+  </Link>
+
 </div>
 
 

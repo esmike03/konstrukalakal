@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Head, Link, useForm, usePage } from "@inertiajs/react";
 import { ArrowLeft, MessageCircle, CheckCircle, X } from "lucide-react";
 
-export default function Orders({ trades, isUser }) {
+export default function OrdersCompleted({ trades, isUser }) {
   const { post } = useForm();
   const { flash, auth, cartItemCount, donateItemCount, tradeItemCount, orderItemCount, url } = usePage().props;
   const [showMessage, setShowMessage] = useState(false);
-  const [filter, setFilter] = useState("pending");
+  const [filter, setFilter] = useState("rejected");
 
   const tabs = [
     { href: "/cart", label: "Buy Cart", count: cartItemCount },
@@ -88,43 +88,59 @@ export default function Orders({ trades, isUser }) {
           )}
 
           {/* Filter Buttons */}
-          <div className="mb-6 w-full flex justify-end">
-            <div className="flex items-center space-x-6 text-sm font-semibold text-gray-700">
-              {["Pending", "Accepted"].map((status) => (
-                <button
-                  key={status}
-                  onClick={() => setFilter(status.toLowerCase())}
-                  className={`transition-colors duration-200 ${filter === status.toLowerCase()
-                      ? "text-green-600 border-b-2 border-green-600"
-                      : "text-gray-700 hover:text-green-600"
-                    }`}
-                >
-                  {status}
-                </button>
-              ))}
-               <Link
-                  href="/OrdersCompleted"
-                  className={`transition-colors duration-200 ${
-                    url === "/OrdersCompleted"
-                      ? "text-green-600 border-b-2 border-green-600"
-                      : "text-gray-700 hover:text-green-600"
-                  }`}
-                >
-                  Completed
-                </Link>
+          <div className="flex justify-end items-center space-x-6 text-sm font-semibold text-gray-700">
 
-                <Link
-                  href="/OrdersRejected"
-                  className={`transition-colors duration-200 ${
-                    url === "/OrdersRejected"
-                      ? "text-green-600 border-b-2 border-green-600"
-                      : "text-gray-700 hover:text-green-600"
-                  }`}
-                >
-                  Rejected
-                </Link>
-            </div>
-          </div>
+  {/* Pending → GO TO NEW PAGE */}
+  <Link
+    href="/Orders"
+    className={`transition-colors duration-200 ${
+      url === "/Orders"
+        ? "text-green-600 border-b-2 border-green-600"
+        : "text-gray-700 hover:text-green-600"
+    }`}
+  >
+    Pending
+  </Link>
+
+  {/* Accepted → FILTER */}
+ <Link
+    href="/Orders"
+    className={`transition-colors duration-200 ${
+      url === "/Orders"
+        ? "text-green-600 border-b-2 border-green-600"
+        : "text-gray-700 hover:text-green-600"
+    }`}
+  >
+    Accepted
+  </Link>
+
+     <Link
+    href="/OrdersCompleted"
+    className={`transition-colors duration-200 ${
+      url === "/OrdersCompleted"
+        ? "text-green-600 border-b-2 border-green-600"
+        : "text-gray-700 hover:text-green-600"
+    }`}
+  >
+    Completed
+  </Link>
+
+  {/* Completed → FILTER */}
+  <button
+    onClick={() => setFilter("completed")}
+    className={`transition-colors duration-200 ${
+      filter === "rejected"
+        ? "text-green-600 border-b-2 border-green-600"
+        : "text-gray-700 hover:text-green-600"
+    }`}
+  >
+    Rejected
+  </button>
+
+
+
+</div>
+
 
           {/* Orders Grouped by Seller */}
           {Object.values(groupedBySeller).length === 0 ? (
@@ -161,8 +177,7 @@ export default function Orders({ trades, isUser }) {
                                 <h3 className="text-sm font-bold drop-shadow-md">{trade.material.material_name}</h3>
                               </Link>
                               <p className="text-xs opacity-90">
-                                {!isOwnerUser ? trade.user.name : ""}
-                                <span className="text-green-400 text-lg font-bold"> ₱{trade.material.price * trade.quantity} </span>
+<span className="text-green-400 text-lg font-bold"> ₱{trade.material.price * trade.quantity} </span>
                                 <span className="font-bold">x {trade.quantity}</span>
                               </p>
                             </div>
@@ -171,24 +186,14 @@ export default function Orders({ trades, isUser }) {
                             <div className="flex gap-2">
                               {isOwnerUser ? (
                                 <>
-                                  <button
-                                    onClick={() => cancelOrder(trade.id)}
-                                    disabled={["rejected", "cancelled"].includes(trade.status)}
-                                    className={`p-2 rounded-full text-sm font-medium shadow-md transition ${["rejected", "cancelled"].includes(trade.status)
-                                        ? "bg-gray-500/40 cursor-not-allowed"
-                                        : "bg-red-500 hover:bg-red-600"
-                                      }`}
-                                    title="Cancel"
-                                  >
-                                    <X size={16} />
-                                  </button>
+
 
                                   <Link
-                                    href={`/message/${trade.material_id}`}
-                                    className="p-2 rounded-full bg-blue-500 hover:bg-blue-600 shadow-md transition"
+
+                                    className="px-2 py-1 rounded-full bg-red-500 hover:bg-blue-600 shadow-md transition"
                                     title="Chat"
                                   >
-                                    <MessageCircle size={16} />
+                                    Rejected
                                   </Link>
                                 </>
                               ) : (

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Head, Link, useForm, usePage } from "@inertiajs/react";
-import { ArrowLeft, MessageCircle, CheckCircle, X } from "lucide-react";
+import { MessageCircle, CheckCircle, X } from "lucide-react";
 
-export default function Orders({ trades, isUser }) {
+export default function DonateCart({ trades, isUser }) {
   const { post } = useForm();
   const { flash, auth, cartItemCount, donateItemCount, tradeItemCount, orderItemCount, url } = usePage().props;
   const [showMessage, setShowMessage] = useState(false);
-  const [filter, setFilter] = useState("pending");
+  const [filter, setFilter] = useState("completed");
 
   const tabs = [
     { href: "/cart", label: "Buy Cart", count: cartItemCount },
@@ -23,10 +23,9 @@ export default function Orders({ trades, isUser }) {
     }
   }, [flash]);
 
-  const rejectOrder = (id) => confirm("Reject this order?") && post(`/order/${id}/reject`);
-  const cancelOrder = (id) => confirm("Cancel this order?") && post(`/order/${id}/cancel`);
-  const completeOrder = (id) => confirm("Complete this order?") && post(`/order/${id}/complete`);
-  const acceptOrder = (id) => confirm("Accept this order?") && post(`/order/${id}/accept`);
+  const rejectDonate = (id) => confirm("Reject this inquiry?") && post(`/donate/${id}/reject`);
+  const cancelDonate = (id) => confirm("Cancel this inquiry?") && post(`/donate/${id}/cancel`);
+  const acceptDonate = (id) => confirm("Accept this inquiry?") && post(`/donate/${id}/accept`);
 
   const filteredTrades = trades.filter(
     (trade) => filter === "all" || trade.status.toLowerCase() === filter
@@ -40,13 +39,22 @@ export default function Orders({ trades, isUser }) {
     return acc;
   }, {});
 
+    const updateQuantity = (id, newQty) => {
+    console.log("Updating:", id, newQty);
+    if (newQty < 1) return;
+    post(`/cart/update-donate/${id}/${newQty}`, {
+      quantity: newQty,
+    }, {
+      preserveScroll: true,
+    });
+
+  };
   return (
     <>
-      <Head title="Orders" />
-
+      <Head title="Donation Cart" />
       <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
-        {/* Sidebar Tabs */}
-        <aside className="md:w-64 w-full top-0 md:h-screen md:left-0">
+        {/* Sidebar */}
+        <aside className="md:w-64 w-full md:h-screen">
           <div className="flex md:flex-col flex-row md:space-y-4 space-x-4 md:space-x-0 p-4 justify-center md:justify-start">
             {tabs.map((tab, idx) => {
               const isActive = url === tab.href;
@@ -57,7 +65,7 @@ export default function Orders({ trades, isUser }) {
                   </span>
                   <Link
                     href={tab.href}
-                    className={`block text-center text-xs font-semibold px-4 py-2 rounded-lg border shadow-md backdrop-blur-md transition ${tab.href === "/Orders"
+                    className={`block text-center text-xs font-semibold px-4 py-2 rounded-lg border shadow-md backdrop-blur-md transition ${tab.href === "/cart/donate"
                         ? "bg-green-600 text-white border-green-700 shadow-lg" // Donation Cart always green
                         : isActive
                           ? "bg-green-600 text-white border-green-700 shadow-lg" // active tab green
@@ -88,9 +96,30 @@ export default function Orders({ trades, isUser }) {
           )}
 
           {/* Filter Buttons */}
-          <div className="mb-6 w-full flex justify-end">
+          <div className="mb-6 w-full flex justify-end items-center">
             <div className="flex items-center space-x-6 text-sm font-semibold text-gray-700">
-              {["Pending", "Accepted"].map((status) => (
+             <Link
+                                href="/cart/donate"
+                                className={`transition-colors duration-200 ${
+                                  url === "/OrdersCompleted"
+                                    ? "text-green-600 border-b-2 border-green-600"
+                                    : "text-gray-700 hover:text-green-600"
+                                }`}
+                              >
+                               Pending
+                              </Link>
+
+                              <Link
+                                href="/cart/donate"
+                                className={`transition-colors duration-200 ${
+                                  url === "/OrdersRejected"
+                                    ? "text-green-600 border-b-2 border-green-600"
+                                    : "text-gray-700 hover:text-green-600"
+                                }`}
+                              >
+                                Accepted
+                              </Link>
+              {[ "Completed"].map((status) => (
                 <button
                   key={status}
                   onClick={() => setFilter(status.toLowerCase())}
@@ -102,33 +131,24 @@ export default function Orders({ trades, isUser }) {
                   {status}
                 </button>
               ))}
-               <Link
-                  href="/OrdersCompleted"
-                  className={`transition-colors duration-200 ${
-                    url === "/OrdersCompleted"
-                      ? "text-green-600 border-b-2 border-green-600"
-                      : "text-gray-700 hover:text-green-600"
-                  }`}
-                >
-                  Completed
-                </Link>
 
-                <Link
-                  href="/OrdersRejected"
-                  className={`transition-colors duration-200 ${
-                    url === "/OrdersRejected"
-                      ? "text-green-600 border-b-2 border-green-600"
-                      : "text-gray-700 hover:text-green-600"
-                  }`}
-                >
-                  Rejected
-                </Link>
+
+                              <Link
+                                href="/DonateRejected"
+                                className={`transition-colors duration-200 ${
+                                  url === "/OrdersRejected"
+                                    ? "text-green-600 border-b-2 border-green-600"
+                                    : "text-gray-700 hover:text-green-600"
+                                }`}
+                              >
+                                Rejected
+                              </Link>
             </div>
           </div>
 
-          {/* Orders Grouped by Seller */}
+          {/* Trades Grouped by Seller */}
           {Object.values(groupedBySeller).length === 0 ? (
-            <p className="text-gray-500 text-center">No orders match this filter.</p>
+            <p className="text-gray-500 text-center text-lg">No items match this filter.</p>
           ) : (
             <div className="space-y-8 max-w-6xl mx-auto">
               {Object.values(groupedBySeller).map(({ owner, items }) => (
@@ -136,7 +156,8 @@ export default function Orders({ trades, isUser }) {
                   {/* Seller Header */}
                   <Link href={`/profile-view/${owner.id}`}>
                   <h2 className="text-xl font-bold text-gray-800 mb-2 border-b pb-2 border-gray-300">{owner.name} - <span className="text-sm font-normal">{owner.address}</span></h2>
-</Link>
+                </Link>
+
                   {/* Seller Items */}
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {items.map((trade) => {
@@ -152,49 +173,37 @@ export default function Orders({ trades, isUser }) {
                             alt={trade.material.material_name}
                             className="absolute inset-0 w-full h-full object-cover transition duration-300 group-hover:scale-105"
                           />
+
                           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
                           {/* Material Info */}
                           <div className="absolute bottom-0 left-0 right-0 p-4 text-white flex justify-between items-end">
                             <div>
                               <Link href={`/materials/${trade.material.id}`}>
-                                <h3 className="text-sm font-bold drop-shadow-md">{trade.material.material_name}</h3>
+                                <h3 className="text-lg font-bold drop-shadow-md">{trade.material.material_name}</h3>
                               </Link>
                               <p className="text-xs opacity-90">
-                                {!isOwnerUser ? trade.user.name : ""}
-                                <span className="text-green-400 text-lg font-bold"> ₱{trade.material.price * trade.quantity} </span>
-                                <span className="font-bold">x {trade.quantity}</span>
+                                {!isOwnerUser ? trade.user.name : ""} x {trade.quantity}
                               </p>
+
                             </div>
 
                             {/* Buttons */}
                             <div className="flex gap-2">
                               {isOwnerUser ? (
                                 <>
-                                  <button
-                                    onClick={() => cancelOrder(trade.id)}
-                                    disabled={["rejected", "cancelled"].includes(trade.status)}
-                                    className={`p-2 rounded-full text-sm font-medium shadow-md transition ${["rejected", "cancelled"].includes(trade.status)
-                                        ? "bg-gray-500/40 cursor-not-allowed"
-                                        : "bg-red-500 hover:bg-red-600"
-                                      }`}
-                                    title="Cancel"
-                                  >
-                                    <X size={16} />
-                                  </button>
-
                                   <Link
-                                    href={`/message/${trade.material_id}`}
-                                    className="p-2 rounded-full bg-blue-500 hover:bg-blue-600 shadow-md transition"
-                                    title="Chat"
-                                  >
-                                    <MessageCircle size={16} />
-                                  </Link>
+                                                                      href={`/materials/${trade.material_id}`}
+                                                                      className="px-2 py-1 rounded-full bg-green-500 hover:bg-blue-600 shadow-md transition"
+                                                                      title="Chat"
+                                                                    >
+                                                                      Completed
+                                                                    </Link>
                                 </>
                               ) : (
                                 <>
                                   <button
-                                    onClick={() => rejectOrder(trade.id)}
+                                    onClick={() => rejectDonate(trade.id)}
                                     disabled={["rejected", "cancelled", "accepted"].includes(trade.status)}
                                     className={`p-2 rounded-full text-sm font-medium shadow-md transition ${["rejected", "cancelled", "accepted"].includes(trade.status)
                                         ? "bg-gray-500/40 cursor-not-allowed"
@@ -212,7 +221,7 @@ export default function Orders({ trades, isUser }) {
                                     <MessageCircle size={16} />
                                   </Link>
                                   <button
-                                    onClick={() => acceptOrder(trade.id)}
+                                    onClick={() => acceptDonate(trade.id)}
                                     disabled={["rejected", "cancelled", "accepted"].includes(trade.status)}
                                     className={`p-2 rounded-full text-sm font-medium shadow-md transition ${["rejected", "cancelled", "accepted"].includes(trade.status)
                                         ? "bg-gray-500/40 cursor-not-allowed"

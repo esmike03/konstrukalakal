@@ -189,7 +189,7 @@ export default function ProfileVisit() {
         </h1>
         <div className="w-full flex justify-center gap-2 align-center px-2 py-1 mb-6 ">
           {authUserId && !isBlocked ? (
-            <Link href={`/direct/${15}/${user.id}`}>
+            <Link href={`/direct/${50}/${user.id}`}>
               <p className="bg-blue-500 text-white rounded-md py-1 px-2 cursor-pointer">Message</p>
             </Link>
 

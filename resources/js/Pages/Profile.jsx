@@ -55,7 +55,7 @@ export default function Profile() {
       </div>
 
       {/* Profile Info Card */}
-      <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8 mt-10">
+      <div className="bg-white rounded-xl shadow-lg py-6 px-2 sm:p-8 mt-10">
         <div className="flex justify-center  w-full align-center">
           <h1 className="text-xl sm:text-xl font-bold text-center text-gray-800">
             {auth.user.name}
@@ -127,7 +127,7 @@ export default function Profile() {
 
           {/* Collapsible Content */}
           <div
-            className={`overflow-hidden transition-all duration-300 ${open ? "max-h-[2000px] p-6" : "max-h-0 p-0"
+            className={`overflow-hidden transition-all duration-300 ${open ? "max-h-[2000px] p-4" : "max-h-0 p-0"
               }`}
           >
             <form

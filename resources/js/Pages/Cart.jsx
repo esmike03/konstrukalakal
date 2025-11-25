@@ -174,148 +174,127 @@ useEffect(() => {
 
         {/* Trades grouped by seller */}
         {Object.values(groupedBySeller).length === 0 ? (
-          <p className="text-gray-500 text-center text-lg">No items found.</p>
-        ) : (
-          <div className="space-y-8 max-w-6xl mx-auto">
-            {Object.values(groupedBySeller).map(({ owner, items }) => (
-              <div key={owner.id} className="space-y-4">
-                {/* Seller Header */}
-                    <Link href={`/profile-view/${owner.id}`}>
-                <p className="text-lg font-bold text-gray-800 mb-2 border-b pb-2 border-gray-300">{owner.name} - <span className="text-xs font-normal">{owner.address}</span></p>
-</Link>
+  <p className="text-gray-500 text-center text-lg">No items found.</p>
+) : (
+  <div className="space-y-8 max-w-6xl mx-auto">
 
+    {Object.values(groupedBySeller).map(({ owner, items }) => (
+      <div
+        key={owner.id}
+        className="bg-gray-50 border border-gray-300 rounded-xl p-4 space-y-4"
+      >
 
-                {/* Seller's Items */}
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {items.map((trade) => {
-                    const isUser = trade.user_id === auth.user.id;
-                    return (
-                      <div
-                        key={trade.id}
-                        className="relative h-50 rounded-2xl overflow-hidden shadow-lg group transition-transform hover:scale-[1.02] cursor-pointer"
-                      >
-                        {/* Background Image */}
-                        <img
-                          src={`/storage/${trade.material.image}`}
-                          alt={trade.material.material_name}
-                          className="absolute inset-0 w-full h-full object-cover transition duration-300 group-hover:scale-105"
-                        />
+        {/* Seller Header */}
+        <Link href={`/profile-view/${owner.id}`}>
+          <p className="text-lg font-bold text-gray-800 border-b pb-2 mb-6 border-gray-300">
+            {owner.name}
+            <span className="text-sm font-normal text-gray-600">
+              {" "}– {owner.address}
+            </span>
+          </p>
+        </Link>
 
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                        <div className="absolute top-2 left-2">
-                        <input
-                            type="checkbox"
-                            checked={selectedItems.includes(trade.id)}
-                            onChange={() => toggleSelectItem(trade.id)}
-                            className="w-5 h-5 accent-green-500"
-                        />
-                        </div>
-                        {/* Material Info */}
-                        <div className="absolute bottom-0 left-0 right-0 p-4 text-white flex justify-between items-end">
-                          <div>
-                            <Link href={`/materials/${trade.material.id}`}>
-                              <h3 className="text-sm font-bold drop-shadow-md">{trade.material.material_name}</h3>
-                            </Link>
-                            <p className="text-xs opacity-90">
-                              {!isUser ? trade.user.name : ""}                                              {/**trade.qunatity*/}
-                              <span className="text-green-400 text-lg font-bold"> ₱{trade.material.price} </span>
-                              <span className="font-bold">x {trade.quantity}</span>
-                            </p>
-                          </div>
+        {/* Seller Items */}
+        <div className="space-y-4">
+          {items.map((trade) => {
+            const isUser = trade.user_id === auth.user.id;
 
-                          <div className="flex absolute right-2 top-0  mb-4   items-center  rounded-full px-1.5 ">
-                            <button
-                              onClick={() => updateQuantity(trade.id, (trade.quantity - 1))}
-                              className=" font-extrabold bg-green-400 rounded-sm  hover:text-red-500 text-white-400 text-sm px-1 transition"
-                            >
-                              −
-                            </button>
-                            <span className="mx-2 text-xs font-extrabold text-white-400  w-6 text-center">
-                              {trade.quantity}
-                            </span>
-                            <button
-                              onClick={() => updateQuantity(trade.id, (trade.quantity + 1))}
-                              className=" hover:text-green-500 bg-green-400 rounded-sm font-extrabold text-white-400 text-sm px-1 transition"
-                            >
-                              +
-                            </button>
-                          </div>
-                          {/* Buttons */}
-                          <div className="flex gap-2">
-                            {isUser ? (
-                              <>
-                                <button
-                                  onClick={() => cancelDonate(trade.id)}
-                                  disabled={["rejected", "cancelled"].includes(trade.status)}
-                                  className={`p-2 rounded-full text-sm font-medium shadow-md transition ${["rejected", "cancelled"].includes(trade.status)
-                                    ? "bg-gray-500/40 cursor-not-allowed"
-                                    : "bg-red-500 hover:bg-red-600"
-                                    }`}
-                                  title="Cancel"
-                                >
-                                  <X size={16} />
-                                </button>
-                                {/*
-                                <button
-                                onClick={() => handleConfirm(trade.id)}
-                                className="p-2 rounded-full bg-green-500 hover:bg-green-600 shadow-md transition"
-                                title="Confirm"
-                                >
-                                <CheckCircle size={16} />
-                                </button>
-                                */}
+            return (
+              <div
+                key={trade.id}
+                className="flex items-start border-b-1 pb-3 border-gray-200  space-x-3"
+              >
+{/* Checkbox */} <div className="flex items-start w-4 pt-1 mr-3"> <input type="checkbox" checked={selectedItems.includes(trade.id)} onChange={() => toggleSelectItem(trade.id)} className="w-5 h-5 accent-green-600" /> </div>
+                {/* IMAGE */}
+                <img
+                  src={`/storage/${trade.material.image}`}
+                  className="w-16 h-16 rounded-md object-cover"
+                />
 
-                                <Link
-                                  href={`/message/${trade.material_id}`}
-                                  className="p-2 rounded-full bg-blue-500 hover:bg-blue-600 shadow-md transition"
-                                  title="Chat"
-                                >
-                                  <MessageCircle size={16} />
-                                </Link>
-                              </>
-                            ) : (
-                              <>
-                                <button
-                                  onClick={() => rejectDonate(trade.id)}
-                                  disabled={["rejected", "cancelled", "accepted"].includes(trade.status)}
-                                  className={`p-2 rounded-full text-sm font-medium shadow-md transition ${["rejected", "cancelled", "accepted"].includes(trade.status)
-                                    ? "bg-gray-500/40 cursor-not-allowed"
-                                    : "bg-red-500 hover:bg-red-600"
-                                    }`}
-                                  title="Reject"
-                                >
-                                  <X size={16} />
-                                </button>
-                                <Link
-                                  href={`/messagex/${trade.material_id}/${trade.user_id}`}
-                                  className="p-2 rounded-full bg-blue-500 hover:bg-blue-600 shadow-md transition"
-                                  title="Chat"
-                                >
-                                  <MessageCircle size={16} />
-                                </Link>
-                                <button
-                                  onClick={() => acceptDonate(trade.id)}
-                                  disabled={["rejected", "cancelled", "accepted"].includes(trade.status)}
-                                  className={`p-2 rounded-full text-sm font-medium shadow-md transition ${["rejected", "cancelled", "accepted"].includes(trade.status)
-                                    ? "bg-gray-500/40 cursor-not-allowed"
-                                    : "bg-green-500 hover:bg-green-600"
-                                    }`}
-                                  title="Accept"
-                                >
-                                  <CheckCircle size={16} />
-                                </button>
-                              </>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
+                {/* TITLE + PRICE */}
+                <div className="flex-1">
+                  <p className="font-semibold text-gray-800">
+                    {trade.material.material_name}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    <span className="text-green-700 font-bold">₱{trade.material.price}</span> × {trade.quantity}
+                  </p>
                 </div>
+
+                {/* QTY CONTROLS */}
+                <div className="flex items-center mt-3 mr-8 space-x-2">
+                  <button
+                    onClick={() => updateQuantity(trade.id, trade.quantity - 1)}
+                    className="w-7 h-7 border border-gray-300 rounded-full text-gray-600 flex items-center justify-center"
+                  >
+                    −
+                  </button>
+
+                  <span className="w-6 text-center text-gray-700 font-semibold">
+                    {trade.quantity}
+                  </span>
+
+                  <button
+                    onClick={() => updateQuantity(trade.id, trade.quantity + 1)}
+                    className="w-7 h-7 border border-gray-300 text-gray-600 rounded-full flex items-center justify-center"
+                  >
+                    +
+                  </button>
+                </div>
+
+                {/* ACTION ICONS */}
+                <div className="flex items-center mt-4 space-x-3">
+                  {isUser ? (
+                    <>
+                      <button
+                        onClick={() => cancelDonate(trade.id)}
+                        className="text-red-600"
+                      >
+                        <X size={20} />
+                      </button>
+
+                      <Link
+                        href={`/message/${trade.material_id}`}
+                        className="text-blue-600"
+                      >
+                        <MessageCircle size={20} />
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => rejectDonate(trade.id)}
+                        className="text-red-600"
+                      >
+                        <X size={20} />
+                      </button>
+
+                      <Link
+                        href={`/messagex/${trade.material_id}/${trade.user_id}`}
+                        className="text-blue-600"
+                      >
+                        <MessageCircle size={20} />
+                      </Link>
+
+                      <button
+                        onClick={() => acceptDonate(trade.id)}
+                        className="text-green-600"
+                      >
+                        <CheckCircle size={20} />
+                      </button>
+                    </>
+                  )}
+                </div>
+
               </div>
-            ))}
-          </div>
-        )}
+            );
+          })}
+        </div>
+      </div>
+    ))}
+  </div>
+)}
+
       </main>
     </div>
   );

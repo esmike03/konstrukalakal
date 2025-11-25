@@ -128,112 +128,142 @@ export default function Orders({ trades, isUser }) {
 
           {/* Orders Grouped by Seller */}
           {Object.values(groupedBySeller).length === 0 ? (
-            <p className="text-gray-500 text-center">No orders match this filter.</p>
-          ) : (
-            <div className="space-y-8 max-w-6xl mx-auto">
-              {Object.values(groupedBySeller).map(({ owner, items }) => (
-                <div key={owner.id} className="space-y-4">
-                  {/* Seller Header */}
-                  <Link href={`/profile-view/${owner.id}`}>
-                  <h2 className="text-xl font-bold text-gray-800 mb-2 border-b pb-2 border-gray-300">{owner.name} - <span className="text-sm font-normal">{owner.address}</span></h2>
-</Link>
-                  {/* Seller Items */}
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {items.map((trade) => {
-                      const isOwnerUser = trade.user_id === auth.user.id;
-                      return (
-                        <div
-                          key={trade.id}
-                          className="relative h-50 rounded-2xl overflow-hidden shadow-lg group transition-transform hover:scale-[1.02] cursor-pointer"
-                        >
-                          {/* Background Image */}
-                          <img
-                            src={`/storage/${trade.material.image}`}
-                            alt={trade.material.material_name}
-                            className="absolute inset-0 w-full h-full object-cover transition duration-300 group-hover:scale-105"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+  <p className="text-gray-500 text-center text-lg">No items match this filter.</p>
+) : (
+  <div className="space-y-8 max-w-6xl mx-auto">
 
-                          {/* Material Info */}
-                          <div className="absolute bottom-0 left-0 right-0 p-4 text-white flex justify-between items-end">
-                            <div>
-                              <Link href={`/materials/${trade.material.id}`}>
-                                <h3 className="text-sm font-bold drop-shadow-md">{trade.material.material_name}</h3>
-                              </Link>
-                              <p className="text-xs opacity-90">
-                                {!isOwnerUser ? trade.user.name : ""}
-                                <span className="text-green-400 text-lg font-bold"> ₱{trade.material.price * trade.quantity} </span>
-                                <span className="font-bold">x {trade.quantity}</span>
-                              </p>
-                            </div>
+    {Object.values(groupedBySeller).map(({ owner, items }) => (
+      <div
+        key={owner.id}
+        className="bg-gray-50 border border-gray-300 rounded-xl p-4 space-y-4"
+      >
 
-                            {/* Buttons */}
-                            <div className="flex gap-2">
-                              {isOwnerUser ? (
-                                <>
-                                  <button
-                                    onClick={() => cancelOrder(trade.id)}
-                                    disabled={["rejected", "cancelled"].includes(trade.status)}
-                                    className={`p-2 rounded-full text-sm font-medium shadow-md transition ${["rejected", "cancelled"].includes(trade.status)
-                                        ? "bg-gray-500/40 cursor-not-allowed"
-                                        : "bg-red-500 hover:bg-red-600"
-                                      }`}
-                                    title="Cancel"
-                                  >
-                                    <X size={16} />
-                                  </button>
+        {/* Seller Header */}
+        <Link href={`/profile-view/${owner.id}`}>
+          <p className="text-lg font-bold text-gray-800 border-b pb-2 mb-6 border-gray-300">
+            {owner.name}
+            <span className="text-sm font-normal text-gray-600">
+              {" "}– {owner.address}
+            </span>
+          </p>
+        </Link>
 
-                                  <Link
-                                    href={`/message/${trade.material_id}`}
-                                    className="p-2 rounded-full bg-blue-500 hover:bg-blue-600 shadow-md transition"
-                                    title="Chat"
-                                  >
-                                    <MessageCircle size={16} />
-                                  </Link>
-                                </>
-                              ) : (
-                                <>
-                                  <button
-                                    onClick={() => rejectOrder(trade.id)}
-                                    disabled={["rejected", "cancelled", "accepted"].includes(trade.status)}
-                                    className={`p-2 rounded-full text-sm font-medium shadow-md transition ${["rejected", "cancelled", "accepted"].includes(trade.status)
-                                        ? "bg-gray-500/40 cursor-not-allowed"
-                                        : "bg-red-500 hover:bg-red-600"
-                                      }`}
-                                    title="Reject"
-                                  >
-                                    <X size={16} />
-                                  </button>
-                                  <Link
-                                    href={`/messagex/${trade.material_id}/${trade.user_id}`}
-                                    className="p-2 rounded-full bg-blue-500 hover:bg-blue-600 shadow-md transition"
-                                    title="Chat"
-                                  >
-                                    <MessageCircle size={16} />
-                                  </Link>
-                                  <button
-                                    onClick={() => acceptOrder(trade.id)}
-                                    disabled={["rejected", "cancelled", "accepted"].includes(trade.status)}
-                                    className={`p-2 rounded-full text-sm font-medium shadow-md transition ${["rejected", "cancelled", "accepted"].includes(trade.status)
-                                        ? "bg-gray-500/40 cursor-not-allowed"
-                                        : "bg-green-500 hover:bg-green-600"
-                                      }`}
-                                    title="Accept"
-                                  >
-                                    <CheckCircle size={16} />
-                                  </button>
-                                </>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
+        {/* Seller Items */}
+        <div className="space-y-4">
+          {items.map((trade) => {
+            const isOwnerUser = trade.user_id === auth.user.id;
+
+            return (
+              <div
+                key={trade.id}
+                className="flex items-start pb-4 border-b border-gray-200 space-x-4"
+              >
+
+                {/* Checkbox */}
+
+                {/* IMAGE */}
+                <img
+                  src={`/storage/${trade.material.image}`}
+                  className="w-20 h-20 rounded-lg object-cover border"
+                />
+
+                {/* MATERIAL DETAILS */}
+                <div className="flex-1">
+                  <p className="font-semibold text-gray-800">
+                    {trade.material.material_name}
+                  </p>
+
+                  {!isOwnerUser && (
+                    <p className="text-xs text-gray-500">
+                      From: {trade.user.name}
+                    </p>
+                  )}
+
+                  <p className="text-sm text-gray-700 mt-1">
+                    <span className="font-bold text-green-700">
+                      ₱{trade.material.price}
+                    </span>
+                    {" "}× {trade.quantity}
+                  </p>
                 </div>
-              ))}
-            </div>
-          )}
+
+                {/* QTY CONTROLS */}
+
+
+                {/* ACTION BUTTONS */}
+                <div className="flex items-center space-x-3 my-auto gap-5 mr-4">
+                  {isOwnerUser ? (
+                    <>
+                      {/* Cancel */}
+                      <button
+                        onClick={() => cancelOrder(trade.id)}
+                        disabled={["rejected", "cancelled"].includes(trade.status)}
+                        className={`text-red-600 ${
+                          ["rejected", "cancelled"].includes(trade.status)
+                            ? "opacity-40 cursor-not-allowed"
+                            : "hover:text-red-700"
+                        }`}
+                      >
+                        <X size={20} />
+                      </button>
+
+                      {/* Chat */}
+                      <Link
+                        href={`/message/${trade.material_id}`}
+                        className="text-blue-600 hover:text-blue-700"
+                      >
+                        <MessageCircle size={20} />
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      {/* Reject */}
+                      <button
+                        onClick={() => rejectDonate(trade.id)}
+                        disabled={["rejected", "cancelled", "accepted"].includes(trade.status)}
+                        className={`text-red-600 ${
+                          ["rejected", "cancelled", "accepted"].includes(trade.status)
+                            ? "opacity-40 cursor-not-allowed"
+                            : "hover:text-red-700"
+                        }`}
+                      >
+                        <X size={20} />
+                      </button>
+
+                      {/* Chat */}
+                      <Link
+                        href={`/messagex/${trade.material_id}/${trade.user_id}`}
+                        className="text-blue-600 hover:text-blue-700"
+                      >
+                        <MessageCircle size={20} />
+                      </Link>
+
+                      {/* Accept */}
+                      <button
+                        onClick={() => acceptDonate(trade.id)}
+                        disabled={["rejected", "cancelled", "accepted"].includes(trade.status)}
+                        className={`text-green-600 ${
+                          ["rejected", "cancelled", "accepted"].includes(trade.status)
+                            ? "opacity-40 cursor-not-allowed"
+                            : "hover:text-green-700"
+                        }`}
+                      >
+                        <CheckCircle size={20} />
+                      </button>
+                    </>
+                  )}
+                </div>
+
+              </div>
+            );
+          })}
+        </div>
+
+      </div>
+    ))}
+  </div>
+)}
+
         </main>
       </div>
     </>

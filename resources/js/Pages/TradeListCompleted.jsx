@@ -7,7 +7,7 @@ export default function MyTrades({ trades, isUser }) {
     const { post } = useForm();
     const { flash } = usePage().props;
     const [showMessage, setShowMessage] = useState(false);
-    const [filter, setFilter] = useState("pending");
+    const [filter, setFilter] = useState("completed");
 
     const handleChange = (e) => {
         const value = e.target.value;
@@ -18,7 +18,7 @@ export default function MyTrades({ trades, isUser }) {
     const tabs = [
         { href: "/order-list", label: "Order List", count: order },
         { href: "/donate-list", label: "Donation List", count: donate },
-        { href: "/trade-list", label: "Trades List", count: trader },
+        { href: "/trade-listCompleted", label: "Trades List", count: trader },
 
     ];
     const [showFromDetails, setShowFromDetails] = useState(false);
@@ -56,7 +56,7 @@ export default function MyTrades({ trades, isUser }) {
     };
 
     const filteredTrades = trades.filter(
-        (trade) => filter === "Pending" || trade.status === filter
+        (trade) => filter === "Completed" || trade.status === filter
     );
 
     return (
@@ -116,7 +116,39 @@ export default function MyTrades({ trades, isUser }) {
 
                         <div className="flex items-center space-x-6 text-sm font-semibold text-gray-700">
 
-                           {["Pending", "Accepted"].map((status) => (
+                        <Link
+                                              href="/trade-list"
+                                              className={`transition-colors duration-200 ${
+                                                url === "/OrdersRejected"
+                                                  ? "text-green-600 border-b-2 border-green-600"
+                                                  : "text-gray-700 hover:text-green-600"
+                                              }`}
+                                            >
+                                              Pending
+                                            </Link>
+                                           <Link
+                                              href="/trade-list"
+                                              className={`transition-colors duration-200 ${
+                                                url === "/OrdersCompleted"
+                                                  ? "text-green-600 border-b-2 border-green-600"
+                                                  : "text-gray-700 hover:text-green-600"
+                                              }`}
+                                            >
+                                              Accepted
+                                            </Link>
+
+
+                                           <Link
+                                              href="/trade-listRejected"
+                                              className={`transition-colors duration-200 ${
+                                                url === "/OrdersCompleted"
+                                                  ? "text-green-600 border-b-2 border-green-600"
+                                                  : "text-gray-700 hover:text-green-600"
+                                              }`}
+                                            >
+                                              Rejected
+                                            </Link>
+                                            {["Completed"].map((status) => (
                                             <button
                                               key={status}
                                               onClick={() => setFilter(status.toLowerCase())}
@@ -128,26 +160,6 @@ export default function MyTrades({ trades, isUser }) {
                                               {status}
                                             </button>
                                           ))}
-                                           <Link
-                                              href="/trade-listRejected"
-                                              className={`transition-colors duration-200 ${
-                                                url === "/OrdersRejected"
-                                                  ? "text-green-600 border-b-2 border-green-600"
-                                                  : "text-gray-700 hover:text-green-600"
-                                              }`}
-                                            >
-                                              Rejected
-                                            </Link>
-                                           <Link
-                                              href="/trade-listCompleted"
-                                              className={`transition-colors duration-200 ${
-                                                url === "/OrdersCompleted"
-                                                  ? "text-green-600 border-b-2 border-green-600"
-                                                  : "text-gray-700 hover:text-green-600"
-                                              }`}
-                                            >
-                                              Completed
-                                            </Link>
                         </div>
                     </div>
 
@@ -317,13 +329,7 @@ export default function MyTrades({ trades, isUser }) {
                                                     Cancel
                                                 </button>
                                             )}
-                                            <Link
-                                                href={`/messagext/${trade.item_title}`}
-                                                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition"
-                                            >
-                                                <MessageCircle className="w-4 h-4" />
 
-                                            </Link>
                                             {trade.status == 'pending' && (
 
 

@@ -181,7 +181,7 @@ export default function Show({ material, user }) {
               {material.condition}
             </span>
             <span className="px-3 py-1 text-xs rounded-full bg-white/30 text-gray-800 backdrop-blur-md shadow">
-              Cash on Delivery
+              Pickup/ Delivery
             </span>
           </div>
 

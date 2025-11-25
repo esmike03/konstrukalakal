@@ -112,7 +112,7 @@ useEffect(() => {
         {/* Flash Message */}
         {flash?.message && (
           <div
-            className={`fixed top-4 right-4 px-4 z-100 py-2 rounded-lg shadow-lg flex items-center gap-2 text-white backdrop-blur-lg ${/(added|success|updated|deleted)/i.test(flash.message)
+            className={`fixed top-20 right-4 px-4 z-100 py-2 rounded-lg shadow-lg flex items-center gap-2 text-white backdrop-blur-lg ${/(added|success|updated|deleted)/i.test(flash.message)
               ? "bg-green-500/80"
               : "bg-red-500/80"
               } transition-all duration-500 ${showMessage ? "opacity-100" : "opacity-0"}`}

@@ -593,6 +593,169 @@ class CartController extends Controller
         }
     }
 
+    public function donateListRejected()
+    {
+        $user = auth()->user();
+        // dd($user);
+        $userId = auth()->id();
+
+
+
+              $donate = Archive::with(['material', 'user', 'owner'])
+            ->where('owner', $user->id)
+            ->where('status', 'rejected')
+            ->whereHas('material', function ($query) {
+                $query
+                ->where('forbdt', 'Donation');
+            })
+            ->get();
+
+        $cartItemCount = Cart::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+        $donateItemCount = Donate::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+
+        $tradeItemCount = Trade::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+        $orderItemCount = Orders::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+        $total = $cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount;
+        $logon = auth()->id();
+        $item = Notifications::where('owner', $logon)->latest()->take(5)->get();
+        $donateCount = Donate::where('owner', auth()->id())->whereHas('material', function ($query) {
+            $query->where('status', 'on');
+        })->count();
+        $tradeCount = Trade::where('owner', auth()->id())->whereHas('material', function ($query) {
+            $query->where('status', 'on');
+        })->count();
+        $orderCount = Orders::where('owner', auth()->id())->whereHas('material', function ($query) {
+            $query->where('status', 'on');
+        })->count();
+        $totaling = ($donateCount + $tradeCount + $orderCount);
+        if ($donate->isNotEmpty() && $donate->first()->user_id == $userId) {
+            return inertia('DonateListRejected', [
+                'trades' => $donate,
+                'isUser' => True,
+                'total' => $total,
+                'item' => $item,
+                'donate' => $donateCount,
+                'trader' => $tradeCount,
+                'order' => $orderCount,
+                'totaling' => $totaling
+            ]);
+        } else {
+
+            return inertia('DonateListRejected', [
+                'trades' => $donate,
+                'isUser' => False,
+                'total' => $total,
+                'item' => $item,
+                'donate' => $donateCount,
+                'trader' => $tradeCount,
+                'order' => $orderCount,
+                'totaling' => $totaling
+            ]);
+        }
+    }
+
+    public function donateListCompleted()
+    {
+        $user = auth()->user();
+        // dd($user);
+        $userId = auth()->id();
+
+
+
+              $donate = Archive::with(['material', 'user', 'owner'])
+            ->where('owner', $user->id)
+            ->where('status', 'completed')
+            ->whereHas('material', function ($query) {
+                $query
+                ->where('forbdt', 'Donation');
+            })
+            ->get();
+
+        $cartItemCount = Cart::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+        $donateItemCount = Donate::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+
+        $tradeItemCount = Trade::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+        $orderItemCount = Orders::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+        $total = $cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount;
+        $logon = auth()->id();
+        $item = Notifications::where('owner', $logon)->latest()->take(5)->get();
+        $donateCount = Donate::where('owner', auth()->id())->whereHas('material', function ($query) {
+            $query->where('status', 'on');
+        })->count();
+        $tradeCount = Trade::where('owner', auth()->id())->whereHas('material', function ($query) {
+            $query->where('status', 'on');
+        })->count();
+        $orderCount = Orders::where('owner', auth()->id())->whereHas('material', function ($query) {
+            $query->where('status', 'on');
+        })->count();
+        $totaling = ($donateCount + $tradeCount + $orderCount);
+        if ($donate->isNotEmpty() && $donate->first()->user_id == $userId) {
+            return inertia('DonateListCompleted', [
+                'trades' => $donate,
+                'isUser' => True,
+                'total' => $total,
+                'item' => $item,
+                'donate' => $donateCount,
+                'trader' => $tradeCount,
+                'order' => $orderCount,
+                'totaling' => $totaling
+            ]);
+        } else {
+
+            return inertia('DonateListCompleted', [
+                'trades' => $donate,
+                'isUser' => False,
+                'total' => $total,
+                'item' => $item,
+                'donate' => $donateCount,
+                'trader' => $tradeCount,
+                'order' => $orderCount,
+                'totaling' => $totaling
+            ]);
+        }
+    }
+
+
     public function updateQuantity($id, $newQty)
     {
 
@@ -1057,6 +1220,175 @@ class CartController extends Controller
         } else {
 
             return inertia('OrderList', [
+                'trades' => $orders,
+                'isUser' => False,
+                'total' => $total,
+                'item' => $item,
+                'donate' => $donateCount,
+                'trader' => $tradeCount,
+                'order' => $orderCount,
+                'totaling' => $totaling
+            ]);
+        }
+    }
+
+    public function toOrderListRejected()
+    {
+        $user = auth()->user();
+        // dd($user);
+        $userId = auth()->id();
+        // dd($userId);
+        $logon = auth()->id();
+        $item = Notifications::where('owner', $logon)->latest()->take(5)->get();
+        $orders = Archive::with('material', 'user', 'owner')
+            ->where(function ($q) use ($user) {
+                $q->where('owner', $user->id)
+                ->where('status', 'rejected');
+            })
+            ->whereHas('material', function ($query) {
+                $query
+                ->where('forbdt', 'Sale');
+            })
+            ->get();
+
+
+
+        $cartItemCount = Cart::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+        $donateItemCount = Donate::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+
+        $tradeItemCount = Trade::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+        $orderItemCount = Orders::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+        $total = $cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount;
+        $donateCount = Donate::where('owner', auth()->id())->whereHas('material', function ($query) {
+            $query->where('status', 'on');
+        })->count();
+        $tradeCount = Trade::where('owner', auth()->id())->whereHas('material', function ($query) {
+            $query->where('status', 'on');
+        })->count();
+        $orderCount = Orders::where('owner', auth()->id())->whereHas('material', function ($query) {
+            $query->where('status', 'on');
+        })->count();
+        $totaling = ($donateCount + $tradeCount + $orderCount);
+
+        if ($orders->isNotEmpty() && $orders->first()->user_id == $userId) {
+            return inertia('OrderListRejected', [
+                'trades' => $orders,
+                'isUser' => True,
+                'total' => $total,
+                'item' => $item,
+                'donate' => $donateCount,
+                'trader' => $tradeCount,
+                'order' => $orderCount,
+                'totaling' => $totaling
+            ]);
+        } else {
+
+            return inertia('OrderListRejected', [
+                'trades' => $orders,
+                'isUser' => False,
+                'total' => $total,
+                'item' => $item,
+                'donate' => $donateCount,
+                'trader' => $tradeCount,
+                'order' => $orderCount,
+                'totaling' => $totaling
+            ]);
+        }
+    }
+
+     public function toOrderListCompleted()
+    {
+        $user = auth()->user();
+        // dd($user);
+        $userId = auth()->id();
+        // dd($userId);
+        $logon = auth()->id();
+        $item = Notifications::where('owner', $logon)->latest()->take(5)->get();
+        $orders = Archive::with('material', 'user', 'owner')
+            ->where(function ($q) use ($user) {
+                $q->where('owner', $user->id)
+                ->where('status', 'completed');
+            })
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on')
+                ->where('forbdt', 'Sale');
+            })
+            ->get();
+
+
+
+
+        $cartItemCount = Cart::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+        $donateItemCount = Donate::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+
+        $tradeItemCount = Trade::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+        $orderItemCount = Orders::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+        $total = $cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount;
+        $donateCount = Donate::where('owner', auth()->id())->whereHas('material', function ($query) {
+            $query->where('status', 'on');
+        })->count();
+        $tradeCount = Trade::where('owner', auth()->id())->whereHas('material', function ($query) {
+            $query->where('status', 'on');
+        })->count();
+        $orderCount = Orders::where('owner', auth()->id())->whereHas('material', function ($query) {
+            $query->where('status', 'on');
+        })->count();
+        $totaling = ($donateCount + $tradeCount + $orderCount);
+
+        if ($orders->isNotEmpty() && $orders->first()->user_id == $userId) {
+            return inertia('OrderListCompleted', [
+                'trades' => $orders,
+                'isUser' => True,
+                'total' => $total,
+                'item' => $item,
+                'donate' => $donateCount,
+                'trader' => $tradeCount,
+                'order' => $orderCount,
+                'totaling' => $totaling
+            ]);
+        } else {
+
+            return inertia('OrderListCompleted', [
                 'trades' => $orders,
                 'isUser' => False,
                 'total' => $total,

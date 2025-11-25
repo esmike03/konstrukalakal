@@ -70,6 +70,8 @@ Route::get('/tradeRejected', [CartController::class, 'totradeRejected']);
 Route::get('/DonateCompleted', [CartController::class, 'todonateCompleted']);
 Route::get('/DonateRejected', [CartController::class, 'todonateRejected']);
 Route::get('/donate-list', [CartController::class, 'donateList']);
+Route::get('/donate-listCompleted', [CartController::class, 'donateListCompleted']);
+Route::get('/donate-listRejected', [CartController::class, 'donateListRejected']);
 Route::get('/history', [CartController::class, 'tohistory']);
 Route::get('/notifications', [CartController::class, 'tonotifications']);
 Route::post('/cart/delete/{id}', [CartController::class, 'destroy'])->name('cart.delete');
@@ -79,6 +81,8 @@ Route::get('/Orders', [CartController::class, 'toOrders']);
 Route::get('/OrdersCompleted', [CartController::class, 'toOrdersCompleted']);
 Route::get('/OrdersRejected', [CartController::class, 'toOrdersRejected']);
 Route::get('/order-list', [CartController::class, 'toOrderList']);
+Route::get('/order-listRejected', [CartController::class, 'toOrderListRejected']);
+Route::get('/order-listCompleted', [CartController::class, 'toOrderListCompleted']);
 Route::post('/profile/update-image', [ProfileController::class, 'updateProfileImage'])->middleware('auth');
 
 Route::put('/materials-update/{material}', [MaterialController::class, 'updateMaterial'])

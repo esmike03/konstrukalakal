@@ -3,11 +3,11 @@ import { Head, Link, useForm, usePage } from "@inertiajs/react";
 import { ArrowLeft, MessageCircle, CheckCircle, X, ChevronDown } from "lucide-react";
 import { router } from "@inertiajs/react";
 
-export default function OrderList({ trades, isUser }) {
+export default function OrderListCompleted({ trades, isUser }) {
     const { post } = useForm();
     const { flash } = usePage().props;
     const [showMessage, setShowMessage] = useState(false);
-    const [filter, setFilter] = useState("pending");
+    const [filter, setFilter] = useState("completed");
 
       const handleChange = (e) => {
     const value = e.target.value;
@@ -16,7 +16,7 @@ export default function OrderList({ trades, isUser }) {
   const { cartItems, auth, donateItemCount, tradeItemCount, orderItemCount, cartItemCount, order, donate, trader } = usePage().props;
         const { url } = usePage();
          const tabs = [
-      { href: "/order-list", label: "Order List", count: order },
+      { href: "/order-listCompleted", label: "Order List", count: order },
       { href: "/donate-list", label: "Donation List", count: donate },
       { href: "/trade-list", label: "Trades List", count: trader },
 
@@ -63,7 +63,7 @@ export default function OrderList({ trades, isUser }) {
     };
 
     const filteredTrades = trades.filter(
-        (trade) => filter === "Pending" || trade.status === filter
+        (trade) => filter === "Rejected" || trade.status === filter
     );
 
     return (
@@ -123,39 +123,52 @@ export default function OrderList({ trades, isUser }) {
 
 
                                             <div className="flex items-center space-x-6 text-sm font-semibold text-gray-700">
- {["Pending", "Accepted"].map((status) => (
-                 <button
-                   key={status}
-                   onClick={() => setFilter(status.toLowerCase())}
-                   className={`transition-colors duration-200 ${filter === status.toLowerCase()
-                       ? "text-green-600 border-b-2 border-green-600"
-                       : "text-gray-700 hover:text-green-600"
-                     }`}
-                 >
-                   {status}
-                 </button>
-               ))}
-                <Link
-                   href="/order-listRejected"
-                   className={`transition-colors duration-200 ${
-                     url === "/OrdersRejected"
-                       ? "text-green-600 border-b-2 border-green-600"
-                       : "text-gray-700 hover:text-green-600"
-                   }`}
-                 >
-                   Rejected
-                 </Link>
-                <Link
-                   href="/order-listCompleted"
-                   className={`transition-colors duration-200 ${
-                     url === "/OrdersCompleted"
-                       ? "text-green-600 border-b-2 border-green-600"
-                       : "text-gray-700 hover:text-green-600"
-                   }`}
-                 >
-                   Completed
-                 </Link>
+<Link
+    href="/order-list"
+    className={`transition-colors duration-200 ${
+      url === "/Orders"
+        ? "text-green-600 border-b-2 border-green-600"
+        : "text-gray-700 hover:text-green-600"
+    }`}
+  >
+    Pending
+  </Link>
 
+  {/* Accepted → FILTER */}
+ <Link
+    href="/order-list"
+    className={`transition-colors duration-200 ${
+      url === "/Orders"
+        ? "text-green-600 border-b-2 border-green-600"
+        : "text-gray-700 hover:text-green-600"
+    }`}
+  >
+    Accepted
+  </Link>
+
+
+     <Link
+    href="/order-listRejected"
+    className={`transition-colors duration-200 ${
+      url === "/OrdersCompleted"
+        ? "text-green-600 border-b-2 border-green-600"
+        : "text-gray-700 hover:text-green-600"
+    }`}
+  >
+    Rejected
+  </Link>
+     <button
+    onClick={() => setFilter("completed")}
+    className={`transition-colors duration-200 ${
+      filter === "completed"
+        ? "text-green-600 border-b-2 border-green-600"
+        : "text-gray-700 hover:text-green-600"
+    }`}
+  >
+    Completed
+  </button>
+
+  {/* Completed → FILTER */}
 
 </div>
                                         </div>
@@ -280,14 +293,7 @@ export default function OrderList({ trades, isUser }) {
                                                 Cancel
                                             </button>
                                             )}
-                                            <Link
-                                            ///messagexx/{id}/{userId}
-                                                href={`/messagexx/${trade.material_id}/${trade.user_id}`}
-                                                className="flex items-center justify-center gap-1 bg-blue-500 text-white px-3 py-2 rounded-md text-sm w-full sm:w-auto"
-                                            >
-                                                <MessageCircle className="w-4 h-4" />
 
-                                            </Link>
                                             {trade.status === "pending" && (
                                             <button
                                                 onClick={() => acceptDonate(trade.id)}

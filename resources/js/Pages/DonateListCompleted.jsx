@@ -7,7 +7,7 @@ export default function DonateCart({ trades, isUser }) {
     const { post } = useForm();
     const { flash } = usePage().props;
     const [showMessage, setShowMessage] = useState(false);
-    const [filter, setFilter] = useState("pending");
+    const [filter, setFilter] = useState("completed");
 
           const handleChange = (e) => {
         const value = e.target.value;
@@ -18,7 +18,7 @@ export default function DonateCart({ trades, isUser }) {
             const { url } = usePage();
              const tabs = [
           { href: "/order-list", label: "Order List", count: order },
-          { href: "/donate-list", label: "Donation List", count: donate },
+          { href: "/donate-listCompleted", label: "Donation List", count: donate },
           { href: "/trade-list", label: "Trades List", count: trader },
 
         ];
@@ -55,7 +55,7 @@ export default function DonateCart({ trades, isUser }) {
     };
 
     const filteredTrades = trades.filter(
-        (trade) => filter === "Pending" || trade.status === filter
+        (trade) => filter === "Completed" || trade.status === filter
     );
 
     return (
@@ -114,38 +114,52 @@ export default function DonateCart({ trades, isUser }) {
                 <div className="mb-6 w-full flex justify-end">
 
                                        <div className="flex items-center space-x-6 text-sm font-semibold text-gray-700">
-{["Pending", "Accepted"].map((status) => (
-                 <button
-                   key={status}
-                   onClick={() => setFilter(status.toLowerCase())}
-                   className={`transition-colors duration-200 ${filter === status.toLowerCase()
-                       ? "text-green-600 border-b-2 border-green-600"
-                       : "text-gray-700 hover:text-green-600"
+  <Link
+                     href="/donate-list"
+                     className={`transition-colors duration-200 ${
+                       url === "/OrdersRejected"
+                         ? "text-green-600 border-b-2 border-green-600"
+                         : "text-gray-700 hover:text-green-600"
                      }`}
-                 >
-                   {status}
-                 </button>
-               ))}
-                <Link
-                   href="/donate-listRejected"
-                   className={`transition-colors duration-200 ${
-                     url === "/OrdersRejected"
-                       ? "text-green-600 border-b-2 border-green-600"
-                       : "text-gray-700 hover:text-green-600"
-                   }`}
-                 >
-                   Rejected
-                 </Link>
-                <Link
-                   href="/donate-listCompleted"
-                   className={`transition-colors duration-200 ${
-                     url === "/OrdersCompleted"
-                       ? "text-green-600 border-b-2 border-green-600"
-                       : "text-gray-700 hover:text-green-600"
-                   }`}
-                 >
-                   Completed
-                 </Link>
+                   >
+                     Pending
+                   </Link>
+                  <Link
+                     href="/donate-list"
+                     className={`transition-colors duration-200 ${
+                       url === "/OrdersCompleted"
+                         ? "text-green-600 border-b-2 border-green-600"
+                         : "text-gray-700 hover:text-green-600"
+                     }`}
+                   >
+                     Accepted
+                   </Link>
+
+
+    <Link
+                     href="/donate-listRejected"
+                     className={`transition-colors duration-200 ${
+                       url === "/OrdersCompleted"
+                         ? "text-green-600 border-b-2 border-green-600"
+                         : "text-gray-700 hover:text-green-600"
+                     }`}
+                   >
+                     Rejected
+                   </Link>
+
+                   {["Completed"].map((status) => (
+    <button
+      key={status}
+      onClick={() => setFilter(status.toLowerCase())}
+      className={`transition-colors duration-200 ${
+        filter === status.toLowerCase()
+          ? "text-green-600 border-b-2 border-green-600"
+          : "text-gray-700 hover:text-green-600"
+      }`}
+    >
+      {status}
+    </button>
+  ))}
 </div>
                 </div>
 
@@ -167,7 +181,7 @@ export default function DonateCart({ trades, isUser }) {
                                         className={`text-xs w-full font-bold uppercase tracking-wide text-center rounded-full px-3 py-1 w-fit mx-auto text-white ${
                                             trade.status === "pending"
                                                 ? "bg-amber-400"
-                                                : trade.status === "accepted"
+                                                : trade.status === "completed"
                                                 ? "bg-green-500"
                                                 : "bg-red-500"
                                         }`}
@@ -261,13 +275,7 @@ export default function DonateCart({ trades, isUser }) {
                                                 Cancel
                                             </button>
                                             )}
-                                        <Link
-                                            href={`/messagex/${trade.material_id}/${trade.user_id}`}
-                                            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition"
-                                        >
-                                            <MessageCircle className="w-4 h-4" />
 
-                                        </Link>
                                         {trade.status === "pending" && (
                                         <button
                                             onClick={() => acceptDonate(trade.id)}

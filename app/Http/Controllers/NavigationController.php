@@ -1277,6 +1277,8 @@ class NavigationController extends Controller
                     'material_id' => $trade->trade_for,
                     'owner'    => $trade->owner,
                     'status'      => 'completed',
+                    'item_title' => $trade->item_title,
+                    'item_image' => $trade->item_image,
         ]);
 
         } else {

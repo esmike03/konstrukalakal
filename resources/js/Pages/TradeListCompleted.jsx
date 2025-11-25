@@ -180,7 +180,7 @@ export default function MyTrades({ trades, isUser }) {
                                         <p
                                             className={`text-xs w-full font-bold uppercase tracking-wide text-center rounded-full px-3 py-1 w-fit mx-auto text-white ${trade.status === "pending"
                                                 ? "bg-amber-400"
-                                                : trade.status === "accepted"
+                                                : trade.status === "completed"
                                                     ? "bg-green-500"
                                                     : "bg-red-500"
                                                 }`}

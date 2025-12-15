@@ -20,10 +20,17 @@ export default function Index() {
               >
                 {/* Notification Image */}
                 <img
-                src={notif.image ? `/storage/${notif.image}` : "/default-avatar.png"}
-                alt="Notif"
-                className="w-12 h-12 rounded-full object-cover border border-white/60 shadow-sm"
-                />
+  src={
+    notif.image
+      ? notif.image.startsWith("http")
+        ? notif.image
+        : `/storage/${notif.image}`
+      : "https://img.icons8.com/clr-gls/1200/appointment-reminders.jpg"
+  }
+  alt="Notif"
+  className="w-12 h-12 rounded-full object-cover border border-white/60 shadow-sm"
+/>
+
 
 
                 {/* Notification Text */}

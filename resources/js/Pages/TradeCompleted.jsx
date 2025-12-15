@@ -169,7 +169,7 @@ export default function TradeCart({ trades, isUser }) {
                         >
                           {/* Background Image */}
                           <img
-                            src={`/storage/${trade.material.image}`}
+                            src={`/storage/${JSON.parse(trade.material.image)[0]}`}
                             alt={trade.material.material_name}
                             className="absolute inset-0 w-full h-full object-cover transition duration-300 group-hover:scale-105"
                           />

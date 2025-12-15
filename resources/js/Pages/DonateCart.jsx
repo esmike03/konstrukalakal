@@ -55,31 +55,64 @@ export default function DonateCart({ trades, isUser }) {
       <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
         {/* Sidebar */}
         <aside className="md:w-64 w-full md:h-screen">
-          <div className="flex md:flex-col flex-row md:space-y-4 space-x-4 md:space-x-0 p-4 justify-center md:justify-start">
-            {tabs.map((tab, idx) => {
-              const isActive = url === tab.href;
-              return (
-                <div key={idx} className="relative">
-                  <span className="absolute -top-2 -right-2 z-50 bg-red-600 text-xs text-white rounded-full px-2 py-0.5 shadow-md">
-                    {tab.count}
-                  </span>
-                  <Link
-                    href={tab.href}
-                    className={`block text-center text-xs font-semibold px-4 py-2 rounded-lg border shadow-md backdrop-blur-md transition ${tab.href === "/cart/donate"
-                        ? "bg-green-600 text-white border-green-700 shadow-lg" // Donation Cart always green
-                        : isActive
-                          ? "bg-green-600 text-white border-green-700 shadow-lg" // active tab green
-                          : "bg-white/70 hover:bg-white/90 text-gray-800 border-gray-200" // other tabs normal
-                      }`}
-                  >
-                    {tab.label}
-                  </Link>
+  <div
+    className="
+      flex
+      md:flex-col
+      flex-row
+      md:space-y-4
+      space-x-4
+      md:space-x-0
+      p-4
+      justify-start
+      md:justify-start
+      overflow-x-auto
+      md:overflow-visible
+      scrollbar-hide
+    "
+  >
+    {tabs.map((tab, idx) => {
+      const isActive = url === tab.href;
 
-                </div>
-              );
-            })}
-          </div>
-        </aside>
+      return (
+        <div key={idx} className="relative shrink-0 md:shrink">
+          {/* Badge */}
+          <span className="absolute -top-2 -right-2 z-50 bg-red-600 text-xs text-white rounded-full px-2 py-0.5 shadow-md">
+            {tab.count}
+          </span>
+
+          {/* Tab Button */}
+          <Link
+            href={tab.href}
+            className={`
+              block
+              text-center
+              text-xs
+              font-semibold
+              px-4 py-2
+              rounded-lg
+              border
+              shadow-md
+              backdrop-blur-md
+              transition
+              whitespace-nowrap
+              ${
+                tab.href === "/cart/donate"
+                  ? "bg-green-600 text-white border-green-700 shadow-lg" // donation always green
+                  : isActive
+                  ? "bg-green-600 text-white border-green-700 shadow-lg"
+                  : "bg-white/70 hover:bg-white/90 text-gray-800 border-gray-200"
+              }
+            `}
+          >
+            {tab.label}
+          </Link>
+        </div>
+      );
+    })}
+  </div>
+</aside>
+
 
         <main className="flex-1 w-full p-6">
           {/* Flash Message */}
@@ -170,7 +203,7 @@ export default function DonateCart({ trades, isUser }) {
 
                 {/* IMAGE */}
                 <img
-                  src={`/storage/${trade.material.image}`}
+                 src={`/storage/${JSON.parse(trade.material.image)[0]}`}
                   className="w-20 h-20 rounded-lg object-cover border"
                 />
 
@@ -188,14 +221,15 @@ export default function DonateCart({ trades, isUser }) {
 
                   <p className="text-sm text-gray-700 mt-1">
                     <span className="font-bold text-green-700">
-                      ₱{trade.material.price * trade.quantity}
+
                     </span>
                     {" "}× {trade.quantity}
                   </p>
                 </div>
 
+                  <div className="flex flex-wrap justify-center mx-auto gap-4">
                 {/* QTY CONTROLS */}
-                <div className="flex items-center space-x-2 my-auto mr-8">
+                <div className="flex items-center space-x-2 my-auto ">
                   <button
                     onClick={() => updateQuantity(trade.id, trade.quantity - 1)}
                     className="w-7 h-7 border border-gray-300 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-100"
@@ -278,7 +312,7 @@ export default function DonateCart({ trades, isUser }) {
                     </>
                   )}
                 </div>
-
+                  </div>
               </div>
             );
           })}

@@ -85,7 +85,7 @@ export default function Materials() {
                 {auth?.user?.name !== 'Admin' && (
                 <button
                     onClick={openMaterialModal}
-                    className="cursor-pointer bg-green-500 text-white text-sm px-3 py-1 rounded-full flex items-center gap-1"
+                    className="cursor-pointer bg-blue-500 text-white text-sm px-3 py-1 rounded-full flex items-center gap-1"
                 >
                     <Upload size={14} /> Upload Materials
                 </button>
@@ -185,12 +185,12 @@ export default function Materials() {
                     >
                         <Filter size={16} /> Filters
                     </button>
-                    <select className="border rounded-full text-gray-600 border-gray-400 text-xs px-3 py-1">
+                    {/* <select className="border rounded-full text-gray-600 border-gray-400 text-xs px-3 py-1">
                         <option>Newest</option>
                         <option>Oldest</option>
                         <option>Price: Low to High</option>
                         <option>Price: High to Low</option>
-                    </select>
+                    </select> */}
                     <button onClick={() => setView("grid")}>
                         <Grid
                         size={20}
@@ -226,7 +226,7 @@ export default function Materials() {
                             <div>
                             {material.image && (
                                 <img
-                                src={`/storage/${material.image}`}
+                                src={`/storage/${JSON.parse(material.image)[0]}`}
                                 alt={material.material_name}
                                 className="w-full h-40 object-cover rounded-xl shadow-sm"
                                 />

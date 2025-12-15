@@ -51,7 +51,8 @@ class NavigationController extends Controller
         $orderCount = Orders::where('owner', auth()->id())->count();
         $totaling = ($donateCount + $tradeCount + $orderCount);
 
-        $materials = Material::where('status', 'on')->get();
+        $materials = Material::where('status', 'on')
+        ->where('user_id', '!=' ,$logon)->get();
         $notifcount = Notifications::where('user_id', $logon)->count();
         $item = Notifications::where('owner', $logon)->latest()->take(5)->get();
         return inertia('Materials', [
@@ -101,7 +102,9 @@ class NavigationController extends Controller
         $orderCount = Orders::where('owner', auth()->id())->count();
         $totaling = ($donateCount + $tradeCount + $orderCount);
 
-        $materials = Material::where('forbdt', 'Trade')->get();
+        $materials = Material::where('forbdt', 'Trade')
+        ->where('status', 'on')
+        ->where('user_id', '!=' ,$logon)->get();
         $item = Notifications::where('owner', $logon)->latest()->take(5)->get();
         return inertia('TradeMaterials', [
             'materials' => $materials,
@@ -150,7 +153,9 @@ class NavigationController extends Controller
         $orderCount = Orders::where('owner', auth()->id())->count();
         $totaling = ($donateCount + $tradeCount + $orderCount);
 
-        $materials = Material::where('forbdt', 'Sale')->get();
+        $materials = Material::where('forbdt', 'Sale')
+        ->where('status', 'on')
+        ->where('user_id', '!=' ,$logon)->get();
         $item = Notifications::where('owner', $logon)->latest()->take(5)->get();
         return inertia('BuyMaterials', [
             'materials' => $materials,
@@ -195,6 +200,7 @@ class NavigationController extends Controller
         $total = ($cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount);
         $materials = Material::where('forbdt', 'Donation')
         ->where('status', 'on')
+        ->where('user_id', '!=' ,$logon)
         ->get();
         $item = Notifications::where('owner', $logon)->latest()->take(5)->get();
 
@@ -430,13 +436,19 @@ class NavigationController extends Controller
             ],
             'quantity' => 'required|integer',
             'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5048', // Validate image
+            'images' => 'nullable|array',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:5048', // Validate image
         ]);
+        // dd($request->file('images'));
 
         // Handle file upload
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('materials', 'public'); // Save to storage/app/public/materials
+        $imagePath = [];
+        
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $imagePath[] = $image->store('materials', 'public');
+            }
         }
 
         // Create material
@@ -451,7 +463,7 @@ class NavigationController extends Controller
             'price' => $request->price,
             'quantity' => $request->quantity,
             'description' => $request->description,
-            'image' => $imagePath, // Store image path
+            'image' => json_encode($imagePath), // Store image path
         ]);
 
         return back()->with('message', 'Uploaded successfully!');

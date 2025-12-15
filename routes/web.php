@@ -85,7 +85,7 @@ Route::get('/order-listRejected', [CartController::class, 'toOrderListRejected']
 Route::get('/order-listCompleted', [CartController::class, 'toOrderListCompleted']);
 Route::post('/profile/update-image', [ProfileController::class, 'updateProfileImage'])->middleware('auth');
 
-Route::put('/materials-update/{material}', [MaterialController::class, 'updateMaterial'])
+Route::post('/materials-update/{material}', [MaterialController::class, 'updateMaterial'])
      ->name('materials.update');
 
      Route::post('/cart/bulk-checkout', [CartController::class, 'bulkCheckout']);

@@ -29,7 +29,7 @@ export default function CreateTrade() {
         <p className="text-sm text-gray-600">You're trading for:</p>
         <div className="flex items-center gap-4 mt-3">
           <img
-            src={`/storage/${material.image}`}
+            src={`/storage/${JSON.parse(material.image)[0]}`}
             alt={material.material_name}
             className="w-20 h-20 object-cover rounded-md shadow"
           />
@@ -76,7 +76,7 @@ export default function CreateTrade() {
           onChange={(e) => setData("trade_quantity", e.target.value)}
           type="number" placeholder="1" className="mt-2 w-1/8 px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-700"/>
           </div>
-          
+
         </div>
         {/* Upload Image */}
         <div>

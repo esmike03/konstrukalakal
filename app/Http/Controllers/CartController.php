@@ -207,7 +207,7 @@ class CartController extends Controller
             ->where('status', 'completed')
             ->whereHas('material', function ($query) {
                 $query
-                ->where('forbdt', 'Donation');
+                    ->where('forbdt', 'Donation');
             })
             ->get();
 
@@ -287,7 +287,7 @@ class CartController extends Controller
             ->where('status', 'completed')
             ->whereHas('material', function ($query) {
                 $query
-                ->where('forbdt', 'Trade');
+                    ->where('forbdt', 'Trade');
             })
             ->get();
 
@@ -355,7 +355,7 @@ class CartController extends Controller
         }
     }
 
-     public function totradeRejected()
+    public function totradeRejected()
     {
         $user = auth()->user();
         // dd($user);
@@ -367,7 +367,7 @@ class CartController extends Controller
             ->where('status', 'rejected')
             ->whereHas('material', function ($query) {
                 $query
-                ->where('forbdt', 'Trade');
+                    ->where('forbdt', 'Trade');
             })
             ->get();
 
@@ -447,7 +447,7 @@ class CartController extends Controller
             ->where('status', 'rejected')
             ->whereHas('material', function ($query) {
                 $query
-                ->where('forbdt', 'Donation');
+                    ->where('forbdt', 'Donation');
             })
             ->get();
 
@@ -601,12 +601,12 @@ class CartController extends Controller
 
 
 
-              $donate = Archive::with(['material', 'user', 'owner'])
+        $donate = Archive::with(['material', 'user', 'owner'])
             ->where('owner', $user->id)
             ->where('status', 'rejected')
             ->whereHas('material', function ($query) {
                 $query
-                ->where('forbdt', 'Donation');
+                    ->where('forbdt', 'Donation');
             })
             ->get();
 
@@ -682,12 +682,12 @@ class CartController extends Controller
 
 
 
-              $donate = Archive::with(['material', 'user', 'owner'])
+        $donate = Archive::with(['material', 'user', 'owner'])
             ->where('owner', $user->id)
             ->where('status', 'completed')
             ->whereHas('material', function ($query) {
                 $query
-                ->where('forbdt', 'Donation');
+                    ->where('forbdt', 'Donation');
             })
             ->get();
 
@@ -769,14 +769,21 @@ class CartController extends Controller
     }
 
 
-     public function updateQuan($id, $newQty)
+    public function updateQuan($id, $newQty)
     {
 
 
         $material = Cart::findOrFail($id);
+        $quan = Material::findorFail($material->material_id);
+        // $material->quantity = $newQty;
+        // $material->save();
 
-        $material->quantity = $newQty;
-        $material->save();
+        if ($newQty <= $quan->quantity) {
+            $material->quantity = $newQty;
+            $material->save();
+        } else {
+            return back()->with('message', 'Quantity Limit Reach');
+        }
 
         return back()->with('message', 'Quantity updated successfully!');
     }
@@ -787,8 +794,18 @@ class CartController extends Controller
 
         $material = Donate::findOrFail($id);
 
-        $material->quantity = $newQty;
-        $material->save();
+
+
+        $quan = Material::findorFail($material->material_id);
+        // $material->quantity = $newQty;
+        // $material->save();
+
+        if ($newQty <= $quan->quantity) {
+            $material->quantity = $newQty;
+            $material->save();
+        } else {
+            return back()->with('message', 'Quantity Limit Reach');
+        }
 
         return back()->with('message', 'Quantity updated successfully!');
     }
@@ -997,10 +1014,9 @@ class CartController extends Controller
 
         $orders = Archive::with(['material', 'user', 'owner'])
             ->where('user_id', $user->id)
-            ->where('status','completed')
+            ->where('status', 'completed')
             ->whereHas('material', function ($query) {
-                $query->where('status', 'on')
-                ->where('forbdt', 'Sale');
+                $query->where('forbdt', 'Sale');
             })
             ->get();
 
@@ -1084,10 +1100,9 @@ class CartController extends Controller
 
         $orders = Archive::with(['material', 'user', 'owner'])
             ->where('user_id', $user->id)
-            ->where('status','rejected')
+            ->where('status', 'rejected')
             ->whereHas('material', function ($query) {
-                $query->where('status', 'on')
-                ->where('forbdt', 'Sale');
+                $query->where('forbdt', 'Sale');
             })
             ->get();
 
@@ -1243,11 +1258,11 @@ class CartController extends Controller
         $orders = Archive::with('material', 'user', 'owner')
             ->where(function ($q) use ($user) {
                 $q->where('owner', $user->id)
-                ->where('status', 'rejected');
+                    ->where('status', 'rejected');
             })
             ->whereHas('material', function ($query) {
                 $query
-                ->where('forbdt', 'Sale');
+                    ->where('forbdt', 'Sale');
             })
             ->get();
 
@@ -1316,7 +1331,7 @@ class CartController extends Controller
         }
     }
 
-     public function toOrderListCompleted()
+    public function toOrderListCompleted()
     {
         $user = auth()->user();
         // dd($user);
@@ -1327,11 +1342,10 @@ class CartController extends Controller
         $orders = Archive::with('material', 'user', 'owner')
             ->where(function ($q) use ($user) {
                 $q->where('owner', $user->id)
-                ->where('status', 'completed');
+                    ->where('status', 'completed');
             })
             ->whereHas('material', function ($query) {
-                $query->where('status', 'on')
-                ->where('forbdt', 'Sale');
+                $query->where('forbdt', 'Sale');
             })
             ->get();
 
@@ -1456,13 +1470,19 @@ class CartController extends Controller
                 $image = Material::where('id', $validated['material_id'])->first();
                 $owner = User::where('id', $image->user_id)->first();
 
+                // Decode JSON image list
+                $images = json_decode($image->image, true);
+
+                // Get first image or null
+                $firstImage = $images[0] ?? null;
+
                 Notifications::create([
                     'user_id'     => auth()->id(),
                     'material_id' => $validated['material_id'],
                     'quantity'    => $validated['quantity'],
                     'message'    => $user->name . ' added an item to their cart.',
                     'username' => $user->name,
-                    'image' => $image->image,
+                    'image' => $firstImage,
                     'ownername' => $owner->name,
                     'owner' => $owner->id,
                 ]);
@@ -1495,6 +1515,10 @@ class CartController extends Controller
         $image = Material::where('id', $validated['material_id'])->first();
         $owner = User::where('id', $image->user_id)->first();
 
+        $images = json_decode($image->image, true);
+
+        // Get first image or null
+        $firstImage = $images[0] ?? null;
         if ($cart) {
             // If the item exists in the cart, update the quantity
             // $cart->quantity += $validated['quantity'];  // Add the quantity to the existing quantity
@@ -1518,7 +1542,7 @@ class CartController extends Controller
                     'quantity'    => $validated['quantity'],
                     'message'    => $user->name . ' has inquired about your products.',
                     'username' => $user->name,
-                    'image' => $image->image,
+                    'image' => $firstImage,
                     'ownername' => $owner->name,
                     'owner' => $owner->id,
                 ]);
@@ -1539,7 +1563,7 @@ class CartController extends Controller
                 'quantity'    => $validated['quantity'],
                 'message'    => $user->name . ' has inquired about your products.',
                 'username' => $user->name,
-                'image' => $image->image,
+                'image' => $firstImage,
                 'ownername' => $owner->name,
                 'owner' => $owner->id,
             ]);
@@ -1579,38 +1603,38 @@ class CartController extends Controller
     }
 
     public function bulkCheckout(Request $request)
-{
-    $ids = $request->input('ids', []);
+    {
+        $ids = $request->input('ids', []);
 
-    if (!auth()->check()) {
-        return back()->with('message', 'Please login to checkout.');
-    }
-
-    if (empty($ids)) {
-        return back()->with('message', 'No items selected.');
-    }
-
-    foreach ($ids as $id) {
-        $cartItem = Cart::find($id);
-        if (!$cartItem) continue;
-
-        $material = Material::find($cartItem->material_id);
-
-        if ($material) {
-            Orders::create([
-                'user_id' => auth()->id(),
-                'material_id' => $cartItem->material_id,
-                'owner' => $material->user_id,
-                'status' => 'pending',
-                'quantity' => $cartItem->quantity,
-            ]);
-
-            $cartItem->delete();
+        if (!auth()->check()) {
+            return back()->with('message', 'Please login to checkout.');
         }
-    }
 
-    return back()->with('message', 'Selected items checked out successfully!');
-}
+        if (empty($ids)) {
+            return back()->with('message', 'No items selected.');
+        }
+
+        foreach ($ids as $id) {
+            $cartItem = Cart::find($id);
+            if (!$cartItem) continue;
+
+            $material = Material::find($cartItem->material_id);
+
+            if ($material) {
+                Orders::create([
+                    'user_id' => auth()->id(),
+                    'material_id' => $cartItem->material_id,
+                    'owner' => $material->user_id,
+                    'status' => 'pending',
+                    'quantity' => $cartItem->quantity,
+                ]);
+
+                $cartItem->delete();
+            }
+        }
+
+        return back()->with('message', 'Selected items checked out successfully!');
+    }
 
 
     public function storeOrder(Request $request, $id)

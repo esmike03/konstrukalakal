@@ -162,7 +162,7 @@ export default function OrdersCompleted({ trades, isUser }) {
                         >
                           {/* Background Image */}
                           <img
-                            src={`/storage/${trade.material.image}`}
+                           src={`/storage/${JSON.parse(trade.material.image)[0]}`}
                             alt={trade.material.material_name}
                             className="absolute inset-0 w-full h-full object-cover transition duration-300 group-hover:scale-105"
                           />
@@ -175,7 +175,7 @@ export default function OrdersCompleted({ trades, isUser }) {
                                 <h3 className="text-sm font-bold drop-shadow-md">{trade.material.material_name}</h3>
                               </Link>
                               <p className="text-xs opacity-90">
-<span className="text-green-400 text-lg font-bold"> ₱{trade.material.price * trade.quantity} </span>
+<span className="text-green-400 text-lg font-bold"> ₱{trade.material.price  } </span>
                                 <span className="font-bold">x {trade.quantity}</span>
                               </p>
                             </div>

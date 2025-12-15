@@ -112,7 +112,7 @@ export default function ProfileVisit() {
                 <button className="w-full text-left px-4 py-1 hover:bg-gray-100">Back</button>
               </Link>
 
-              {authUserId && (
+              {authUserId && authUserId !== user.id && (
                 <>
                   <button
                     onClick={() => setOpen(!open)}
@@ -159,6 +159,7 @@ export default function ProfileVisit() {
                 </>
               )}
 
+
               {!authUserId && (
                 <p className="text-center text-gray-500 text-sm py-1">Login to access options</p>
               )}
@@ -188,16 +189,18 @@ export default function ProfileVisit() {
           {user.name}
         </h1>
         <div className="w-full flex justify-center gap-2 align-center px-2 py-1 mb-6 ">
-          {authUserId && !isBlocked ? (
+          {authUserId && authUserId !== user.id && !isBlocked ? (
             <Link href={`/direct/${50}/${user.id}`}>
-              <p className="bg-blue-500 text-white rounded-md py-1 px-2 cursor-pointer">Message</p>
+              <p className="bg-blue-500 text-white rounded-md py-1 px-2 cursor-pointer">
+                Message
+              </p>
             </Link>
-
           ) : !authUserId ? (
             <p className="font-bold text-gray-500 cursor-default">Login to message</p>
-          ) : (
+          ) : isBlocked ? (
             <p className="font-bold text-red-500">-- Blocked --</p>
-          )}
+          ) : null}
+
 
           {auth?.user?.name === 'Admin' && user.status === 'enabled' && (
 
@@ -220,26 +223,26 @@ export default function ProfileVisit() {
         {/* Details Box */}
         <div className="flex flex-col sm:flex-row justify-between gap-6 sm:gap-10">
 
-  <div>
-    <p className="text-sm font-semibold text-gray-500">Email</p>
-    <p className="text-lg text-gray-800">{user.email}</p>
-  </div>
+          <div>
+            <p className="text-sm font-semibold text-gray-500">Email</p>
+            <p className="text-lg text-gray-800">{user.email}</p>
+          </div>
 
-  <div>
-    <p className="text-sm font-semibold text-gray-500">Address</p>
-    <p className="text-lg text-gray-800">
-      {user.address || "No address provided"}
-    </p>
-  </div>
+          <div>
+            <p className="text-sm font-semibold text-gray-500">Address</p>
+            <p className="text-lg text-gray-800">
+              {user.address || "No address provided"}
+            </p>
+          </div>
 
-  <div>
-    <p className="text-sm font-semibold text-gray-500">Contact</p>
-    <p className="text-lg text-gray-800">
-      {user.contact || "No contact number provided"}
-    </p>
-  </div>
+          <div>
+            <p className="text-sm font-semibold text-gray-500">Contact</p>
+            <p className="text-lg text-gray-800">
+              {user.contact || "No contact number provided"}
+            </p>
+          </div>
 
-</div>
+        </div>
 
 
       </div>
@@ -396,7 +399,7 @@ export default function ProfileVisit() {
                     <div>
                       {material.image && (
                         <img
-                          src={`/storage/${material.image}`}
+                          src={`/storage/${JSON.parse(material.image)[0]}`}
                           alt={material.material_name}
                           className="w-full h-30 object-cover rounded-xl shadow-sm"
                         />

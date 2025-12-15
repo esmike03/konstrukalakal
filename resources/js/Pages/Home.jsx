@@ -123,13 +123,14 @@ export default function Home() {
             className="bg-white flex flex-col justify-between rounded-2xl shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition"
           >
             {/* Image */}
-            {material.image && (
-              <img
-                src={`/storage/${material.image}`}
-                alt={material.materialName}
-                className="w-full h-40 object-cover"
-              />
-            )}
+           {material.image && (
+  <img
+    src={`/storage/${JSON.parse(material.image)[0]}`}
+    alt={material.materialName}
+    className="w-full h-40 object-cover"
+  />
+)}
+
 
             {/* Content */}
             <div className="p-4 flex flex-col flex-grow">
@@ -171,7 +172,7 @@ export default function Home() {
 
               {/* Button */}
               <Link href={`/materials/${material.id}`} className="mt-auto">
-                <button className="w-full mt-4 text-sm bg-green-600 text-white py-2.5 rounded-lg font-medium hover:bg-green-700 transition">
+                <button className="w-full mt-4 text-sm bg-yellow-400 text-white py-2.5 rounded-lg font-medium hover:bg-green-700 transition">
                   View Details
                 </button>
               </Link>
@@ -191,26 +192,26 @@ export default function Home() {
                 <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 text-center">
                     {/* Stat 1 */}
                     <div>
-                        <h2 className="text-3xl font-bold">1000+</h2>
-                        <p className="text-sm">Active Users</p>
+                        <h2 className="text-3xl font-bold text-blue-400">1000+</h2>
+                        <p className="text-sm text-blue-400">Active Users</p>
                     </div>
 
                     {/* Stat 2 */}
                     <div>
-                        <h2 className="text-3xl font-bold">5000+</h2>
-                        <p className="text-sm">Materials Traded</p>
+                        <h2 className="text-3xl font-bold text-yellow-400">5000+</h2>
+                        <p className="text-sm text-yellow-400">Materials Traded</p>
                     </div>
 
                     {/* Stat 3 */}
                     <div>
-                        <h2 className="text-3xl font-bold">2000+</h2>
-                        <p className="text-sm">Successful Donations</p>
+                        <h2 className="text-3xl font-bold text-green-400">2000+</h2>
+                        <p className="text-sm text-green-400">Successful Donations</p>
                     </div>
 
                     {/* Stat 4 */}
                     <div>
-                        <h2 className="text-3xl font-bold">500+</h2>
-                        <p className="text-sm">Partner Organizations</p>
+                        <h2 className="text-3xl font-bold text-red-300">500+</h2>
+                        <p className="text-sm text-red-300">Partner Organizations</p>
                     </div>
                 </div>
             </section>
@@ -220,7 +221,7 @@ export default function Home() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
 
                         {/* Sustainable Trading */}
-                        <div className="bg-green-800 p-6 rounded-lg shadow-lg flex flex-col items-center">
+                        <div className="bg-blue-800 p-6 rounded-lg shadow-lg flex flex-col items-center">
                             <span className="text-green-500 text-3xl">♻️</span>
                             <h3 className="font-bold mt-4 text-white">Sustainable Trading</h3>
                             <p className="text-gray-300 text-sm mt-2">
@@ -229,10 +230,10 @@ export default function Home() {
                         </div>
 
                         {/* Secure Transactions */}
-                        <div className="bg-green-800 p-6 rounded-lg shadow-lg flex flex-col items-center">
+                        <div className="bg-yellow-300 p-6 rounded-lg shadow-lg flex flex-col items-center">
                             <span className="text-green-500 text-3xl">🤝</span>
-                            <h3 className="font-bold mt-4 text-white">Secure Transactions</h3>
-                            <p className="text-gray-300 text-sm mt-2">
+                            <h3 className="font-bold mt-4 text-black">Secure Transactions</h3>
+                            <p className="text-black text-sm mt-2">
                                 Safe and secure platform for trading construction materials with verified users.
                             </p>
                         </div>

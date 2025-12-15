@@ -227,7 +227,7 @@ export default function MyTrades({ trades, isUser }) {
                                         <div>
                                             <Link href={`/materials/${trade.material.id}`} className="relative group text-center">
                                                 <img
-                                                    src={`/storage/${trade.material.image}`}
+                                                    src={`/storage/${JSON.parse(trade.material.image)[0]}`}
                                                     alt={trade.material.material_name}
                                                     className="w-20 h-20 ml-4 object-cover rounded-xl shadow-md"
                                                 />

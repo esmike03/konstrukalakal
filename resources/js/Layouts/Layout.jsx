@@ -112,7 +112,7 @@ export default function Layout({ children }) {
               {auth.user && (
                 <div className="flex">
                 <Link href="/messages">
-                    <MessageCircle size={20} className="mr-2 text-gray-700 cursor-pointer hover:text-green-600"/>
+                    <MessageCircle size={20} className="mr-2 text-blue-700 cursor-pointer hover:text-green-600"/>
                 </Link>
 
                     <Link
@@ -125,7 +125,7 @@ export default function Layout({ children }) {
   <div className="relative">
     <Bell
       size={22}
-      className="text-gray-700 transition-all duration-200 hover:text-green-600 hover:scale-110"
+      className="text-yellow-400  transition-all duration-200 hover:text-green-600 hover:scale-110"
     />
     {notifcount > 0 && (
       <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse" />

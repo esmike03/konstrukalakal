@@ -85,28 +85,47 @@ useEffect(() => {
     <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
       {/* Sidebar Tabs */}
       <aside className="md:w-64 w-full top-0 md:h-screen md:left-0">
-        <div className="flex md:flex-col flex-row md:space-y-4 space-x-4 md:space-x-0 p-4 justify-center md:justify-start">
-          {tabs.map((tab, idx) => {
-            const isActive = url.startsWith(tab.href);
-            return (
-              <div key={idx} className="relative">
-                <span className="absolute -top-2 -right-2 z-50 bg-red-600 text-xs text-white rounded-full px-2 py-0.5 shadow-md">
-                  {tab.count}
-                </span>
-                <Link
-                  href={tab.href}
-                  className={`block text-center text-xs font-semibold px-4 py-2 rounded-lg border shadow-md backdrop-blur-md transition ${isActive
-                    ? "bg-green-600 text-white border-green-700 shadow-lg"
-                    : "bg-white/70 hover:bg-white/90 text-gray-800 border-gray-200"
-                    }`}
-                >
-                  {tab.label}
-                </Link>
-              </div>
-            );
-          })}
+  <div
+    className="
+      flex
+      md:flex-col
+      flex-row
+      md:space-y-4
+      space-x-4
+      md:space-x-0
+      p-4
+      justify-start
+      overflow-x-auto
+      md:overflow-visible
+      scrollbar-hide
+    "
+  >
+    {tabs.map((tab, idx) => {
+      const isActive = url.startsWith(tab.href);
+      return (
+        <div key={idx} className="relative flex-shrink-0 md:flex-shrink">
+          {/* Badge */}
+          <span className="absolute -top-2 -right-2 z-50 bg-red-600 text-xs text-white rounded-full px-2 py-0.5 shadow-md">
+            {tab.count}
+          </span>
+
+          {/* Tab Button */}
+          <Link
+            href={tab.href}
+            className={`block text-center text-xs font-semibold px-4 py-2 rounded-lg border shadow-md backdrop-blur-md transition whitespace-nowrap ${
+              isActive
+                ? "bg-green-600 text-white border-green-700 shadow-lg"
+                : "bg-white/70 hover:bg-white/90 text-gray-800 border-gray-200"
+            }`}
+          >
+            {tab.label}
+          </Link>
         </div>
-      </aside>
+      );
+    })}
+  </div>
+</aside>
+
 
       <main className="flex-1 w-full p-4">
         {/* Flash Message */}
@@ -207,7 +226,7 @@ useEffect(() => {
 {/* Checkbox */} <div className="flex items-start w-4 pt-1 mr-3"> <input type="checkbox" checked={selectedItems.includes(trade.id)} onChange={() => toggleSelectItem(trade.id)} className="w-5 h-5 accent-green-600" /> </div>
                 {/* IMAGE */}
                 <img
-                  src={`/storage/${trade.material.image}`}
+                  src={`/storage/${JSON.parse(trade.material.image)[0]}`}
                   className="w-16 h-16 rounded-md object-cover"
                 />
 
@@ -221,8 +240,10 @@ useEffect(() => {
                   </p>
                 </div>
 
+               <div className="flex flex-wrap justify-center mx-auto gap-4">
+
                 {/* QTY CONTROLS */}
-                <div className="flex items-center mt-3 mr-8 space-x-2">
+                <div className="flex items-center mt-3  space-x-2">
                   <button
                     onClick={() => updateQuantity(trade.id, trade.quantity - 1)}
                     className="w-7 h-7 border border-gray-300 rounded-full text-gray-600 flex items-center justify-center"
@@ -284,6 +305,7 @@ useEffect(() => {
                       </button>
                     </>
                   )}
+                </div>
                 </div>
 
               </div>

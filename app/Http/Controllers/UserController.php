@@ -31,16 +31,21 @@ class UserController extends Controller
         ]);
     }
 
-    public function reportedItem()
-    {
-         $reports = Reporteditem::with(['reportedBy', 'reportedUser', 'reportedItem'])
-            ->latest()
-            ->get();
+public function reportedItem()
+{
+    $reports = Reporteditem::with(['reportedBy', 'reportedUser', 'reportedItem'])
+        ->whereHas('reportedItem', function ($q) {
+            $q->where('status', 'on'); // or whatever your active value is
+        })
+        ->latest()
+        ->get();
 
-        return Inertia::render('ReportedItem', [
-            'reports' => $reports,
-        ]);
-    }
+    return Inertia::render('ReportedItem', [
+        'reports' => $reports,
+    ]);
+}
+
+
 
     public function destroy($id)
     {

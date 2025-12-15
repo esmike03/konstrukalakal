@@ -55,32 +55,65 @@ export default function MyTrades({ trades, isUser }) {
 
             <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
 
-                <aside className="md:w-64 w-full top-0  md:h-screen   md:left-0 ">
-                    <div className="flex md:flex-col flex-row md:space-y-4 space-x-4 md:space-x-0 p-4 justify-center md:justify-start">
-                        {tabs.map((tab, idx) => {
-                            const isActive = url === tab.href;
-                            // 👈 Check if the current URL matches the tab
+                <aside className="md:w-64 w-full md:h-screen">
+  <div
+    className="
+      flex
+      md:flex-col
+      flex-row
+      md:space-y-4
+      space-x-4
+      md:space-x-0
+      p-4
+      justify-start
+      md:justify-start
+      overflow-x-auto
+      md:overflow-visible
+      scrollbar-hide
+    "
+  >
+    {tabs.map((tab, idx) => {
+      const isActive = url === tab.href;
 
-                            return (
-                                <div key={idx} className="relative">
-                                    <span className="absolute -top-2 -right-2 z-50 bg-red-600 text-xs text-white rounded-full px-2 py-0.5 shadow-md">
-                                        {tab.count}
-                                    </span>
-                                    <Link
-                                        href={tab.href}
-                                        className={`block text-center text-xs font-semibold px-4 py-2 rounded-lg border shadow-md backdrop-blur-md transition
-                            ${isActive
-                                                ? "bg-green-600 text-white border-green-700 shadow-lg" // 🔵 Highlighted (active)
-                                                : "bg-white/70 hover:bg-white/90 text-gray-800 border-gray-200"
-                                            }`}
-                                    >
-                                        {tab.label}
-                                    </Link>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </aside>
+      return (
+        <div key={idx} className="relative shrink-0 md:shrink">
+          {/* Badge */}
+          <span className="absolute -top-2 -right-2 z-50 bg-red-600 text-xs text-white rounded-full px-2 py-0.5 shadow-md">
+            {tab.count}
+          </span>
+
+          {/* Tab Button */}
+          <Link
+            href={tab.href}
+            className={`
+              block
+              text-center
+              text-xs
+              font-semibold
+              px-4 py-2
+              rounded-lg
+              border
+              shadow-md
+              backdrop-blur-md
+              transition
+              whitespace-nowrap
+              ${
+                tab.href === "/my-trades"
+                  ? "bg-green-600 text-white border-green-700 shadow-lg" // donation always green
+                  : isActive
+                  ? "bg-green-600 text-white border-green-700 shadow-lg"
+                  : "bg-white/70 hover:bg-white/90 text-gray-800 border-gray-200"
+              }
+            `}
+          >
+            {tab.label}
+          </Link>
+        </div>
+      );
+    })}
+  </div>
+</aside>
+
 
                 <main className="flex-1   w-full  p-6">
                     {/* Flash message */}
@@ -210,7 +243,7 @@ export default function MyTrades({ trades, isUser }) {
                                         <div>
                                             <Link href={`/materials/${trade.material.id}`} className="relative group text-center">
                                                 <img
-                                                    src={`/storage/${trade.material.image}`}
+                                                   src={`/storage/${JSON.parse(trade.material.image)[0]}`}
                                                     alt={trade.material.material_name}
                                                     className="w-20 h-20 ml-4 object-cover rounded-xl shadow-md"
                                                 />

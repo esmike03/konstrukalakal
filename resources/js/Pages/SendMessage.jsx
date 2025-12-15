@@ -98,7 +98,7 @@ useEffect(() => {
             <div className="w-[40%] relative">
 
               <img
-                src={`/storage/${material.image}`}
+                src={`/storage/${JSON.parse(material.image)[0]}`}
                 alt={material.material_name}
                 className="w-full h-full object-cover rounded-md"
               />

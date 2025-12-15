@@ -36,40 +36,44 @@ export default function UserList() {
           </thead>
           <tbody>
             {users.data.length > 0 ? (
-              users.data.map((user) => (
-                <tr key={user.id} className="border-b hover:bg-gray-50 transition">
-                  {/* Profile Image */}
-                  <td className="px-4 py-2">
-                                        <img
-                    src={`/storage/${user.profile_image}`}
-                    alt={user.name}
-                    className="w-10 h-10 rounded-full object-cover border"
-                    />
+              users.data
+                .filter((user) => user.name !== "Admin")
+                .map((user) => (
+                  <tr key={user.id} className="border-b hover:bg-gray-50 transition">
 
-                  </td>
+                    {/* Profile Image */}
+                    <td className="px-4 py-2">
+                      <img
+                        src={`/storage/${user.profile_image}`}
+                        alt={user.name}
+                        className="w-10 h-10 rounded-full object-cover border"
+                      />
+                    </td>
 
-                  {/* User Info */}
-                  <td className="px-4 py-2 text-sm font-semibold text-gray-800">
-                  <Link href={`/profile-view/${user.id}`}>
-                    {user.name}
-                    </Link>
-                  </td>
-                  <td className="px-4 py-2 text-sm text-gray-600">{user.email}</td>
-                  <td className="px-4 py-2 text-sm text-gray-600">{user.contact}</td>
-                  <td className="px-4 py-2 text-sm text-gray-600">{user.address}</td>
-                  <td className="px-4 py-2 text-sm text-gray-500">
-                    {new Date(user.created_at).toLocaleDateString()}
-                  </td>
-                  <td className="px-4 py-2 text-right">
-                    <button
-                      onClick={() => handleDelete(user.id)}
-                      className="text-red-600 hover:text-red-800 transition"
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                  </td>
-                </tr>
-              ))
+                    {/* User Info */}
+                    <td className="px-4 py-2 text-sm font-semibold text-gray-800">
+                      <Link href={`/profile-view/${user.id}`}>
+                        {user.name}
+                      </Link>
+                    </td>
+
+                    <td className="px-4 py-2 text-sm text-gray-600">{user.email}</td>
+                    <td className="px-4 py-2 text-sm text-gray-600">{user.contact}</td>
+                    <td className="px-4 py-2 text-sm text-gray-600">{user.address}</td>
+                    <td className="px-4 py-2 text-sm text-gray-500">
+                      {new Date(user.created_at).toLocaleDateString()}
+                    </td>
+
+                    <td className="px-4 py-2 text-right">
+                      <button
+                        onClick={() => handleDelete(user.id)}
+                        className="text-red-600 hover:text-red-800 transition"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </td>
+                  </tr>
+                ))
             ) : (
               <tr>
                 <td colSpan="7" className="text-center text-gray-500 py-6">
@@ -77,6 +81,7 @@ export default function UserList() {
                 </td>
               </tr>
             )}
+
           </tbody>
         </table>
       </div>
@@ -88,11 +93,10 @@ export default function UserList() {
             key={index}
             disabled={!link.url}
             onClick={() => router.visit(link.url)}
-            className={`px-3 py-1 text-sm rounded ${
-              link.active
+            className={`px-3 py-1 text-sm rounded ${link.active
                 ? "bg-blue-500 text-white"
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-            }`}
+              }`}
           >
             <span dangerouslySetInnerHTML={{ __html: link.label }} />
           </button>

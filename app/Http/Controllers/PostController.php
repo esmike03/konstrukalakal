@@ -149,6 +149,27 @@ class PostController extends Controller
             'user_req' => auth()->id(),
         ]);
 
+        // \App\Models\Notifications::create([
+        //             'user_id'     => $request->user_id,
+        //             'users' => auth()->id(),
+        //             'material_id' => '18',
+        //             'owner'    => $request->user_id,
+        //             'status'      => 'reported',
+        //             'item_title' => $request->reason,
+        //             'item_image' => '',
+        // ]);
+
+        Notifications::create([
+                    'user_id'     => $request->user_id,
+                    'material_id' => 18,
+                    'quantity'    => 1,
+                    'message'    => 'Someone have reported you for ' . $request->reason . '.',
+                    'username' => 'Confidential',
+                    'image' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFjZWhrimd975f_0Y66f0qySHGOodLt_3BxQ&s',
+                    'ownername' => $request->user_id,
+                    'owner' => $request->user_id,
+                ]);
+
         return back()->with('message', 'Report submitted successfully.');
     }
 
@@ -174,7 +195,7 @@ class PostController extends Controller
 {
     $blockedUser = User::findOrFail($request->user_id); // person being blocked
     $currentUser = auth()->user(); // signed-in user
-    
+
     // --- 1. Update blockedUser.blocked (add current user ID) ---
     $blockedBy = $blockedUser->blocked ?? [];
     if (!is_array($blockedBy)) {
@@ -192,7 +213,7 @@ class PostController extends Controller
     if (!is_array($myBlockedList)) {
         $myBlockedList = json_decode($myBlockedList, true) ?? [];
     }
-    
+
     if (!in_array($blockedUser->id, $myBlockedList)) {
         $myBlockedList[] = $blockedUser->id;
     }

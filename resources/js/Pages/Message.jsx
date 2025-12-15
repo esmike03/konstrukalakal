@@ -1,5 +1,5 @@
 import { Link, usePage } from "@inertiajs/react";
-import { Clock, Trash2 } from "lucide-react";
+import { Clock, Trash2, UsersRoundIcon } from "lucide-react";
 
 
 export default function Messages() {
@@ -7,6 +7,7 @@ export default function Messages() {
     auth: { user: authUser },
     conversations = [],
   } = usePage().props;
+   const { auth } = usePage().props;
 
   // Filter out invalid self-chat edge cases
   const otherChats = conversations.filter(
@@ -15,7 +16,22 @@ export default function Messages() {
 
   return (
     <div className="w-full px-4 sm:px-14 mt-6">
-      <h1 className="text-2xl text-gray-800 mb-6">Messages</h1>
+    <div className="flex justify-between">
+    <h1 className="text-2xl text-gray-800 mb-6">Messages</h1>
+
+    <div>
+    {auth.user.name !== "Admin" && (
+        <Link href="/direct/15/5">
+          <p className="flex gap-2">
+            <UsersRoundIcon /> Admin
+          </p>
+        </Link>
+      )}
+
+    </div>
+    </div>
+
+
 
       {otherChats.length > 0 ? (
         <div className="space-y-3">
@@ -27,7 +43,7 @@ export default function Messages() {
             >
               <div className="flex items-center p-4 bg-white rounded-lg shadow hover:bg-gray-50 transition">
                 <img
-                  src={`/storage/${chat.material_image}`}
+                  src={`/storage/${JSON.parse(chat.material_image)[0]}`}
                   alt={chat.user.name}
                   className="h-12 w-12 rounded-full object-cover"
                 />

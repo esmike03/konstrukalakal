@@ -20,7 +20,7 @@ export default function CreateMaterials() {
         quantity: "",
         description: "",
         forbdt: "",
-        image: null, // Store selected file
+        images: [], // Store selected file
     });
     const isPriceDisabled = form.forbdt === "Trade" || form.forbdt === "Donation";
     const [imagePreview, setImagePreview] = useState(null);
@@ -30,15 +30,14 @@ export default function CreateMaterials() {
     // Handle text input changes
     const handleChange = (e) => {
         if (e.target.type === "file") {
-            const file = e.target.files[0];
-            if (file) {
-                setForm({ ...form, image: file });
-                setImagePreview(URL.createObjectURL(file)); // Preview selected image
-            }
+            const files = Array.from(e.target.files); // get all selected files
+            setForm({ ...form, images: files }); // update images array
+            setImagePreview(URL.createObjectURL(files[0])); // show preview of first file
         } else {
             setForm({ ...form, [e.target.name]: e.target.value });
         }
     };
+
 
     // Handle form submission
     const handleSubmit = (e) => {
@@ -48,8 +47,15 @@ export default function CreateMaterials() {
 
         const formData = new FormData();
         Object.keys(form).forEach((key) => {
-            formData.append(key, form[key]);
+            if (key === "images") {
+                form.images.forEach((file) => {
+                    formData.append("images[]", file);
+                });
+            } else {
+                formData.append(key, form[key]);
+            }
         });
+
 
         router.post('/materials/store', formData, {
             headers: {
@@ -75,26 +81,26 @@ export default function CreateMaterials() {
 
                 {/* Form */}
                 <form onSubmit={handleSubmit} className="">
-                                {/* Header */}
-                            <div className="flex justify-between items-center mb-4">
-                                <div className='flex gap-3'>
-                                    <h2 className="text-lg font-bold text-gray-600">Upload Material</h2>
-                                    <div>
-                                        <select name="forbdt" onChange={handleChange} className="w-fit p-1 px-2 border text-gray-500 text-xs border-gray-400 rounded-lg">
-                                            <option value="">Choose</option>
-                                            <option value="Sale">Sale</option>
-                                            <option value="Trade">Trade</option>
-                                            <option value="Donation">Donation</option>
-                                        </select>
-                                        {errors.forbdt && <p className="text-red-500 text-xs mt-1">{errors.forbdt}</p>}
-                                    </div>
-
-                                </div>
-
-                                <button onClick={closeMaterialModal} className="text-gray-600 hover:text-gray-900">
-                                    <X size={20} />
-                                </button>
+                    {/* Header */}
+                    <div className="flex justify-between items-center mb-4">
+                        <div className='flex gap-3'>
+                            <h2 className="text-lg font-bold text-gray-600">Upload Material</h2>
+                            <div>
+                                <select name="forbdt" onChange={handleChange} className="w-fit p-1 px-2 border text-gray-500 text-xs border-gray-400 rounded-lg">
+                                    <option value="">Choose</option>
+                                    <option value="Sale">Sale</option>
+                                    <option value="Trade">Trade</option>
+                                    <option value="Donation">Donation</option>
+                                </select>
+                                {errors.forbdt && <p className="text-red-500 text-xs mt-1">{errors.forbdt}</p>}
                             </div>
+
+                        </div>
+
+                        <button onClick={closeMaterialModal} className="text-gray-600 hover:text-gray-900">
+                            <X size={20} />
+                        </button>
+                    </div>
                     <div className="grid grid-cols-2 gap-x-2">
                         <div>
                             <input name="materialName" type="text" placeholder="Material Name" onChange={handleChange} className="w-full p-2 border text-xs border-gray-400 rounded-lg mb-3" />
@@ -146,20 +152,20 @@ export default function CreateMaterials() {
 
 
                         <div>
-                                <div>
-                                    <select name="availability" onChange={handleChange} className="w-full p-2 border text-gray-500 text-xs border-gray-400 rounded-lg mb-3">
-                                        <option value="">Availability</option>
-                                        <option value="Few">Few</option>
-                                        <option value="More">More</option>
-                                    </select>
-                                    {errors.availability && <p className="text-red-500 text-xs mt-1">{errors.availability}</p>}
-                                </div>
+                            <div>
+                                <select name="availability" onChange={handleChange} className="w-full p-2 border text-gray-500 text-xs border-gray-400 rounded-lg mb-3">
+                                    <option value="">Availability</option>
+                                    <option value="Few">Few</option>
+                                    <option value="More">More</option>
+                                </select>
+                                {errors.availability && <p className="text-red-500 text-xs mt-1">{errors.availability}</p>}
+                            </div>
 
-                                <div>
-                                    <input name="price" type="text" placeholder="Price" onChange={handleChange} disabled={isPriceDisabled} className={`w-full text-xs p-2 border border-gray-400 rounded-lg mb-3
+                            <div>
+                                <input name="price" type="text" placeholder="Price" onChange={handleChange} disabled={isPriceDisabled} className={`w-full text-xs p-2 border border-gray-400 rounded-lg mb-3
         ${isPriceDisabled ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : ''}`} />
-                                    {errors.price && <p className="text-red-500 text-xs mt-1">{errors.price}</p>}
-                                </div>
+                                {errors.price && <p className="text-red-500 text-xs mt-1">{errors.price}</p>}
+                            </div>
 
                             <div>
                                 <input name="quantity" type="number" placeholder="Quantity" onChange={handleChange} className="w-full text-xs p-2 border border-gray-400 rounded-lg mb-3" />
@@ -174,7 +180,7 @@ export default function CreateMaterials() {
                             <label className="border-dashed border-2 border-gray-300 p-3 flex flex-col items-center justify-center text-gray-600 rounded-lg cursor-pointer">
                                 <UploadCloud size={22} />
                                 <p className="mt-2 text-xs text-center">Click to upload an image</p>
-                                <input type="file" name="image" accept="image/*" onChange={handleChange} className="hidden" />
+                                <input type="file" multiple name="images[]" onChange={handleChange} className="hidden" />
                             </label>
 
                             <div>

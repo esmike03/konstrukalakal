@@ -41,6 +41,10 @@ export default function Show({ material, user }) {
     else if (material.forbdt === "Donation") setButtonText("Inquire");
   }, [material.forbdt]);
 
+  const images = material.image ? JSON.parse(material.image) : [];
+  const [mainImage, setMainImage] = useState(images[0]);
+console.log(material.image);
+console.log('asdasds');
   useEffect(() => {
     if (flash?.message) {
       setShowMessage(true);
@@ -94,12 +98,16 @@ export default function Show({ material, user }) {
 
         {/* Product Image Section */}
         <div className="w-full md:w-1/2">
-          <button
-            onClick={() => setOpen(!open)}
-            className="w-fit absolute text-left px-2 text-yellow-500 py-2 hover:bg-red-100"
-          >
-            <AlertCircle />
-          </button>
+          {auth?.user && auth.user.id !== user.id && (
+            <button
+              onClick={() => setOpen(!open)}
+              className="w-fit absolute text-left px-2 text-yellow-500 py-2 hover:bg-red-100"
+            >
+              <AlertCircle />
+            </button>
+          )}
+
+
 
           {/* Dropdown */}
           {open && (
@@ -125,11 +133,33 @@ export default function Show({ material, user }) {
             </div>
           )}
 
-          <img
-            src={`/storage/${material.image}`}
-            alt={material.material_name}
-            className="w-full h-auto object-cover rounded-2xl shadow-lg"
-          />
+          
+
+          {/* Big main image */}
+      <img
+        src={`/storage/${mainImage}`}
+        alt={material.material_name}
+        className="w-full h-64 md:h-80 object-cover rounded-2xl shadow-lg mb-2"
+      />
+
+      {/* Small thumbnails */}
+      {images.length > 1 && (
+        <div className="flex gap-2 mt-2">
+          {images.slice(0, 5).map((img, idx) => (
+            <img
+              key={idx}
+              src={`/storage/${img}`}
+              alt={`Thumbnail ${idx + 1}`}
+              className={`w-16 h-16 object-cover rounded-lg shadow-md cursor-pointer hover:scale-105 transition 
+                ${img === mainImage ? "ring-2 ring-green-500" : ""}`} // optional highlight
+              onClick={() => setMainImage(img)}
+            />
+          ))}
+        </div>
+      )}
+
+
+
         </div>
 
         {/* Product Details */}
@@ -223,62 +253,62 @@ export default function Show({ material, user }) {
 
           {/* Buttons */}
           <div className="mt-4 flex flex-wrap gap-3">
-  {auth?.user?.id === user.id ? (
-    <p className="text-sm text-gray-700">You can edit this in My Uploads.</p>
-  ) : (
-    <>
-      {!isBlocked ? (
-        <>
-          {material.forbdt === "Sale" ? (
-            <button
-              onClick={addToCart}
-              className="flex items-center justify-center gap-2 px-5 py-2 rounded-full
+            {auth?.user?.id === user.id ? (
+              <p className="text-sm text-gray-700">You can edit this in My Uploads.</p>
+            ) : (
+              <>
+                {!isBlocked ? (
+                  <>
+                    {material.forbdt === "Sale" ? (
+                      <button
+                        onClick={addToCart}
+                        className="flex items-center justify-center gap-2 px-5 py-2 rounded-full
               bg-gradient-to-r from-green-500 to-green-700 text-white font-medium shadow-md hover:scale-105 transition"
-            >
-              <ShoppingCart size={18} /> {buttonText}
-            </button>
-          ) : material.forbdt === "Trade" ? (
-            <Link
-              href="/trade/create"
-              data={{
-                material,
-                quantity: data.quantity,
-              }}
-              onClick={handleClick}
-              method="get"
-              as="button"
-              className="flex items-center justify-center gap-2 px-5 py-2 rounded-full
+                      >
+                        <ShoppingCart size={18} /> {buttonText}
+                      </button>
+                    ) : material.forbdt === "Trade" ? (
+                      <Link
+                        href="/trade/create"
+                        data={{
+                          material,
+                          quantity: data.quantity,
+                        }}
+                        onClick={handleClick}
+                        method="get"
+                        as="button"
+                        className="flex items-center justify-center gap-2 px-5 py-2 rounded-full
               bg-gradient-to-r from-blue-500 to-blue-700 text-white font-medium shadow-md hover:scale-105 transition"
-            >
-              <ShoppingCart size={18} /> Trade
-            </Link>
-          ) : (
-            <button
-              onClick={addToDonate}
-              className="flex items-center justify-center gap-2 px-5 py-2 rounded-full
+                      >
+                        <ShoppingCart size={18} /> Trade
+                      </Link>
+                    ) : (
+                      <button
+                        onClick={addToDonate}
+                        className="flex items-center justify-center gap-2 px-5 py-2 rounded-full
               bg-gradient-to-r from-purple-500 to-purple-700 text-white font-medium shadow-md hover:scale-105 transition"
-            >
-              <ShoppingCart size={18} /> {buttonText}
-            </button>
-          )}
+                      >
+                        <ShoppingCart size={18} /> {buttonText}
+                      </button>
+                    )}
 
-          {/* Message button */}
-          {auth?.user && (
-            <Link
-              href={`/message/${material.id}`}
-              className="flex items-center justify-center gap-2 px-5 py-2 rounded-full
+                    {/* Message button */}
+                    {auth?.user && (
+                      <Link
+                        href={`/message/${material.id}`}
+                        className="flex items-center justify-center gap-2 px-5 py-2 rounded-full
               bg-white/40 text-gray-800 font-medium shadow hover:bg-white/60 transition backdrop-blur-md"
-            >
-              ✉️ Message
-            </Link>
-          )}
-        </>
-      ) : (
-        <p className="text-red-500 font-semibold">Unavailable</p>
-      )}
-    </>
-  )}
-</div>
+                      >
+                        ✉️ Message
+                      </Link>
+                    )}
+                  </>
+                ) : (
+                  <p className="text-red-500 font-semibold">Unavailable</p>
+                )}
+              </>
+            )}
+          </div>
 
         </div>
       </div >

@@ -212,7 +212,7 @@ export default function Materials() {
                 >
                   {material.image && (
                     <img
-                      src={`/storage/${material.image}`}
+                      src={`/storage/${JSON.parse(material.image)[0]}`}
                       alt={material.material_name}
                       className="w-full h-40 object-cover rounded-lg"
                     />

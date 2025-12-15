@@ -210,7 +210,7 @@ export default function OrderListCompleted({ trades, isUser }) {
                                         <Link href={`/materials/${trade.material.id}`}>
                                             <div className="text-center">
                                                 <img
-                                                    src={`/storage/${trade.material.image}`}
+                                                    src={`/storage/${JSON.parse(trade.material.image)[0]}`}
                                                     alt={trade.material.material_name}
                                                     className="w-20 h-20 object-cover rounded-md mx-auto"
                                                 />

@@ -72,26 +72,53 @@ class MaterialController extends Controller
      * Persist the changes from the edit form.
      * Route::put('/materials/{material}', [MaterialController::class, 'update'])->name('materials.update');
      */
-    public function updateMaterial(Request $request, Material $material)
-    {
-        $validated = $request->validate([
-            'material_name' => 'required|string|max:255',
-            'forbdt'        => 'required|in:Sale,Trade,Donation',
-            'category'      => 'required|string|max:255',
-            'condition'     => 'required|string|max:255',
-            'price'         => 'required|numeric|min:0',
-            'quantity'      => 'required|integer|min:0',
-            'description'   => 'nullable|string',
-        ]);
+   public function updateMaterial(Request $request, Material $material)
+{
+    // Validate text fields only
+    $validated = $request->validate([
+        'material_name' => 'required|string|max:255',
+        'forbdt'        => 'required|in:Sale,Trade,Donation',
+        'category'      => 'required|string|max:255',
+        'condition'     => 'required|string|max:255',
+        'price'         => 'nullable|numeric|min:0',
+        'quantity'      => 'required|integer|min:0',
+        'description'   => 'nullable|string',
+        // NOTE: No validation for 'images' here as we handle it separately
+    ]);
 
-        // mass‐assign the validated fields
-        $material->update($validated);
+    // Update text fields first
+    $material->update($validated);
 
-        // redirect back to the edit page (so your flash banner can show)
-        return redirect()
-            ->route('materials.edit', $material)
-            ->with('message', 'Material updated successfully!');
+    // Handle images separately: This check will only pass if new files were selected
+    if ($request->hasFile('images')) {
+        $paths = [];
+
+        // OPTIONAL: Delete old images from storage
+        // You should generally delete the old files before replacing them
+        // if ($material->image) {
+        //     $oldImages = json_decode($material->image, true);
+        //     foreach ($oldImages as $oldImage) {
+        //         Storage::disk('public')->delete($oldImage);
+        //     }
+        // }
+
+        // Store new images
+        foreach ($request->file('images') as $file) {
+            $paths[] = $file->store('materials', 'public');
+        }
+
+        // Replace old images with new paths
+        $material->image = json_encode($paths);
+        $material->save();
     }
+    // IMPORTANT: If $request->hasFile('images') is FALSE, $material->image IS NOT touched.
+    // This successfully preserves the existing image path.
+
+    return redirect()
+        ->route('materials.edit', $material)
+        ->with('message', 'Material updated successfully!');
+}
+
 
     public function editMaterial($id)
     {
@@ -702,12 +729,12 @@ class MaterialController extends Controller
         $item = Notifications::where('owner', $logon)->latest()->take(5)->get();
 
 
-            $trades = Archive::with(['material', 'user', 'owner'])
+        $trades = Archive::with(['material', 'user', 'owner'])
             ->where('owner', $user->id)
             ->where('status', 'rejected')
             ->whereHas('material', function ($query) {
                 $query
-                ->where('forbdt', 'Trade');
+                    ->where('forbdt', 'Trade');
             })
             ->get();
 
@@ -774,7 +801,7 @@ class MaterialController extends Controller
         }
     }
 
-       public function TradeListCompleted()
+    public function TradeListCompleted()
     {
         $user = auth()->user();
         $userId = auth()->id();
@@ -785,7 +812,7 @@ class MaterialController extends Controller
             ->where('status', 'completed')
             ->whereHas('material', function ($query) {
                 $query
-                ->where('forbdt', 'Trade');
+                    ->where('forbdt', 'Trade');
             })
             ->get();
 
@@ -902,10 +929,10 @@ class MaterialController extends Controller
 
         $authId = auth()->id();
 
-        if($authId == $convo->sender_id){
+        if ($authId == $convo->sender_id) {
             $convo->user1 = 'off';
             $convo->save();
-        } else if($authId == $convo->recipient_id){
+        } else if ($authId == $convo->recipient_id) {
             $convo->user2 = 'off';
             $convo->save();
         }
@@ -940,8 +967,8 @@ class MaterialController extends Controller
         $authId = auth()->id();
 
         Material::where('user_id', $id)->update(['status' => 'on']);
-            $user->status = 'enabled';
-            $user->save();
+        $user->status = 'enabled';
+        $user->save();
 
 
         // Optionally, you can return a response with the updated cart data

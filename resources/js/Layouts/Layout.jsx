@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, Head, usePage } from "@inertiajs/react";
 import { useModal } from "@/context/ModalContext";
-import { ShoppingCart, Clock, LogOut, User, Menu, X, Bell, MessageCircle, Upload, Users } from "lucide-react";
+import { ShoppingCart, Clock, LogOut, User, Menu, X, Bell, MessageCircle, Upload, Users, BarChart } from "lucide-react";
 
 export default function Layout({ children }) {
 
@@ -246,6 +246,23 @@ export default function Layout({ children }) {
                         <div className="relative">
 
                            <span>Reported Item</span>
+
+                        </div>
+
+                      </Link>
+
+
+                        )}
+
+                        {auth.user.name === 'Admin' && (
+                      <Link
+                        href="/admin/statistics"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 w-full text-left relative"
+                      >
+                        <BarChart size={18} />
+                        <div className="relative">
+
+                           <span>Statistics</span>
 
                         </div>
 

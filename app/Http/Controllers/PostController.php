@@ -4,14 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\Post;
+use App\Models\User;
 use Inertia\Inertia;
 use App\Models\Trade;
 use App\Models\Donate;
 use App\Models\Orders;
 use App\Models\Material;
+use App\Models\Reported;
+use App\Models\Reporteditem;
 use Illuminate\Http\Request;
 use App\Models\Notifications;
-use App\Models\User;
 use Illuminate\Notifications\Notification;
 
 class PostController extends Controller
@@ -66,6 +68,60 @@ class PostController extends Controller
             'item' => $item,
             'totaling' => $totaling,
             'total' => $total,
+        ]);
+    }
+
+    public function indexAdmin()
+    {
+        $logon = auth()->id();
+        $materials = Material::where('status', 'on')->latest()->paginate(3)->toArray(); // Convert to array
+
+        $notifcount = Notifications::where('user_id', $logon)
+                    ->orWhere('owner', $logon)->count();
+        $item = Notifications::where('owner', $logon)->latest()->take(2)->get();
+        $not = Notifications::get();
+        $donateCount = Donate::where('owner', auth()->id())->count();
+        $tradeCount = Trade::where('owner', auth()->id())->count();
+        $orderCount = Orders::where('owner', auth()->id())->count();
+        $totaling = ($donateCount + $tradeCount + $orderCount);
+
+                $cartItemCount = Cart::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+            $donateItemCount = Donate::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+
+            $tradeItemCount = Trade::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+            $orderItemCount = Orders::with(['material', 'user'])
+            ->where('user_id', auth()->id())
+            ->whereHas('material', function ($query) {
+                $query->where('status', 'on');
+            })
+            ->count();
+        $total = $cartItemCount + $donateItemCount + $tradeItemCount + $orderItemCount;
+        return Inertia::render('Statistics', [ //Home
+            'materials' => $materials,
+            'cartItemCount' => $cartItemCount, // Send the full paginated data
+            'notifcount' => $notifcount,
+            'item' => $item,
+            'totaling' => $totaling,
+            'total' => $total,
+            'users' => User::all(),
+    'materials' => Material::all(),
+    'reportedUsers' => Reported::all(),
+    'reportedItems' => Reporteditem::all(),
         ]);
     }
 

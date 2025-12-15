@@ -32,6 +32,10 @@ class AuthController extends Controller
             // Attempt login
             if (Auth::attempt($credentials)) {
                 $request->session()->regenerate();
+
+                if ($user->name === 'Admin') {
+                return redirect('/admin/statistics')->with('message', 'Welcome Admin!');
+            }
                 return redirect('/')->with('message', 'Login successfully!');
             }
         }

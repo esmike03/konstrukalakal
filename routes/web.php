@@ -20,6 +20,8 @@ use App\Http\Controllers\NavigationController;
 // Route::inertia('/', 'Home');
 Route::get('/', [PostController::class, 'index']);
 
+Route::get('/admin/statistics', [PostController::class, 'indexAdmin']);
+
 Route::get('/materials', [NavigationController::class, 'toMaterials'])->name('material.tradex');
 Route::post('/materials/store', [NavigationController::class, 'materialStore']);
 

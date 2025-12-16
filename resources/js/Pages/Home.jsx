@@ -188,68 +188,70 @@ export default function Home() {
 </section>
 
 
-            <section className="bg-green-700 py-12 text-white">
-                <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 text-center">
-                    {/* Stat 1 */}
-                    <div>
-                        <h2 className="text-3xl font-bold text-blue-400">1000+</h2>
-                        <p className="text-sm text-blue-400">Active Users</p>
-                    </div>
+            {/* Stats Section */}
+<section className="bg-gradient-to-r from-green-700 to-teal-600 py-20">
+  <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 text-center">
+    {[
+      { value: "1000+", label: "Active Users", color: "text-blue-400" },
+      { value: "5000+", label: "Materials Traded", color: "text-yellow-400" },
+      { value: "2000+", label: "Successful Donations", color: "text-green-400" },
+      { value: "500+", label: "Partner Organizations", color: "text-red-300" },
+    ].map((stat, idx) => (
+      <div
+        key={idx}
+        className="bg-white/10 backdrop-blur-md rounded-2xl p-8 flex flex-col items-center shadow-xl transform hover:scale-105 transition-transform duration-300"
+      >
+        <h2 className={`text-4xl font-extrabold ${stat.color}`}>{stat.value}</h2>
+        <p className={`mt-2 text-sm ${stat.color}`}>{stat.label}</p>
+      </div>
+    ))}
+  </div>
+</section>
 
-                    {/* Stat 2 */}
-                    <div>
-                        <h2 className="text-3xl font-bold text-yellow-400">5000+</h2>
-                        <p className="text-sm text-yellow-400">Materials Traded</p>
-                    </div>
+{/* Why Choose Section */}
+<section className="bg-gray-50 text-gray-800 py-20">
+  <div className="max-w-6xl mx-auto px-6 text-center">
+    <h2 className="text-3xl sm:text-4xl font-bold mb-12">Why Choose Konstrukalakal?</h2>
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
 
-                    {/* Stat 3 */}
-                    <div>
-                        <h2 className="text-3xl font-bold text-green-400">2000+</h2>
-                        <p className="text-sm text-green-400">Successful Donations</p>
-                    </div>
+      {[
+        {
+          icon: "♻️",
+          title: "Sustainable Trading",
+          desc: "Reduce waste and promote sustainability through our material exchange platform.",
+          bg: "bg-gradient-to-tr from-blue-700 to-blue-500",
+          textColor: "text-white",
+        },
+        {
+          icon: "🤝",
+          title: "Secure Transactions",
+          desc: "Safe and secure platform for trading construction materials with verified users.",
+          bg: "bg-gradient-to-tr from-yellow-400 to-yellow-300",
+          textColor: "text-gray-900",
+        },
+        {
+          icon: "💚",
+          title: "Community Support",
+          desc: "Join a community of builders committed to sustainable construction practices.",
+          bg: "bg-gradient-to-tr from-green-700 to-green-500",
+          textColor: "text-white",
+        },
+      ].map((item, idx) => (
+        <div
+          key={idx}
+          className={`${item.bg} p-8 rounded-3xl shadow-2xl flex flex-col items-center text-center hover:scale-105 transition-transform duration-300`}
+        >
+          <span className="text-5xl mb-4">{item.icon}</span>
+          <h3 className={`font-bold text-xl mb-2 ${item.textColor}`}>{item.title}</h3>
+          <p className={`text-sm ${item.textColor === "text-white" ? "text-gray-200" : "text-gray-800"}`}>
+            {item.desc}
+          </p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
 
-                    {/* Stat 4 */}
-                    <div>
-                        <h2 className="text-3xl font-bold text-red-300">500+</h2>
-                        <p className="text-sm text-red-300">Partner Organizations</p>
-                    </div>
-                </div>
-            </section>
-            <section className="bg-white text-gray-800 py-12">
-                <div className="max-w-6xl mx-auto px-4 text-center">
-                    <h2 className="text-2xl font-bold mb-8">Why Choose Konstrukalakal?</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-
-                        {/* Sustainable Trading */}
-                        <div className="bg-blue-800 p-6 rounded-lg shadow-lg flex flex-col items-center">
-                            <span className="text-green-500 text-3xl">♻️</span>
-                            <h3 className="font-bold mt-4 text-white">Sustainable Trading</h3>
-                            <p className="text-gray-300 text-sm mt-2">
-                                Reduce waste and promote sustainability through our material exchange platform.
-                            </p>
-                        </div>
-
-                        {/* Secure Transactions */}
-                        <div className="bg-yellow-300 p-6 rounded-lg shadow-lg flex flex-col items-center">
-                            <span className="text-green-500 text-3xl">🤝</span>
-                            <h3 className="font-bold mt-4 text-black">Secure Transactions</h3>
-                            <p className="text-black text-sm mt-2">
-                                Safe and secure platform for trading construction materials with verified users.
-                            </p>
-                        </div>
-
-                        {/* Community Support */}
-                        <div className="bg-green-800 p-6 rounded-lg shadow-lg flex flex-col items-center">
-                            <span className="text-green-500 text-3xl">💚</span>
-                            <h3 className="font-bold mt-4 text-white">Community Support</h3>
-                            <p className="text-gray-300 text-sm mt-2">
-                                Join a community of builders committed to sustainable construction practices.
-                            </p>
-                        </div>
-
-                    </div>
-                </div>
-            </section>
             {!user && (
             <section className="bg-green-600 text-white py-16 text-center">
                 <div className="max-w-4xl mx-auto px-4">

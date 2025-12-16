@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\User;
 use App\Models\Trade;
 use App\Models\Donate;
-use App\Models\User;
 use App\Models\Orders;
+use App\Models\Review;
 use App\Models\Archive;
 use App\Models\Material;
 use Illuminate\Http\Request;
@@ -443,7 +444,7 @@ class NavigationController extends Controller
 
         // Handle file upload
         $imagePath = [];
-        
+
 
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
@@ -1381,6 +1382,10 @@ class NavigationController extends Controller
                     ->where('user_id', $user)->get();
         $notifcount = Notifications::where('user_id', $logon)->count();
         $item = Notifications::where('owner', $logon)->latest()->take(5)->get();
+        $reviews = Review::with(['reviewUser', 'owner'])
+        ->where('user_id', $user)
+        ->latest()->get();
+
         return inertia('ProfileVisit', [
             'materials' => $materials,
             'cartItemCount' => $cartItemCount,
@@ -1388,7 +1393,8 @@ class NavigationController extends Controller
             'item' => $item,
             'totaling' => $totaling,
             'notifcount' => $notifcount,
-            'user' => $user_details
+            'user' => $user_details,
+            'reviews' => $reviews,
         ]);
     }
 }

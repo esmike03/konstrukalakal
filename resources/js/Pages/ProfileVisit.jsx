@@ -1,20 +1,43 @@
 import { usePage, Link, router } from "@inertiajs/react";
 import { useState, useEffect } from "react";
 import { useModal } from "@/context/ModalContext";
-import { Search, Grid, List, Upload, Filter, CheckCircle } from "lucide-react";
+import { Search, Grid, List, Upload, Filter, CheckCircle, ChevronDown, ChevronUp, Star } from "lucide-react";
 
 
-export default function ProfileVisit() {
+export default function ProfileVisit({
+    label = "Reviews",
+    placeholder = "Write a Review",
+    value,
+    onChange,
+}) {
   const { auth } = usePage().props;
-
+  const [openReview, setOpenReview] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
   const [view, setView] = useState("grid");
   const { openMaterialModal } = useModal();
-  const { materials } = usePage().props; // Fetch materials from Inertia
+  const { materials, reviews } = usePage().props; // Fetch materials from Inertia
   const { user } = usePage().props;
   const { flash } = usePage().props;
   const [showMessage, setShowMessage] = useState(false);
   const [open, setOpen] = useState(false);
+
+    const submitReview = () => {
+    router.post(`/reviews/${user.id}`, {
+    comment,
+    rating,
+    }, {
+    onSuccess: () => {
+      // Clear rating and comment after successful submit
+      setRating(0);
+      setHover(0);
+      setComment("");
+    }
+    });
+    };
+
+  const [comment, setComment] = useState("");
+  const [rating, setRating] = useState(0);
+  const [hover, setHover] = useState(0);
 
   const authUserId = auth?.user?.id ?? null;
   const isBlocked = authUserId ? user.blocked?.includes(authUserId) : false;
@@ -218,6 +241,8 @@ export default function ProfileVisit() {
             </Link>
 
           )}
+
+
         </div>
 
         {/* Details Box */}
@@ -243,6 +268,109 @@ export default function ProfileVisit() {
           </div>
 
         </div>
+        <div className="w-full  mx-auto mt-10">
+            {/* Header / Toggle */}
+            <button
+            type="button"
+            onClick={() => setOpenReview(!openReview)}
+            className="w-full flex items-center justify-between px-4 py-3 bg-gray-100 rounded-xl hover:bg-gray-200 transition"
+            >
+            <span className="font-medium text-gray-700">{label}</span>
+            {openReview ? (
+            <ChevronUp className="w-5 h-5 text-gray-600" />
+            ) : (
+            <ChevronDown className="w-5 h-5 text-gray-600" />
+            )}
+            </button>
+
+
+            {/* Collapsible Content */}
+            <div
+            className={`overflow-hidden transition-all duration-300 ease-in-out ${
+            openReview ? "max-h-[1000px] mt-3" : "max-h-0"
+            }`}
+            >
+            {reviews.map((review) => (
+                <div
+                    key={review.id}
+                    className="bg-white p-4 rounded-xl shadow"
+                >
+                <div className="flex gap-3">
+                    {/* Reviewer */}
+                    <p className="font-semibold text-gray-800">
+                    {review.owner?.name} -
+                    </p>
+
+                     {/* Stars */}
+                    <div className="flex gap-1 my-1">
+                    {[1,2,3,4,5].map(star => (
+                        <Star
+                        key={star}
+                        className={`w-4 h-4 ${
+                            review.rating >= star
+                            ? 'fill-yellow-400 text-yellow-400'
+                            : 'text-gray-300'
+                        }`}
+                        />
+                    ))}
+                    </div>
+                </div>
+
+
+
+
+                    {/* Comment */}
+                    <p className="text-gray-700">{review.comment}</p>
+
+                    {/* Reviewed user */}
+
+                </div>
+                ))}
+            <div className="flex items-center gap-1 mt-8">
+            {[1, 2, 3, 4, 5].map((star) => (
+            <Star
+            key={star}
+            className={`w-6 h-6 cursor-pointer transition ${
+            (hover || rating) >= star
+            ? "fill-yellow-400 text-yellow-400"
+            : "text-gray-300"
+            }`}
+            onMouseEnter={() => setHover(star)}
+            onMouseLeave={() => setHover(0)}
+            onClick={() => setRating(star)}
+            />
+            ))}
+            {rating > 0 && (
+            <span className="ml-2 text-sm text-gray-600">{rating}/5</span>
+            )}
+</div>
+            <div className="flex gap-4 mt-3">
+                <input
+                type="text"
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                placeholder={placeholder}
+                className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                />
+                <button
+  onClick={submitReview}
+  disabled={!rating || !comment}
+  className="
+    px-3 rounded-md cursor-pointer text-white
+    bg-blue-500
+    disabled:bg-gray-300
+    disabled:text-gray-500
+    disabled:cursor-not-allowed
+    transition
+  "
+>
+  Submit
+</button>
+
+            </div>
+
+            </div>
+            </div>
 
 
       </div>

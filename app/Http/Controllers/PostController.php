@@ -9,6 +9,7 @@ use Inertia\Inertia;
 use App\Models\Trade;
 use App\Models\Donate;
 use App\Models\Orders;
+use App\Models\Review;
 use App\Models\Material;
 use App\Models\Reported;
 use App\Models\Reporteditem;
@@ -124,6 +125,25 @@ class PostController extends Controller
     'reportedItems' => Reporteditem::all(),
         ]);
     }
+
+    public function storeReview(Request $request, $id)
+    {
+        $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'comment' => 'required|string',
+        ]);
+
+
+        Review::create([
+            'review_user' => auth()->id(),
+            'rating' => $request->rating,
+            'comment' => $request->comment,
+            'user_id' => $id,
+        ])->with(
+            'message', 'Review Added Successfully!'
+        );
+    }
+
 
     /**
      * Show the form for creating a new resource.

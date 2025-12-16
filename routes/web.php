@@ -62,7 +62,7 @@ Route::get('/back', [MaterialController::class, 'back'])->name('materials.back')
 Route::get('/messagexx/{id}/{userId}', [MaterialController::class, 'sendMessagexxx'])->name('messagexxx.showxxx');
 Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
 Route::post('/donate/submit', [CartController::class, 'storeDonate']);
-
+Route::post('/reviews/{id}', [PostController::class, 'storeReview']);
 Route::post('/order/{id}/submit', [CartController::class, 'storeOrder'])->name('order');
 
 Route::get('/cart', [CartController::class, 'toCart']);

@@ -25,7 +25,7 @@ class AuthController extends Controller
         if ($user) {
             if ($user->status === 'disabled') {
                 return back()->with([
-                    'message' => 'Your account has been disabled.'
+                    'message' => 'Your account has been reviewed and found to be in violation of our Terms and Conditions. As a result, your account has been disabled. If you believe this is a mistake, you may contact support.'
                 ]);
             }
 

@@ -12,6 +12,7 @@ use App\Models\Orders;
 use App\Models\Archive;
 use App\Models\Message;
 use App\Models\Material;
+use App\Models\Reported;
 use App\Models\ConvoList;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -950,9 +951,38 @@ class MaterialController extends Controller
 
         Material::where('user_id', $id)->update(['status' => 'off']);
 
+        $reporters = Reported::where('rep_user', $id)
+            ->distinct()
+            ->pluck('user_req');
+
+        foreach ($reporters as $reporterId) {
+            Notifications::create([
+                'user_id'     => $reporterId,
+                'material_id' => 1,
+                'quantity'    => 1,
+                'message'     => 'We have reviewed the report regarding ' . $user->name . ' and determined that it violates our Terms and Conditions. As a result, the user’s account has been disabled.',
+                'username'    => $user->name,
+                'image'       => '',
+                'ownername'   => $reporterId,
+                'owner'       => $reporterId,
+            ]);
+        }
+                Notifications::create([
+            'user_id'     => $user->id,
+            'material_id' => 1,
+            'quantity'    => 1,
+            'message'     => 'Your account has been reviewed and found to be in violation of our Terms and Conditions. As a result, your account has been disabled.',
+            'username'    => $user->name,
+            'image'       => '',
+            'ownername'   => $user->id,
+            'owner'       => $user->id,
+        ]);
+
+
+
         $user->status = 'disabled';
         $user->save();
-
+        Reported::where('rep_user', $id)->delete();
 
         // Optionally, you can return a response with the updated cart data
         return back()->with('message', 'User Disabled.');

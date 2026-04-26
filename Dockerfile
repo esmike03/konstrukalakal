@@ -23,4 +23,5 @@ RUN php artisan config:cache && php artisan route:cache && php artisan view:cach
 
 EXPOSE 10000
 
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=10000"]
+# Migrate and start server at runtime (not build time)
+CMD php artisan storage:link && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=10000
